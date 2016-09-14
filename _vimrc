@@ -42,7 +42,7 @@ syntax on  "语法高亮
 "-------------------------------------------------------------------------------------------------------------------------------
 
 " GUI {{{
-colorscheme monokai "sublime的配色方案
+colorscheme molokai "主题
 set shortmess=atI "去掉欢迎界面
 set cursorline
 set hlsearch
