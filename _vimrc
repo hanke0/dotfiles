@@ -1,3 +1,13 @@
+" 分割出来的窗口位于当前窗口下边/右边 
+set splitbelow
+set splitright
+"编码设置"
+set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936 
+set encoding=utf-8 
+set langmenu=zh_CN 
+let $LANG = 'en_US.UTF-8'
+"开启directX"
+set renderoptions=type:directx
 "主题配置"
 let g:solarized_termcolors=256
 colorscheme solarized
