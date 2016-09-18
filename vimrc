@@ -72,11 +72,9 @@ set encoding=utf-8
 "主题配置"
 if has('gui_running')
   set background=dark
-  set t_Co=256
   colorscheme solarized
   set guifont=Microsoft\ YaHei:h12:cANSI
 else
-  set t_Co=256
   colorscheme Tomorrow-Night
 endif
 
