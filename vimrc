@@ -33,6 +33,7 @@ set hlsearch
 "set cursorline  "突出显示当前行"
 "set cursorcolumn  "突出显示当前列"
 set wrap
+set t_ti= t_te=
 
 "增加功能：
 filetype plugin indent on
