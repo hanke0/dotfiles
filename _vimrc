@@ -9,8 +9,7 @@ let $LANG = 'en_US.UTF-8'
 "开启directX"
 set renderoptions=type:directx
 "主题配置"
-let g:solarized_termcolors=256
-colorscheme solarized
+"colorscheme molokai
 "去掉vi的一致性"
 set nocompatible
 "设置命令缓冲区可见
@@ -59,3 +58,54 @@ function RunPython()
   let &makeprg = mp
   let &errorformat = ef
 endfunction
+"-------------------------------------------------------------------------------------------"
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+"插件开始"
+Plugin 'Lokaltog/vim-powerline'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Yggdroot/indentLine'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'tell-k/vim-autopep8'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'kien/rainbow_parentheses.vim'
+"插件结束"
+call vundle#end()
+filetype plugin indent on
+"-------------------------------------------------------------------------------------------"
+"NerdTree {
+"F2开启和关闭树"
+map <F2> :NERDTreeToggle<CR>
+let NERDTreeChDirMode=1
+"显示书签"
+let NERDTreeShowBookmarks=1
+"设置忽略文件类型"
+let NERDTreeIgnore=['\~$', '\.pyc$', '\.swp$']
+"窗口大小"
+let NERDTreeWinSize=25
+"}
+
+"autopep8{
+"缩进指示线"
+let g:indentLine_char='┆'
+let g:indentLine_enabled = 1
+ 
+"autopep8设置"
+let g:autopep8_disable_show_diff=1
+"}
+
+"nerdcommenter&pairs{
+let mapleader=','
+map <F4> <leader>ci <CR>
+"}
+
+"rainbow_parentheses{
+let g:rbpt_colorpairs = [ ['brown', 'RoyalBlue3'], ['Darkblue', 'SeaGreen3'], ['darkgray', 'DarkOrchid3'], ['darkgreen', 'firebrick3'],['darkcyan', 'RoyalBlue3'],['darkred', 'SeaGreen3'],['darkmagenta', 'DarkOrchid3'],['brown', 'firebrick3'],['gray', 'RoyalBlue3'],['black',       'SeaGreen3'],['darkmagenta', 'DarkOrchid3'],['Darkblue',  'firebrick3'],['darkgreen', 'RoyalBlue3'],['darkcyan', 'SeaGreen3'],['darkred', 'DarkOrchid3'],['red', 'firebrick3']]
+let g:rbpt_max = 16
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+"}
