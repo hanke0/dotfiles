@@ -1,10 +1,10 @@
 "更方便的编辑：
 set backspace=indent,eol,start whichwrap+=<,>,[,]
 set ru
-set whichwrap=b,s,<,>,[,] 
+set whichwrap=b,s,<,>,[,]
 set ambiwidth=double
 set nocompatible
-set spell
+"set spell
 set selection=inclusive
 set clipboard+=unnamed  " Vim 的默认寄存器和系统剪贴板共享
 
@@ -31,7 +31,7 @@ set nu
 syntax on
 set hlsearch
 "set cursorline  "突出显示当前行"
-"set cursorcolumn  "突出显示当前列" 
+"set cursorcolumn  "突出显示当前列"
 set wrap
 
 "增加功能：
@@ -47,8 +47,8 @@ set expandtab
 set smarttab
 set tabstop=4
 set nobomb
-set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936 
-set encoding=utf-8 
+set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936
+set encoding=utf-8
 
 "主题配置"
 if has('gui_running')
@@ -143,5 +143,3 @@ set laststatus=2
 call vundle#end()
 filetype plugin indent on
 "Vudle End  ------------------------------------------------------------------  Vudle End
-
-
