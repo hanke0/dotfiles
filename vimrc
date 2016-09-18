@@ -10,12 +10,12 @@ set clipboard+=unnamed  " Vim 的默认寄存器和系统剪贴板共享
 
 "更方便的显示：
 if has("gui_running")
-set encoding=utf-8
-set fileencodings=utf-8,chinese,latin-1
+  set encoding=utf-8
+  set fileencodings=utf-8,chinese,latin-1
 if has("win32")
-set fileencoding=chinese
+  set fileencoding=chinese
 else
-set fileencoding=utf-8
+  set fileencoding=utf-8
 endif
 let &termencoding=&encoding
 "解决菜单乱码
@@ -93,15 +93,17 @@ autocmd BufWritePre * call RemoveTrailingWhitespace()
 
 "Vudle Start  ------------------------------------------------------------------  Vudle Start
 filetype off
-if has('linux')
-  set rtp+=~/.vim/bundle/Vundle.vim
-  call vundle#begin()
-else
+if has('win32')
   set rtp+=$VIM/vimfiles/bundle/Vundle
   call vundle#begin('$VIM/vimfiles/bundle')
+else
+  set rtp+=~/.vim/bundle/Vundle.vim
+  call vundle#begin()
 endif
-Plugin 'VundleVim/Vundle.vim'
+
 "插件开始"
+Plugin 'VundleVim/Vundle.vim'
+
 Plugin 'scrooloose/nerdtree'
 map <F2> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['.idea', '.vscode', 'node_modules', '*.pyc','\~$', '\.pyc$', '\.swp$']
