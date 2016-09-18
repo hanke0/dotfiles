@@ -29,24 +29,42 @@ set splitright
 set nu
 "set relativenumber
 syntax on
-set hlsearch
-"set cursorline  "突出显示当前行"
-"set cursorcolumn  "突出显示当前列"
+"set hlsearch
+"set cursorline  "突出显示当前行
+"set cursorcolumn  "突出显示当前列
 set wrap
 set t_ti= t_te=
+set shortmess=atI
+set helplang=cn
+" for error highlight，防止错误整行标红导致看不清
+highlight clear SpellBad
+highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
+highlight clear SpellCap
+highlight SpellCap term=underline cterm=underline
+highlight clear SpellRare
+highlight SpellRare term=underline cterm=underline
+highlight clear SpellLocal
+highlight SpellLocal term=underline cterm=underline
 
 "增加功能：
 filetype plugin indent on
 set showmatch
 set mouse=a  "启用鼠标"
 set clipboard+=unnamed  "Vim的默认寄存器和系统剪贴板共享
+set nobackup  ""取消备份。 视情况自己改
+set noswapfile  ""关闭交换文件
+set ignorecase
+
+
 
 "格式化：
 set autoindent
 set smartindent
-set expandtab
-set smarttab
-set tabstop=4
+" 具体编辑文件类型的一般设置，比如不要 tab 等
+autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
+autocmd FileType ruby,javascript,html,css,xml set tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai
+autocmd BufRead,BufNewFile *.md,*.mkd,*.markdown set filetype=markdown.mkd
+autocmd BufRead,BufNewFile *.part set filetype=html
 set nobomb
 set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936
 set encoding=utf-8
@@ -54,9 +72,11 @@ set encoding=utf-8
 "主题配置"
 if has('gui_running')
   set background=dark
+  set t_Co=256
   colorscheme solarized
   set guifont=Microsoft\ YaHei:h12:cANSI
 else
+  set t_Co=256
   colorscheme Tomorrow-Night
 endif
 
@@ -64,9 +84,26 @@ if has('win32')
   set renderoptions=type:directx
 endif
 
+
+"Keymap Start  ------------------------------------------------------------------  Keymap Start
+noremap <F1> <Esc>
+map <F2> :NERDTreeToggle<CR>
+nnoremap <F3> :call HideNumber()<CR>
+map <F5> :w<CR> :call RunPython()<CR>
+nnoremap <F4> :set wrap! wrap?<CR>
+autocmd FileType python map <buffer> <F8> :call Autopep8()<CR>
+
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+
+
+"Keymap END  ------------------------------------------------------------------  Keymap END
+"
 "Function Start  ------------------------------------------------------------------  Function Start
 "按F5运行python"
-map <F5> :w<CR> :call RunPython()<CR>
 function RunPython()
   let mp = &makeprg
   let ef = &errorformat
@@ -90,6 +127,38 @@ function! RemoveTrailingWhitespace()
     endif
 endfunction
 autocmd BufWritePre * call RemoveTrailingWhitespace()
+
+function! HideNumber()
+  if(&relativenumber == &number)
+    set relativenumber! number!
+  elseif(&number)
+    set number!
+  else
+    set relativenumber!
+  endif
+  set number?
+endfunc
+
+
+autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
+function! AutoSetFileHead()
+    "如果文件类型为.sh文件
+    if &filetype == 'sh'
+        call setline(1, "\#!/bin/bash")
+    endif
+
+    "如果文件类型为python
+    if &filetype == 'python'
+        call setline(1, "\#!/usr/bin/env python")
+        call append(1, "\# encoding: utf-8")
+    endif
+
+    normal G
+    normal o
+    normal o
+endfunc
+
+
 "Function END  ------------------------------------------------------------------  Function END
 
 "Vudle Start  ------------------------------------------------------------------  Vudle Start
@@ -106,7 +175,6 @@ endif
 Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'scrooloose/nerdtree'
-map <F2> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['.idea', '.vscode', 'node_modules', '*.pyc','\~$', '\.pyc$', '\.swp$']
 let NERDTreeBookmarksFile = $VIM . '/NERDTreeBookmarks'
 let NERDTreeMinimalUI = 1
@@ -124,7 +192,6 @@ let g:indentLine_char='┆'
 let g:indentLine_enabled = 1
 
 Plugin 'tell-k/vim-autopep8'
-autocmd FileType python map <buffer> <F8> :call Autopep8()<CR>
 let g:autopep8_disable_show_diff=1
 
 Plugin 'jiangmiao/auto-pairs'  "括号自动补全"
