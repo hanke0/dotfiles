@@ -185,9 +185,6 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 "窗口大小"
 let NERDTreeWinSize=25
 
-Plugin 'Yggdroot/indentLine'
-let g:indentLine_char='┆'
-let g:indentLine_enabled = 1
 
 Plugin 'tell-k/vim-autopep8'
 let g:autopep8_disable_show_diff=1
