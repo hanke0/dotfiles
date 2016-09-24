@@ -12,6 +12,12 @@ set clipboard+=unnamed  " Vim 的默认寄存器和系统剪贴板共享
 if has("gui_running")
   set encoding=utf-8
   set fileencodings=utf-8,chinese,latin-1
+  "不显示工具/菜单栏
+  set guioptions-=T
+  set guioptions-=m
+  set guioptions-=L
+  set guioptions-=r
+  set guioptions-=b
 if has("win32")
   set fileencoding=chinese
 else
@@ -24,10 +30,11 @@ source $VIMRUNTIME/menu.vim
 "解决consle输出乱码
 language messages zh_CN.utf-8
 endif
+set shortmess=atI
 set splitbelow
 set splitright
 set nu
-"set relativenumber
+set relativenumber
 syntax on
 "set hlsearch
 "set cursorline  "突出显示当前行
@@ -73,7 +80,7 @@ set encoding=utf-8
 if has('gui_running')
   set background=dark
   colorscheme solarized
-  set guifont=Microsoft\ YaHei:h12:cANSI
+  set guifont=DejaVu\ Sans\ Mono:h12
 else
   colorscheme Tomorrow-Night
 endif
@@ -84,18 +91,30 @@ endif
 
 
 "Keymap Start  ------------------------------------------------------------------  Keymap Start
+let mapleader=","
 noremap <F1> <Esc>
 map <F2> :NERDTreeToggle<CR>
-nnoremap <F3> :call HideNumber()<CR>
-map <F5> :w<CR> :call RunPython()<CR>
+nnoremap <F3> :vsp<CR>
 nnoremap <F4> :set wrap! wrap?<CR>
-autocmd FileType python map <buffer> <F8> :call Autopep8()<CR>
-
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
+map <F5> :w<CR> :call RunPython()<CR>
+map <F8> :call FormartSrc()<CR><CR>
+" 方便切换 splits
+nmap <C-Tab> <C-w><C-w>
+nmap <leader>h <C-w>h
+nmap <leader>l <C-w>l
+nmap <leader>j <C-w>j
+nmap <leader>k <C-w>k
+nmap <C-h> <C-w>h
+nmap <C-l> <C-w>l
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+" press space to fold/unfold code
+if &filetype == 'py'||&filetype == 'python'
+	set foldmethod=indent
+	set foldlevel=99
+	nnoremap <space> za
+	vnoremap <space> zf
+endif
 
 
 "Keymap END  ------------------------------------------------------------------  Keymap END
@@ -156,6 +175,39 @@ function! AutoSetFileHead()
     normal o
 endfunc
 
+
+" 保存python文件时删除多余空格
+fun! <SID>StripTrailingWhitespaces()
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
+autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+
+"定义FormartSrc()
+func FormartSrc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!astyle --style=ansi -a --suffix=none %"
+    elseif &filetype == 'cpp' || &filetype == 'hpp'
+        exec "r !astyle --style=ansi --one-line=keep-statements -a --suffix=none %> /dev/null 2>&1"
+    elseif &filetype == 'perl'
+        exec "!astyle --style=gnu --suffix=none %"
+    elseif &filetype == 'py'||&filetype == 'python'
+        exec "r !autopep8 -i --aggressive %"
+    elseif &filetype == 'java'
+        exec "!astyle --style=java --suffix=none %"
+    elseif &filetype == 'jsp'
+        exec "!astyle --style=gnu --suffix=none %"
+    elseif &filetype == 'xml'
+        exec "!astyle --style=gnu --suffix=none %"
+    else
+        exec "normal gg=G"
+        return
+    endif
+    exec "e! %"
+endfunc
 
 "Function END  ------------------------------------------------------------------  Function END
 
