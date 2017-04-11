@@ -81,9 +81,6 @@ if has('gui_running')
   set background=dark
   colorscheme solarized
   set guifont=DejaVu\ Sans\ Mono:h12
-else
-  colorscheme Tomorrow-Night
-endif
 
 if has('win32')
   set renderoptions=type:directx
@@ -211,52 +208,4 @@ endfunc
 
 "Function END  ------------------------------------------------------------------  Function END
 
-"Vudle Start  ------------------------------------------------------------------  Vudle Start
-filetype off
-if has('win32')
-  set rtp+=$VIM/vimfiles/bundle/Vundle
-  call vundle#begin('$VIM/vimfiles/bundle')
-else
-  set rtp+=~/.vim/bundle/Vundle.vim
-  call vundle#begin()
-endif
 
-"插件开始"
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'scrooloose/nerdtree'
-let NERDTreeIgnore=['.idea', '.vscode', 'node_modules', '*.pyc','\~$', '\.pyc$', '\.swp$']
-let NERDTreeBookmarksFile = $VIM . '/NERDTreeBookmarks'
-let NERDTreeMinimalUI = 1
-let NERDTreeBookmarksSort = 1
-let NERDTreeShowLineNumbers = 0
-let NERDTreeShowBookmarks = 1
-let g:NERDTreeWinPos = 'right'
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-"窗口大小"
-let NERDTreeWinSize=25
-
-
-Plugin 'tell-k/vim-autopep8'
-let g:autopep8_disable_show_diff=1
-
-Plugin 'jiangmiao/auto-pairs'  "括号自动补全"
-
-Plugin 'kien/rainbow_parentheses.vim'
-"rainbow_parentheses
-let g:rbpt_colorpairs = [ ['brown', 'RoyalBlue3'], ['Darkblue', 'SeaGreen3'], ['darkgray', 'DarkOrchid3'], ['darkgreen', 'firebrick3'],['darkcyan', 'RoyalBlue3'],['darkred', 'SeaGreen3'],['darkmagenta', 'DarkOrchid3'],['brown', 'firebrick3'],['gray', 'RoyalBlue3'],['black',       'SeaGreen3'],['darkmagenta', 'DarkOrchid3'],['Darkblue',  'firebrick3'],['darkgreen', 'RoyalBlue3'],['darkcyan', 'SeaGreen3'],['darkred', 'DarkOrchid3'],['red', 'firebrick3']]
-let g:rbpt_max = 16
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-
-Plugin 'ctrlpvim/ctrlp.vim'  "快速查找文件Ctrl+P"
-
-Bundle 'bling/vim-airline'
-set laststatus=2
-"插件结束"
-call vundle#end()
-filetype plugin indent on
-"Vudle End  ------------------------------------------------------------------  Vudle End
