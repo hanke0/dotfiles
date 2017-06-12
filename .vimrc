@@ -1,9 +1,19 @@
+"使用步奏，限于Linux系统
+"cd ~ && mkdir tmp
+"git clone --no-checkout https://github.com/Willtuner/.vim.git ~/tmp
+"rmdir tmp
+"git reset --hard HEAD
+"git pull
+
+
+"NormSetStart-------------------------------------------------------NormSetStart
+
 "更方便的编辑：
 set backspace=indent,eol,start whichwrap+=<,>,[,]
-set ru
+set ru  "打开 VIM 的状态栏标尺
 set whichwrap=b,s,<,>,[,]
 set ambiwidth=double
-set nocompatible "取消vi兼容模式"
+set nocompatible "取消vi兼容模式
 "set spell
 set selection=inclusive
 set clipboard+=unnamed  " Vim 的默认寄存器和系统剪贴板共享
@@ -64,8 +74,6 @@ set nobackup  ""取消备份。 视情况自己改
 set noswapfile  ""关闭交换文件
 set ignorecase
 
-
-
 "格式化：
 set autoindent
 set smartindent
@@ -88,11 +96,12 @@ if has('gui_running')
     set renderoptions=type:directx
 endif
 
+"NormSetEnd-----------------------------------------------------------NormSetEnd
+
 
 "Keymap Start-------------------------------------------------------Keymap Start
 
 let mapleader=","
-
 nnoremap <F1> :set number!<CR>
 nnoremap <F2> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 nnoremap <F3> :vsp<CR>
@@ -100,6 +109,7 @@ nnoremap <F4> :set wrap! wrap?<CR>
 map <F5> :w<CR> :call RunPython()<CR>
 map <F6> :NERDTreeToggle<CR>
 map <F8> :call FormartSrc()<CR><CR>
+
 " 方便切换 splits
 nmap <C-Tab> <C-w><C-w>
 nmap <leader>h <C-w>h
@@ -118,9 +128,7 @@ if &filetype == 'py'||&filetype == 'python'
 	vnoremap <space> zf
 endif
 
-
 "Keymap END  -------------------------------------------------------  Keymap END
-
 
 
 "Function Start  -----------------------------------------------  Function Start
@@ -161,7 +169,6 @@ function! HideNumber()
   set number?
 endfunc
 
-
 "autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
 function! AutoSetFileHead()
     "如果文件类型为.sh文件
@@ -179,7 +186,6 @@ function! AutoSetFileHead()
     normal o
     normal o
 endfunc
-
 
 " 保存python文件时删除多余空格
 fun! <SID>StripTrailingWhitespaces()
@@ -214,6 +220,6 @@ func FormartSrc()
     exec "e! %"
 endfunc
 
-"Function END  ---------------------------------------------------  Function END
+"FunctionEnd------------------------------------------------------------Function
 
 
