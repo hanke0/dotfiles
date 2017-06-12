@@ -7,29 +7,28 @@
 
 
 "NormSetStart-------------------------------------------------------NormSetStart
-
-"更方便的编辑：
-set backspace=indent,eol,start whichwrap+=<,>,[,]
+"基本设置:
+set backspace=indent,eol,start "backspace 可以删除更多字符
 set ru  "打开 VIM 的状态栏标尺
-set whichwrap=b,s,<,>,[,]
-set ambiwidth=double
+set whichwrap=b,s,<,>,[,]  "光标可以移动到上一行
+set ambiwidth=double "防止特殊符号无法正常显示
 set nocompatible "取消vi兼容模式
-"set spell
+"set spell "打开拼写检查
 set selection=inclusive
 set clipboard+=unnamed  " Vim 的默认寄存器和系统剪贴板共享
 set colorcolumn=80 "80字符限制线"
 
-"更方便的显示：
+"显示设置：
 if has("gui_running")
   set encoding=utf-8
   set fileencodings=utf-8,chinese,latin-1
   "不显示工具/菜单栏
+  set showmatch "去除vim的GUI版本中的toolbar
   set guioptions-=T
   set guioptions-=m
   set guioptions-=L
   set guioptions-=r
   set guioptions-=b
-
   if has("win32")
     set fileencoding=chinese
   else
@@ -42,19 +41,15 @@ if has("gui_running")
   "解决consle输出乱码
   language messages zh_CN.utf-8
 endif
-
-set shortmess=atI
-set splitbelow
-set splitright
-set nu
-set relativenumber
-syntax on
-"set hlsearch "语法高亮"
+set shortmess=atI "启动的时候不显示那个援助乌干达儿童的提示
+set splitbelow "新分割窗口在下边
+set splitright "新分割窗口在右边
+"set relativenumber "行号变成相对
+syntax on "语法高亮
+"set hlsearch "高亮搜索词
 "set cursorline  "突出显示当前行
 "set cursorcolumn  "突出显示当前列
-set wrap
-set t_ti= t_te=
-set shortmess=atI
+set nowrap "自动折行
 set helplang=cn
 " for error highlight，防止错误整行标红导致看不清
 highlight clear SpellBad
@@ -67,8 +62,8 @@ highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
 "增加功能：
-filetype plugin indent on
-set showmatch
+filetype plugin indent on "开启文件类型自动识别
+
 set mouse=a  "启用鼠标"
 set nobackup  ""取消备份。 视情况自己改
 set noswapfile  ""关闭交换文件
@@ -91,16 +86,13 @@ if has('gui_running')
   set background=dark
   colorscheme solarized
   set guifont=DejaVu\ Sans\ Mono:h12
-
   if has('win32')
     set renderoptions=type:directx
 endif
-
 "NormSetEnd-----------------------------------------------------------NormSetEnd
 
 
 "Keymap Start-------------------------------------------------------Keymap Start
-
 let mapleader=","
 nnoremap <F1> :set number!<CR>
 nnoremap <F2> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
@@ -127,12 +119,10 @@ if &filetype == 'py'||&filetype == 'python'
 	nnoremap <space> za
 	vnoremap <space> zf
 endif
-
 "Keymap END  -------------------------------------------------------  Keymap END
 
 
 "Function Start  -----------------------------------------------  Function Start
-
 "按F5运行python"
 function RunPython()
   let mp = &makeprg
@@ -219,7 +209,6 @@ func FormartSrc()
     endif
     exec "e! %"
 endfunc
-
 "FunctionEnd------------------------------------------------------------Function
 
 
