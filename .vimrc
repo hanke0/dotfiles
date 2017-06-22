@@ -87,6 +87,7 @@ if has('gui_running')
   set guifont=DejaVu\ Sans\ Mono:h12
   if has('win32')
     set renderoptions=type:directx
+  endif
 endif
 "NormSetEnd-----------------------------------------------------------NormSetEnd
 
