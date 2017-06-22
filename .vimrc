@@ -1,7 +1,7 @@
 "使用步奏，限于Linux系统
 "cd ~ && mkdir tmp
 "git clone --no-checkout https://github.com/Willtuner/.vim.git ~/tmp
-"rmdir tmp
+"mv ~/tmp/.git ~ && rmdir tmp
 "git reset --hard HEAD
 "git pull
 
@@ -29,6 +29,7 @@ if has("gui_running")
   set guioptions-=L
   set guioptions-=r
   set guioptions-=b
+  set mouse=a  "启用鼠标"
   if has("win32")
     set fileencoding=chinese
   else
@@ -63,8 +64,6 @@ highlight SpellLocal term=underline cterm=underline
 
 "增加功能：
 filetype plugin indent on "开启文件类型自动识别
-
-set mouse=a  "启用鼠标"
 set nobackup  ""取消备份。 视情况自己改
 set noswapfile  ""关闭交换文件
 set ignorecase
@@ -210,5 +209,3 @@ func FormartSrc()
     exec "e! %"
 endfunc
 "FunctionEnd------------------------------------------------------------Function
-
-
