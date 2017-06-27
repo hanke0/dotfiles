@@ -17,6 +17,8 @@ set nocompatible "取消vi兼容模式
 set selection=inclusive
 set clipboard+=unnamed  " Vim 的默认寄存器和系统剪贴板共享
 set colorcolumn=80 "80字符限制线"
+set shortmess=a
+set cmdheight=2
 
 "显示设置：
 if has("gui_running")
