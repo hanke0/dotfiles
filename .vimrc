@@ -104,7 +104,6 @@
     nnoremap <F4> :set wrap! wrap?<CR>
     map <F5> :w<CR> :call RunPython()<CR>
     map <F6> :NERDTreeToggle<CR>
-    map <F7> :call HideNumber()<CR>
     map <F8> :call FormartSrc()<CR><CR>
 
     " 方便切换 splits
@@ -152,17 +151,6 @@
         endif
     endfunction
     autocmd BufWritePre * call RemoveTrailingWhitespace()
-
-    function! HideNumber()
-      if(&relativenumber == &number)
-        set relativenumber! number!
-      elseif(&number)
-        set number!
-      else
-        set relativenumber!
-      endif
-      set number?
-    endfunction
 
     "autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
     function! AutoSetFileHead()
