@@ -99,8 +99,8 @@
 
 "按键设置{
     let mapleader=","
-    nnoremap <F1> HideNumber()<CR>
-    nnoremap <F2> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
+    nnoremap <F1> :set nu relativenumber! nu? relativenumber?<CR>
+    nnoremap <F2> :syntax on<CR>
     nnoremap <F3> :vsp<CR>
     nnoremap <F4> :set wrap! wrap?<CR>
     map <F5> :w<CR> :call RunPython()<CR>
