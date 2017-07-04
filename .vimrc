@@ -106,7 +106,10 @@
     map <F5> :w<CR> :call RunPython()<CR>
     map <F6> :NERDTreeToggle<CR>
     map <F8> :call FormartSrc()<CR><CR>
-
+    set pastetoggle=<F11>                     "粘贴模式快捷键
+    vmap <C-c> "+y                            "选中状态下 Ctrl+c 复制
+    vmap <C-v> "+p                            "选中状态下 Ctrl+v 粘贴
+   
     " 方便切换 splits
     nmap <C-Tab> <C-w><C-w>
     nmap <leader>h <C-w>h
@@ -124,6 +127,7 @@
         nnoremap <space> za
         vnoremap <space> zf
     endif
+
 "}
 
 
