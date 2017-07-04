@@ -25,6 +25,7 @@
     set nobackup                           "取消备份。 视情况自己改
     set noswapfile                         "关闭交换文件
     set ignorecase
+    set nu                                 "number 行号
 "}
 
 
