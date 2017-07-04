@@ -99,12 +99,12 @@
 
 "按键设置{
     let mapleader=","
-    nnoremap <F1> :set nu relativenumber! nu? relativenumber?<CR>
-    nnoremap <F2> :syntax on<CR>
-    nnoremap <F3> :vsp<CR>
+    nnoremap <F2> :set relativenumber! relativenumber?<CR>
+    nnoremap <F3> :syntax on<CR>
     nnoremap <F4> :set wrap! wrap?<CR>
     map <F5> :w<CR> :call RunPython()<CR>
     map <F6> :NERDTreeToggle<CR>
+    map <F7> :call HideNumber()<CR>
     map <F8> :call FormartSrc()<CR><CR>
 
     " 方便切换 splits
