@@ -1,13 +1,13 @@
 
 "#####################################  使用步奏，限于Linux系统  #############################
 
-"       cd ~ && mkdir tmp
-"       git clone --no-checkout https://github.com/Willtuner/.vim.git ~/tmp
-"       mv ~/tmp/.git ~ && rmdir tmp
-"       git reset --hard HEAD
-"       git pull
-"       git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-"
+"    cd ~ && mkdir tmp
+"    git clone --no-checkout https://github.com/ko-han/.vim.git ~/tmp
+"    mv ~/tmp/.git ~ && rmdir tmp
+"    git reset --hard HEAD
+"    git pull
+"    # Plugin Options
+"    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 "############################################################################################
 
@@ -109,7 +109,7 @@
     else
         let g:iswindows = 0
     endif
-     
+
     if has("gui_running")
         let g:isGUI = 1
     else
@@ -217,13 +217,13 @@
     let s:Obj_Extension = '.o'
     let s:Exe_Extension = '.exe'
     let s:Sou_Error = 0
-     
+
     let s:windows_CFlags = 'gcc\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
     let s:linux_CFlags = 'gcc\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-     
+
     let s:windows_CPPFlags = 'g++\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
     let s:linux_CPPFlags = 'g++\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-     
+
     func! Compile()
         exe ":ccl"
         exe ":update"
@@ -283,7 +283,7 @@
         endif
         exe ":setlocal makeprg=make"
     endfunc
-     
+
     func! Link()
         call Compile()
         if s:Sou_Error || s:LastShellReturn_C != 0
@@ -339,7 +339,7 @@
         endif
         setlocal makeprg=make
     endfunc
-     
+
     func! Run()
         let s:ShowWarning = 0
         call Link()
