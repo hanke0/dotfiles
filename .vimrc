@@ -1,10 +1,9 @@
 "#####################################  使用步奏，限于Linux系统  #############################
 
-"    cd ~ && mkdir tmp
-"    git clone --no-checkout https://github.com/ko-han/.vim.git ~/tmp
-"    mv ~/tmp/.git ~ && rmdir tmp
-"    git reset --hard HEAD
-"    git pull
+"    git clone https://github.com/ko-han/han-vim.git
+"    mv ./han-vim/renew-vim.sh ~/renew-vim.sh
+"    chmod +x ~/renew-vim.sh && rm -rf ./han-vim
+"    ~/renew-vim.sh
 "    # Plugin Options
 "    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
