@@ -109,12 +109,13 @@
     endif
 "}
 
+let g:rehash256 = 1
+colorscheme molokai
 
 "显示设置{
     if g:isGUI
         set encoding=utf-8
         set background=dark
-        colorscheme solarized
         set guifont=DejaVu\ Sans\ Mono:h12
         set encoding=utf-8
         let $LANG = 'en_US.UTF-8'
