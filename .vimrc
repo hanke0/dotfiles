@@ -1,4 +1,4 @@
-"    Q: How to use?
+"    Q: How to use it?
 "    A: RUN renew-vim.sh to update
 
 "    # Plugin Options
