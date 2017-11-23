@@ -111,8 +111,15 @@
 
 let g:rehash256 = 1
 colorscheme molokai
-"状态栏
-set statusline=%2*%n%m%r%h%w%*\ %F\ %1*[FORMAT=%2*%{&ff}:%{&fenc!=''?&fenc:&enc}%1*]\ [TYPE=%2*%Y%1*]\ [COL=%2*%03v%1*]\ [ROW=%2*%03l%1*/%3*%L(%p%%)%1*]\
+"状态栏{
+    set laststatus=2
+    set statusline=
+    set statusline+=%1*[%F%m%r%h%w]
+    set statusline+=\ \ \ \ %1*[FORMAT=%2*%{&ff}:%{&fenc!=''?&fenc:&enc}%1*]
+    set statusline+=\ %1*[TYPE=%2*%Y%1*]
+    set statusline+=\ [COL=%2*%03v%1*]
+    set statusline+=\ [ROW=%2*%03l%1*/%3*%L(%p%%)%1*]
+"}
 
 "显示设置{
     if g:isGUI
