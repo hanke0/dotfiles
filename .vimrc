@@ -17,9 +17,9 @@
     nnoremap <F2> :set relativenumber! relativenumber?<CR>
     nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
     nnoremap <F4> :set wrap! wrap?<CR>
-    " F9 一键保存、编译、连接存并运行
-    map <F9> :call Run()<CR>
-    imap <F9> <ESC>:call Run()<CR>
+    " Ctril + B 一键保存、编译、连接存并运行
+    map <c-B> :call Run()<CR>
+    imap <c-B> <ESC>:call Run()<CR>
     " Ctrl + F9 一键保存并编译
     map <c-F9> :call Compile()<CR>
     imap <c-F9> <ESC>:call Compile()<CR>
