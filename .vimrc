@@ -1,15 +1,8 @@
-"#####################################  使用步奏，限于Linux系统  #############################
+"    Q: How to use?
+"    A: RUN renew-vim.sh to update
 
-"    cd ~ && mkdir tmp
-"    git clone --no-checkout https://github.com/ko-han/.vim.git ~/tmp
-"    mv ~/tmp/.git ~ && rmdir tmp
-"    git reset --hard HEAD
-"    git pull
 "    # Plugin Options
 "    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-
-"############################################################################################
-
 
 "按键设置{
     let mapleader=","
