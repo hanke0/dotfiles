@@ -3,7 +3,7 @@
 cd ~ && mkdir ~/tmp_han_vim_config
 git clone  https://github.com/ko-han/.vim.git ~/tmp_han_vim_config
 rm -rf ~/tmp_han_vim_config/.git
-cp -r ~/tmp_han_vim_config/*  ~/tmp_han_vim_config/.[^.]* ~/
+mv -f ~/tmp_han_vim_config/*  ~/tmp_han_vim_config/.[^.]* ~/
 chmod +x ~/bin/renew-vim.sh
 rm -rf ~/tmp_han_vim_config
 echo ""
