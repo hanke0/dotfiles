@@ -11,7 +11,7 @@ function main() {
     ls -A $TMP | xargs -i -t cp -rf $TMP/{} ~/
     chmod +x ~/bin/renew-vim.sh
     echo "delete "$TMP
-    #rm -rf $TMP
+    rm -rf $TMP
     echo
     echo "Great, All Things Hava Done, Enjoy It!"
 }
