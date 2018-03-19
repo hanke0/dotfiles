@@ -9,7 +9,7 @@ function main() {
     echo "delete "$TMP"/.git"
     rm -rf $TMP"/.git"
     ls -A $TMP | xargs -i -t cp -rf $TMP/{} ~/
-    chmod +x ~/bin/renew-vim.sh
+    chmod +x ~/renew-vim.sh
     echo "delete "$TMP
     rm -rf $TMP
     echo
