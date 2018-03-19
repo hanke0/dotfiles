@@ -1,5 +1,5 @@
 "    Q: How to use it?
-"    A: RUN renew-vim.sh to update
+"    A: Just run han-vim.sh to config and update. that's simple.
 
 "    # Plugin Options
 "    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
