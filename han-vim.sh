@@ -1,17 +1,16 @@
 #!/bin/bash
+set -e
 
 TMP=$HOME"/tmp_han_vim_config"
 
 
 function main() {
-    git clone  https://github.com/ko-han/.vim.git $TMP
-    echo
-    echo "delete "$TMP"/.git"
-    rm -rf $TMP"/.git"
-    cp -a -R -f $TMP"/.vi*" $HOME
-    echo "delete "$TMP
+    echo "Download files..."
+    git clone  https://github.com/ko-han/.vim.git $TMP  1>/dev/null 2>/dev/null
+    echo "Copy files..."
+    cp -R -f $TMP"/.vimrc" $TMP"/.vim" $HOME
+    echo "Delete downloaded files"
     rm -rf $TMP
-    echo
     echo "Great, All Things Hava Done, Enjoy It!"
 }
 
