@@ -7,7 +7,7 @@
 "
 "
 " Q: How to use it?
-" A: Just run han-vim.sh to config and update. that's simple.
+" A: curl https://raw.githubusercontent.com/ko-han/han-vim/master/han-vim.sh | bash
 "
 " # Plugin Options
 " git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
