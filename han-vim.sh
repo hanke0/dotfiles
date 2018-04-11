@@ -8,8 +8,7 @@ function main() {
     echo
     echo "delete "$TMP"/.git"
     rm -rf $TMP"/.git"
-    ls -A $TMP | xargs -i -t cp -rf $TMP/{} ~/
-    chmod +x ~/han-vim.sh
+    cp -af $TMP"/.vi* ~/"
     echo "delete "$TMP
     rm -rf $TMP
     echo
