@@ -8,7 +8,7 @@ function main() {
     echo
     echo "delete "$TMP"/.git"
     rm -rf $TMP"/.git"
-    cp -af $TMP"/.vi*" "~/"
+    cp -af $TMP"/.vi*" $HOME
     echo "delete "$TMP
     rm -rf $TMP
     echo
