@@ -1,7 +1,6 @@
 #!/bin/bash
-set -e
 
-TMP=$HOME"/tmp_han_vim_config"
+set -e
 
 function getPlug() {
     curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -28,7 +27,7 @@ function main() {
 }
 
 echo "--------------- han-vim ----------------"
-echo 
+echo
 while :
     do
         read -r -p "This will delete '~/.vim' and '~/.vimrc', Continue to install? [Y/n] " input
