@@ -12,9 +12,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-
-
-
 """""""""""""""""""""""""""""""""""""""""
 "通用
 """""""""""""""""""""""""""""""""""""""""
@@ -22,6 +19,10 @@
 set nocompatible
 " 开启语法高亮功能
 syntax enable
+"检测文件格式
+filetype on 
+filetype plugin on 
+filetype indent on 
 " 允许用指定语法高亮配色方案替换默认方案
 syntax on
 
@@ -34,13 +35,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
 
-
 "文件自动检测外部更改
 set autoread
-"检测文件格式
-filetype on 
-filetype plugin on 
-filetype indent on 
+
 "backspace 可以删除更多字符
 set backspace=indent,eol,start
 "打开 VIM 的状态栏标尺
@@ -49,14 +46,12 @@ set ru
 set whichwrap=b,s,<,>,[,]
 "防止特殊符号无法正常显示
 set ambiwidth=double
+"自动切换到文件所在文件夹
 set autochdir
-"打开拼写检查
-"set spell
+"在选择文本时，光标所在位置也属于被选中的范围
 set selection=inclusive
 "Vim 的默认寄存器和系统剪贴板共享
 set clipboard+=unnamed
-"80字符限制线"
-"set colorcolumn=80
 "不显示一些东西如乌干达儿童提示
 set shortmess=a
 set cmdheight=2
@@ -64,6 +59,7 @@ set cmdheight=2
 set nobackup
 "关闭交换文件
 set noswapfile
+"关闭搜索时大小写敏感
 set ignorecase
 "行号
 set number
@@ -76,12 +72,11 @@ set showmatch
 set winaltkeys=no
 " 让配置变更立即生效
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
-set rtp+=~/.vim
 "运行环境判断
 if(has("win32") || has("win64") || has("win95") || has("win16"))
-    let g:iswindows = 1
+    let g:isWin = 1
 else
-    let g:iswindows = 0
+    let g:isWin = 0
 endif
 
 if has("gui_running")
@@ -104,7 +99,7 @@ if g:isGUI
     "启用鼠标"
     set mouse=a
 endif
-if g:iswindows
+if g:isWin
     "解决菜单乱码
     source $VIMRUNTIME/delmenu.vim
     "解决consle输出乱码
@@ -113,18 +108,14 @@ if g:iswindows
     source $VIMRUNTIME/mswin.vim
 endif
 
-"新分割窗口在下边
-set splitbelow
 "新分割窗口在右边
 set splitright
-"行号变成相对
-"set relativenumber
 "高亮搜索词
 set hlsearch
 "突出显示当前行
 set cursorline
-"突出显示当前列
-"set cursorcolumn
+"80字符限制线
+set colorcolumn=120
 "折行
 set nowrap
 "防止错误整行标红导致看不清
@@ -169,8 +160,6 @@ let &termencoding=&encoding
 """""""""""""""""""""""""""""""""""""""""
 "插件
 """""""""""""""""""""""""""""""""""""""""
-"nerdtree
-
 "vim-airline
 let g:airline_theme='solarized'
 
@@ -184,14 +173,11 @@ let g:ctrlp_custom_ignore = {
     \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
     \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
     \ }
-if g:iswindows
+if g:isWin
     let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
 else
     let g:ctrlp_user_command = 'find %s -type f'
 endif
-"""""""""""""""""""""""""""""""""""""""""
-"函数
-"""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""
 "按键设置
