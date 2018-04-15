@@ -9,8 +9,6 @@
 " Q: How to use it?
 " A: curl https://raw.githubusercontent.com/ko-han/han-vim/master/han-vim.sh | bash
 "
-" # Plugin Options
-" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -22,19 +20,11 @@ let mapleader=","
 nnoremap <F2> :set relativenumber! relativenumber?<CR>
 nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 nnoremap <F4> :set wrap! wrap?<CR>
-" Ctril + B 一键保存、编译、连接存并运行
-map <c-B> :call Run()<CR>
-imap <c-B> <ESC>:call Run()<CR>
-" Ctrl + F9 一键保存并编译
-map <c-F9> :call Compile()<CR>
-imap <c-F9> <ESC>:call Compile()<CR>
-" Ctrl + F10 一键保存并连接
-map <c-F10> :call Link()<CR>
-imap <c-F10> <ESC>:call Link()<CR>
 "粘贴模式快捷键
 set pastetoggle=<F5>
+map <C-n> :NERDTreeToggle<CR>
 
-"保存并删除行尾空格
+"strip all trailing whitespace in the current file
 nnoremap <leader>w :%s/\s\+$//<cr>:let @/=''<CR>
 
 "选中状态下 Ctrl+c 复制
@@ -69,9 +59,14 @@ vnoremap <space> zf
 """""""""""""""""""""""""""""""""""""""""
 "基本设置
 """""""""""""""""""""""""""""""""""""""""
-
 "取消vi兼容模式
 set nocompatible
+"文件自动检测外部更改
+set autoread
+"检测文件格式
+filetype on 
+filetype plugin on 
+filetype indent on 
 "backspace 可以删除更多字符
 set backspace=indent,eol,start
 "打开 VIM 的状态栏标尺
@@ -119,8 +114,6 @@ if has("gui_running")
 else
     let g:isGUI = 0
 endif
-let g:rehash256 = 1
-colorscheme molokai
 
 """""""""""""""""""""""""""""""""""""""""
 "状态栏
@@ -136,19 +129,11 @@ colorscheme molokai
 """""""""""""""""""""""""""""""""""""""""
 "显示设置
 """""""""""""""""""""""""""""""""""""""""
+set background=light
+colorscheme solarized
 if g:isGUI
     set encoding=utf-8
-    set background=dark
-    set guifont=DejaVu\ Sans\ Mono:h12
-    set encoding=utf-8
-    let $LANG = 'en_US.UTF-8'
-    " 禁止光标闪烁
-    set gcr=a:block-blinkon0
-    " 禁止显示滚动条
-    set guioptions-=l
-    set guioptions-=L
-    set guioptions-=r
-    set guioptions-=R
+    set guifont=Source\ Code\ Pro:h12
     " 禁止显示菜单和工具条
     set guioptions-=m
     set guioptions-=T
@@ -164,7 +149,6 @@ if g:iswindows
     source $VIMRUNTIME/mswin.vim
 endif
 
-let &termencoding=&encoding
 "新分割窗口在下边
 set splitbelow
 "新分割窗口在右边
@@ -172,9 +156,9 @@ set splitright
 "行号变成相对
 "set relativenumber
 "高亮搜索词
-"set hlsearch
+set hlsearch
 "突出显示当前行
-"set cursorline
+set cursorline
 "突出显示当前列
 "set cursorcolumn
 "折行
@@ -193,8 +177,6 @@ highlight SpellLocal term=underline cterm=underline
 """""""""""""""""""""""""""""""""""""""""
 "格式化
 """""""""""""""""""""""""""""""""""""""""
-" 自适应不同语言的智能缩进
-filetype indent on
 " 将制表符扩展为空格
 set expandtab
 " 设置编辑时制表符占用空格数
@@ -210,180 +192,45 @@ autocmd FileType ruby,javascript,html,css,xml set ts=2 sw=2 softtabstop=2 expand
 set nobomb
 set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936
 set encoding=utf-8
+let &termencoding=&encoding
+
+"""""""""""""""""""""""""""""""""""""""""
+"插件
+"""""""""""""""""""""""""""""""""""""""""
+call plug#begin('~/.vim/plugged')
+Plug 'altercation/vim-colors-solarized'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'ctrlpvim/ctrlp.vim'
+call plug#end()
+
+"nerdtree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | 
+
+"vim-airline
+let g:airline_theme='solarized'
+
+"ctrlpvim
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+let g:ctrlp_working_path_mode = 'a'
+let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+    \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
+    \ }
+if g:iswindows
+    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
+else
+    let g:ctrlp_user_command = 'find %s -type f'
+endif
 
 """""""""""""""""""""""""""""""""""""""""
 "函数
 """""""""""""""""""""""""""""""""""""""""
-" Remove trailing whitespace when writing a buffer, but not for diff files.
-function! RemoveTrailingWhitespace()
-    if &ft != "diff"
-        let b:curcol = col(".")
-        let b:curline = line(".")
-        silent! %s/\s\+$//
-        silent! %s/\(\s*\n\)\+\%$//
-        call cursor(b:curline, b:curcol)
-    endif
-endfunction
-autocmd BufWritePre * call RemoveTrailingWhitespace()
 
-
-"GCC编译运行相关
-let s:LastShellReturn_C = 0
-let s:LastShellReturn_L = 0
-let s:ShowWarning = 1
-let s:Obj_Extension = '.o'
-let s:Exe_Extension = '.exe'
-let s:Sou_Error = 0
-
-let s:windows_CFlags = 'gcc\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-let s:linux_CFlags = 'gcc\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-
-let s:windows_CPPFlags = 'g++\ -fexec-charset=gbk\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-let s:linux_CPPFlags = 'g++\ -Wall\ -g\ -O0\ -c\ %\ -o\ %<.o'
-
-func! Compile()
-    exe ":ccl"
-    exe ":update"
-    if expand("%:e") == "c" || expand("%:e") == "cpp" || expand("%:e") == "cxx"
-        let s:Sou_Error = 0
-        let s:LastShellReturn_C = 0
-        let Sou = expand("%:p")
-        let Obj = expand("%:p:r").s:Obj_Extension
-        let Obj_Name = expand("%:p:t:r").s:Obj_Extension
-        let v:statusmsg = ''
-        if !filereadable(Obj) || (filereadable(Obj) && (getftime(Obj) < getftime(Sou)))
-            redraw!
-            if expand("%:e") == "c"
-                if g:iswindows
-                    exe ":setlocal makeprg=".s:windows_CFlags
-                else
-                    exe ":setlocal makeprg=".s:linux_CFlags
-                endif
-                echohl WarningMsg | echo " compiling..."
-                silent make
-            elseif expand("%:e") == "cpp" || expand("%:e") == "cxx"
-                if g:iswindows
-                    exe ":setlocal makeprg=".s:windows_CPPFlags
-                else
-                    exe ":setlocal makeprg=".s:linux_CPPFlags
-                endif
-                echohl WarningMsg | echo " compiling..."
-                silent make
-            endif
-            redraw!
-            if v:shell_error != 0
-                let s:LastShellReturn_C = v:shell_error
-            endif
-            if g:iswindows
-                if s:LastShellReturn_C != 0
-                    exe ":bo cope"
-                    echohl WarningMsg | echo " compilation failed"
-                else
-                    if s:ShowWarning
-                        exe ":bo cw"
-                    endif
-                    echohl WarningMsg | echo " compilation successful"
-                endif
-            else
-                if empty(v:statusmsg)
-                    echohl WarningMsg | echo " compilation successful"
-                else
-                    exe ":bo cope"
-                endif
-            endif
-        else
-            echohl WarningMsg | echo ""Obj_Name"is up to date"
-        endif
-    else
-        let s:Sou_Error = 1
-        echohl WarningMsg | echo " please choose the correct source file"
-    endif
-    exe ":setlocal makeprg=make"
-endfunc
-
-func! Link()
-    call Compile()
-    if s:Sou_Error || s:LastShellReturn_C != 0
-        return
-    endif
-    let s:LastShellReturn_L = 0
-    let Sou = expand("%:p")
-    let Obj = expand("%:p:r").s:Obj_Extension
-    if g:iswindows
-        let Exe = expand("%:p:r").s:Exe_Extension
-        let Exe_Name = expand("%:p:t:r").s:Exe_Extension
-    else
-        let Exe = expand("%:p:r")
-        let Exe_Name = expand("%:p:t:r")
-    endif
-    let v:statusmsg = ''
-    if filereadable(Obj) && (getftime(Obj) >= getftime(Sou))
-        redraw!
-        if !executable(Exe) || (executable(Exe) && getftime(Exe) < getftime(Obj))
-            if expand("%:e") == "c"
-                setlocal makeprg=gcc\ -o\ %<\ %<.o
-                echohl WarningMsg | echo " linking..."
-                silent make
-            elseif expand("%:e") == "cpp" || expand("%:e") == "cxx"
-                setlocal makeprg=g++\ -o\ %<\ %<.o
-                echohl WarningMsg | echo " linking..."
-                silent make
-            endif
-            redraw!
-            if v:shell_error != 0
-                let s:LastShellReturn_L = v:shell_error
-            endif
-            if g:iswindows
-                if s:LastShellReturn_L != 0
-                    exe ":bo cope"
-                    echohl WarningMsg | echo " linking failed"
-                else
-                    if s:ShowWarning
-                        exe ":bo cw"
-                    endif
-                    echohl WarningMsg | echo " linking successful"
-                endif
-            else
-                if empty(v:statusmsg)
-                    echohl WarningMsg | echo " linking successful"
-                else
-                    exe ":bo cope"
-                endif
-            endif
-        else
-            echohl WarningMsg | echo ""Exe_Name"is up to date"
-        endif
-    endif
-    setlocal makeprg=make
-endfunc
-
-func! Run()
-    let s:ShowWarning = 0
-    call Link()
-    let s:ShowWarning = 1
-    if s:Sou_Error || s:LastShellReturn_C != 0 || s:LastShellReturn_L != 0
-        return
-    endif
-    let Sou = expand("%:p")
-    let Obj = expand("%:p:r").s:Obj_Extension
-    if g:iswindows
-        let Exe = expand("%:p:r").s:Exe_Extension
-    else
-        let Exe = expand("%:p:r")
-    endif
-    if executable(Exe) && getftime(Exe) >= getftime(Obj) && getftime(Obj) >= getftime(Sou)
-        redraw!
-        echohl WarningMsg | echo " running..."
-        if g:iswindows
-            exe ":!%<.exe"
-        else
-            if g:isGUI
-                exe ":!gnome-terminal -e ./%<"
-            else
-                exe ":!./%<"
-            endif
-        endif
-        redraw!
-        echohl WarningMsg | echo " running finish"
-    endif
-endfunc

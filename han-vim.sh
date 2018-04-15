@@ -3,29 +3,45 @@ set -e
 
 TMP=$HOME"/tmp_han_vim_config"
 
-
-function main() {
-    echo "Download files..."
-    git clone  https://github.com/ko-han/.vim.git $TMP  1>/dev/null 2>/dev/null
-    echo "Copy files..."
-    cp -R -f $TMP"/.vimrc" $TMP"/.vim" $HOME
-    echo "Delete downloaded files"
-    rm -rf $TMP
-    echo "Great, All Things Hava Done, Enjoy It!"
+function getPlug() {
+    curl -Lo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 }
 
-if [ -d $TMP ]
-then
-    echo $TMP" exist, delete it(y/n)"
-    read answer
-    if [ $answer == "y" ]
-    then
-        rm -rf $TMP
-        main
-    else
-        echo "Fail."
-        exit 1
-    fi
-else
-    main
-fi
+function cleanOldSetting() {
+    rm -rf ~/.vimrc ~/.vim
+}
+
+function getSetting() {
+    curl -Lo ~/.vimrc https://raw.githubusercontent.com/ko-han/han-vim/master/.vimrc
+}
+
+function PlugInstall() {
+    vim -c "PlugInstall"
+}
+
+function main() {
+    cleanOldSetting
+    getSetting
+    getPlug
+    PlugInstall
+}
+
+echo "--------------- han-vim ----------------"
+echo 
+while :
+    do
+        read -r -p "This will delete '~/.vim' and '~/.vimrc', Continue to install? [Y/n] " input
+        case $input in
+            [yY][eE][sS]|[yY])
+                main
+                exit 0
+                ;;
+            [nN][oO]|[nN])
+                exit 1
+                ;;
+            *)
+                echo "Invalid input..."
+                ;;
+        esac
+done
