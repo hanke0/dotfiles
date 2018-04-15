@@ -160,6 +160,10 @@ let &termencoding=&encoding
 """"""""""""""""""""""""""""""""""""""""
 "插件
 """"""""""""""""""""""""""""""""""""""""
+"nerdtree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+
 "vim-airline
 let g:airline_theme='solarized'
 
