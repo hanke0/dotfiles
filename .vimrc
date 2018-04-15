@@ -32,6 +32,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdcommenter'
 call plug#end()
 
 "文件自动检测外部更改
