@@ -4,7 +4,7 @@ set -e
 TMP=$HOME"/tmp_han_vim_config"
 
 function getPlug() {
-    curl -Lo ~/.vim/autoload/plug.vim --create-dirs \
+    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 }
 
@@ -13,7 +13,7 @@ function cleanOldSetting() {
 }
 
 function getSetting() {
-    curl -Lo ~/.vimrc https://raw.githubusercontent.com/ko-han/han-vim/master/.vimrc
+    curl -fsSLo ~/.vimrc https://raw.githubusercontent.com/ko-han/han-vim/master/.vimrc
 }
 
 function PlugInstall() {

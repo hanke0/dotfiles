@@ -7,7 +7,7 @@
 "
 "
 " Q: How to use it?
-" A: curl https://raw.githubusercontent.com/ko-han/han-vim/master/han-vim.sh | bash
+" A: curl -fsSL https://raw.githubusercontent.com/ko-han/han-vim/master/han-vim.sh | sh
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
