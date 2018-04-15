@@ -12,55 +12,29 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-"""""""""""""""""""""""""""""""""""""""""
-"按键设置
-"""""""""""""""""""""""""""""""""""""""""
-let mapleader=","
 
-nnoremap <F2> :set relativenumber! relativenumber?<CR>
-nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
-nnoremap <F4> :set wrap! wrap?<CR>
-"粘贴模式快捷键
-set pastetoggle=<F5>
-map <C-n> :NERDTreeToggle<CR>
 
-"strip all trailing whitespace in the current file
-nnoremap <leader>w :%s/\s\+$//<cr>:let @/=''<CR>
-
-"选中状态下 Ctrl+c 复制
-vmap <C-c> "+y
-"选中状态下 Ctrl+v 粘贴
-vmap <C-v> "+gP
-
-" 方便切换 splits
-nmap <C-Tab> <C-w><C-w>
-nmap <leader>h <C-w>h
-nmap <leader>l <C-w>l
-nmap <leader>j <C-w>j
-nmap <leader>k <C-w>k
-nmap <C-h> <C-w>h
-nmap <C-l> <C-w>l
-nmap <C-j> <C-w>j
-nmap <C-k> <C-w>k
-
-" press space to fold/unfold code
-if &filetype == 'py'||&filetype == 'python'
-    set foldmethod=indent
-    set foldlevel=99
-else
-    set foldmethod=syntax
-    set foldlevel=99
-endif
-" 启动 vim 时关闭折叠代码
-set nofoldenable
-nnoremap <space> za
-vnoremap <space> zf
 
 """""""""""""""""""""""""""""""""""""""""
-"基本设置
+"通用
 """""""""""""""""""""""""""""""""""""""""
 "取消vi兼容模式
 set nocompatible
+" 开启语法高亮功能
+syntax enable
+" 允许用指定语法高亮配色方案替换默认方案
+syntax on
+
+"插件管理
+call plug#begin('~/.vim/plugged')
+Plug 'altercation/vim-colors-solarized'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'ctrlpvim/ctrlp.vim'
+call plug#end()
+
+
 "文件自动检测外部更改
 set autoread
 "检测文件格式
@@ -91,14 +65,15 @@ set nobackup
 "关闭交换文件
 set noswapfile
 set ignorecase
-"number 行号
-set nu
+"行号
+set number
+set relativenumber
+"显示当前输入的命令
+set showcmd
+"输入时显示相对应的括号
+set showmatch
 "ALT不映射到菜单栏
 set winaltkeys=no
-" 开启语法高亮功能
-syntax enable
-" 允许用指定语法高亮配色方案替换默认方案
-syntax on
 " 让配置变更立即生效
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
 set rtp+=~/.vim
@@ -114,17 +89,6 @@ if has("gui_running")
 else
     let g:isGUI = 0
 endif
-
-"""""""""""""""""""""""""""""""""""""""""
-"状态栏
-"""""""""""""""""""""""""""""""""""""""""
-    set laststatus=2
-    set statusline=
-    set statusline+=%1*[%F%m%r%h%w]
-    set statusline+=\ \ \ \ %1*[FORMAT=%2*%{&ff}:%{&fenc!=''?&fenc:&enc}%1*]
-    set statusline+=\ %1*[TYPE=%2*%Y%1*]
-    set statusline+=\ [COL=%2*%03v%1*]
-    set statusline+=\ [ROW=%2*%03l%1*/%3*%L(%p%%)%1*]
 
 """""""""""""""""""""""""""""""""""""""""
 "显示设置
@@ -173,6 +137,14 @@ highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
+"状态栏
+set laststatus=2
+set statusline=
+set statusline+=%1*[%F%m%r%h%w]
+set statusline+=\ \ \ \ %1*[FORMAT=%2*%{&ff}:%{&fenc!=''?&fenc:&enc}%1*]
+set statusline+=\ %1*[TYPE=%2*%Y%1*]
+set statusline+=\ [COL=%2*%03v%1*]
+set statusline+=\ [ROW=%2*%03l%1*/%3*%L(%p%%)%1*]
 
 """""""""""""""""""""""""""""""""""""""""
 "格式化
@@ -197,19 +169,7 @@ let &termencoding=&encoding
 """""""""""""""""""""""""""""""""""""""""
 "插件
 """""""""""""""""""""""""""""""""""""""""
-call plug#begin('~/.vim/plugged')
-Plug 'altercation/vim-colors-solarized'
-Plug 'scrooloose/nerdtree'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'ctrlpvim/ctrlp.vim'
-call plug#end()
-
 "nerdtree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | 
 
 "vim-airline
 let g:airline_theme='solarized'
@@ -229,8 +189,50 @@ if g:iswindows
 else
     let g:ctrlp_user_command = 'find %s -type f'
 endif
-
 """""""""""""""""""""""""""""""""""""""""
 "函数
 """""""""""""""""""""""""""""""""""""""""
 
+"""""""""""""""""""""""""""""""""""""""""
+"按键设置
+"""""""""""""""""""""""""""""""""""""""""
+let mapleader=","
+
+nnoremap <F2> :set relativenumber! relativenumber?<CR>
+nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
+nnoremap <F4> :set wrap! wrap?<CR>
+"粘贴模式快捷键
+set pastetoggle=<F5>
+map <C-n> :NERDTreeToggle<CR>
+
+"strip all trailing whitespace in the current file
+nnoremap <leader>w :%s/\s\+$//<cr>:let @/=''<CR>
+
+"选中状态下 Ctrl+c 复制
+vmap <C-c> "+y
+"选中状态下 Ctrl+v 粘贴
+vmap <C-v> "+gP
+
+" 方便切换 splits
+nmap <C-Tab> <C-w><C-w>
+nmap <leader>h <C-w>h
+nmap <leader>l <C-w>l
+nmap <leader>j <C-w>j
+nmap <leader>k <C-w>k
+nmap <C-h> <C-w>h
+nmap <C-l> <C-w>l
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+
+" press space to fold/unfold code
+if &filetype == 'py'||&filetype == 'python'
+    set foldmethod=indent
+    set foldlevel=99
+else
+    set foldmethod=syntax
+    set foldlevel=99
+endif
+" 启动 vim 时关闭折叠代码
+set nofoldenable
+nnoremap <space> za
+vnoremap <space> zf
