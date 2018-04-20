@@ -1,9 +1,9 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-"           / /_  ____ _____     _   __(_)___ ___ 
+"           / /_  ____ _____     _   __(_)___ ___
 "          / __ \/ __ `/ __ \   | | / / / __ `__ \
 "         / / / / /_/ / / / /   | |/ / / / / / / /
-"        /_/ /_/\__,_/_/ /_/    |___/_/_/ /_/ /_/ 
+"        /_/ /_/\__,_/_/ /_/    |___/_/_/ /_/ /_/
 "
 "
 " Q: How to use it?
@@ -19,9 +19,9 @@ set nocompatible
 " 开启语法高亮功能
 syntax enable
 "检测文件格式
-filetype on 
-filetype plugin on 
-filetype indent on 
+filetype on
+filetype plugin on
+filetype indent on
 " 允许用指定语法高亮配色方案替换默认方案
 syntax on
 
@@ -192,7 +192,7 @@ nnoremap <F2> :set relativenumber! relativenumber?<CR>
 nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 nnoremap <F4> :set wrap! wrap?<CR>
 "粘贴模式快捷键
-set pastetoggle=<F5>
+set pastetoggle=<leader>p
 map <C-n> :NERDTreeToggle<CR>
 
 "strip all trailing whitespace in the current file
