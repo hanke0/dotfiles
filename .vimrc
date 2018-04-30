@@ -52,8 +52,10 @@ set cmdheight=2
 set nobackup
 "关闭交换文件
 set noswapfile
-"关闭搜索时大小写敏感
+" 设置默认进行大小写不敏感查找
 set ignorecase
+" 如果有一个大写字母，则切换到大小写敏感查找
+set smartcase
 "行号
 set number
 set relativenumber
