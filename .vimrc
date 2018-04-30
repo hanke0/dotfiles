@@ -25,8 +25,8 @@ filetype indent on
 
 "插件管理
 call plug#begin('~/.vim/plugged')
+Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdcommenter'
 call plug#end()
 
