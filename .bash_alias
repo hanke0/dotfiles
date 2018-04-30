@@ -1,0 +1,20 @@
+alias grep='grep --color'
+alias egrep='egrep --color'
+alias ls='ls -G'
+alias la='ls -a'
+alias ll='ls -l'
+alias cls='clear'
+
+alias which='type -p'
+
+alias sv='brew services'
+alias cask='brew cask'
+
+alias cat='ccat'
+alias env='conda env'
+
+alias gam='git commit -a -m'
+alias gm='git commit -m'
+alias gs='git status'
+alias ga='git add' 
+
