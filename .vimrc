@@ -192,6 +192,8 @@ nnoremap <leader>w :%s/\s\+$//<cr>:let @/=''<CR>
 vmap <C-c> "+y
 "选中状态下 Ctrl+v 粘贴
 vmap <C-v> "+gP
+" Save a file as root (,W)
+noremap <leader>w :w !sudo tee % > /dev/null<CR>
 
 " 方便切换 splits
 nmap <C-Tab> <C-w><C-w>
