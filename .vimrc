@@ -22,15 +22,10 @@ syntax enable
 filetype on
 filetype plugin on
 filetype indent on
-" 允许用指定语法高亮配色方案替换默认方案
-syntax on
 
 "插件管理
 call plug#begin('~/.vim/plugged')
-Plug 'altercation/vim-colors-solarized'
 Plug 'scrooloose/nerdtree'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdcommenter'
 call plug#end()
@@ -50,8 +45,6 @@ set ambiwidth=double
 set autochdir
 "在选择文本时，光标所在位置也属于被选中的范围
 set selection=inclusive
-"Vim 的默认寄存器和系统剪贴板共享
-set clipboard+=unnamed
 "不显示一些东西如乌干达儿童提示
 set shortmess=a
 set cmdheight=2
@@ -88,8 +81,6 @@ endif
 """"""""""""""""""""""""""""""""""""""""
 "显示设置
 """"""""""""""""""""""""""""""""""""""""
-set background=light
-colorscheme solarized
 if g:isGUI
     set encoding=utf-8
     set guifont=Source\ Code\ Pro:h12
@@ -149,7 +140,6 @@ set shiftwidth=4
 " 让 vim 把连续数量的空格视为一个制表符
 set softtabstop=4
 
-autocmd FileType python setlocal expandtab sta sw=4 sts=4
 autocmd FileType ruby,javascript,html,css,xml set ts=2 sw=2 softtabstop=2 expandtab ai
 
 set nobomb
@@ -163,9 +153,6 @@ let &termencoding=&encoding
 "nerdtree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
-"vim-airline
-let g:airline_theme='solarized'
 
 "ctrlpvim
 let g:ctrlp_map = '<c-p>'
@@ -192,7 +179,7 @@ nnoremap <F2> :set relativenumber! relativenumber?<CR>
 nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 nnoremap <F4> :set wrap! wrap?<CR>
 "粘贴模式快捷键
-set pastetoggle=<leader>p
+set pastetoggle=<F6>
 map <C-n> :NERDTreeToggle<CR>
 
 "strip all trailing whitespace in the current file
