@@ -4,14 +4,14 @@ set -e
 
 function getSetting() {
     if [ -e ~/bashrc ]; then
-        curl -fsSLo ~/.bashrc https://raw.githubusercontent.com/ko-han/han-bashrc/master/.bashrc
+        curl -fsSLo ~/.bashrc https://github.com/ko-han/dotfiles/blob/master/.bashrc
     else
-        curl -fsSL https://raw.githubusercontent.com/ko-han/han-bashrc/master/.bashrc >> ~/.bashrc
+        curl -fsSL https://github.com/ko-han/dotfiles/blob/master/.bashrc >> ~/.bashrc
     fi
     if [ -e ~/bash_alias ]; then
-        curl -fsSLo ~/.bash_alias https://raw.githubusercontent.com/ko-han/han-bashrc/master/.bash_alias
+        curl -fsSLo ~/.bash_alias https://github.com/ko-han/dotfiles/blob/master/.bash_alias
     else
-        curl -fsSL https://raw.githubusercontent.com/ko-han/han-bashrc/master/.bash_alias >> ~/.bash_alias
+        curl -fsSL https://github.com/ko-han/dotfiles/blob/master/.bash_alias >> ~/.bash_alias
     fi
 }
 

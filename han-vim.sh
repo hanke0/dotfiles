@@ -12,7 +12,7 @@ function cleanOldSetting() {
 }
 
 function getSetting() {
-    curl -fsSLo ~/.vimrc https://raw.githubusercontent.com/ko-han/han-vim/master/.vimrc
+    curl -fsSLo ~/.vimrc https://github.com/ko-han/dotfiles/blob/master/.vimrc
 }
 
 function PlugInstall() {

@@ -6,7 +6,7 @@
 "
 "
 " Q: How to use it?
-" A: bash -c "$(curl -sSL https://raw.githubusercontent.com/ko-han/han-vim/master/han-vim.sh)"
+" A: bash -c "$(curl -sSL https://github.com/ko-han/dotfiles/blob/master/han-vim.sh)"
 "
 
 
