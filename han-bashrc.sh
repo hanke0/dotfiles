@@ -2,52 +2,60 @@
 
 set -e
 
+config=(".bashrc" ".bash_alias" ".bash_path" ".bash_plugin" ".bash_prompt")
+
+tmp=".bash.tmp"
+
 function getSetting() {
-    if [ -e ~/bashrc ]; then
-        curl -fsSLo ~/.bashrc https://github.com/ko-han/dotfiles/blob/master/.bashrc
-    else
-        curl -fsSL https://github.com/ko-han/dotfiles/blob/master/.bashrc >> ~/.bashrc
+    if [ -e ~/"$tmp" ]; then
+        rm ~/"$tmp"
     fi
-    if [ -e ~/bash_alias ]; then
-        curl -fsSLo ~/.bash_alias https://github.com/ko-han/dotfiles/blob/master/.bash_alias
-    else
-        curl -fsSL https://github.com/ko-han/dotfiles/blob/master/.bash_alias >> ~/.bash_alias
+    set +e
+    for var in  ${config[@]} ; do
+        echo 'downloading' $var
+        echo "------------------------ $var ----------------------------" >> ~/"$tmp"
+        curl -fsSL 'https://raw.githubusercontent.com/ko-han/dotfiles/master/bash/'"$var" >> ~/"$tmp"
+        echo "" >> ~/"$tmp"
+    done
+    set -e
+}
+
+function setSetting() {
+    cat ~/"$tmp" >> ~/.bashrc
+}
+
+function deleteBashrc() {
+    if [ -e ~/.bashrc ]; then
+    read -r -p "Do you want delete '~/.bashrc'?[y/n] " input
+    case $input in
+        [yY][eE][sS]|[yY])
+            rm ~/.bashrc
+            ;;
+        *)
+            ;;
+    esac
     fi
 }
 
+function activateNow() {
+    read -r -p "Activate now?[Y/N] " input
+    case $input in
+        [yY][eE][sS]|[yY])
+            [ -e ~/.bashrc ] && . ~/.bashrc
+            ;;
+        *)
+            ;;
+    esac
+}
 
 echo "--------------- han-bashrc ----------------"
-echo
-if [ -e ~/.bashrc ]; then
-read -r -p "Do you want delete '~/.bashrc'(default No)?[Y/N] " input
-case $input in
-    [yY][eE][sS]|[yY])
-        rm ~/.bashrc
-        ;;
-    *)
-        ;;
-esac
-fi
-if [ -e ~/.bash_alias ]; then
-read -r -p "Do you want delete '~/.bash_alias'(default No)?[Y/N] " input
-case $input in
-    [yY][eE][sS]|[yY])
-        rm ~/.bash_alias
-        ;;
-    *)
-        ;;
-esac
-fi
+echo ""
 
 getSetting
+deleteBashrc
+setSetting
+activateNow
 
-read -r -p "Activate now(default No)?[Y/N] " input
-case $input in
-    [yY][eE][sS]|[yY])
-        [ -e ~/.bashrc ] && . ~/.bashrc
-        ;;
-    *)
-        ;;
-esac
+
 
 
