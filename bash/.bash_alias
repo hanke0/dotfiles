@@ -5,8 +5,6 @@ alias la='ls -a'
 alias ll='ls -l'
 alias cls='clear'
 
-alias which='type -p'
-
 alias sv='brew services'
 alias cask='brew cask'
 
@@ -16,5 +14,9 @@ alias env='conda env'
 alias gam='git commit -a -m'
 alias gm='git commit -m'
 alias gs='git status'
-alias ga='git add' 
+alias ga='git add'
 
+alias sa='source activate'
+alias sd='source deactivate'
+
+alias ipy='ipython'
