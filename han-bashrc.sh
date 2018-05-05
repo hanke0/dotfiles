@@ -41,6 +41,7 @@ function delete_bashrc() {
 }
 
 function activate_now() {
+    set +e
     read -r -p "Activate now?[Y/N] " input
     case $input in
         [yY][eE][sS]|[yY])
@@ -49,6 +50,7 @@ function activate_now() {
         *)
             ;;
     esac
+    set -e
 }
 
 echo "--------------- han-bashrc ----------------"
@@ -58,8 +60,8 @@ delete_tmp
 get_setting
 delete_bashrc
 set_setting
-activate_now
 delete_tmp
+activate_now
 
 
 
