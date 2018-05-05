@@ -4,7 +4,7 @@ alias ls='ls -G'
 alias la='ls -a'
 alias ll='ls -l'
 alias cls='clear'
-alias clsh'history -c'
+alias clsh='history -c'
 
 alias which='type -a'
 
