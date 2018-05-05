@@ -2,29 +2,32 @@
 
 set -e
 
-config=(".bashrc" ".bash_alias" ".bash_path" ".bash_plugin" ".bash_prompt")
+config=(".bashrc" ".bash_alias" ".bash_path" ".bash_plugin" ".bash_prompt" ".bash_function")
 
 tmp=".bash.tmp"
 
-function getSetting() {
+function delete_tmp() {
     if [ -e ~/"$tmp" ]; then
         rm ~/"$tmp"
     fi
+}
+
+function get_setting() {
     set +e
     for var in  ${config[@]} ; do
         echo 'downloading' $var
-        echo "------------------------ $var ----------------------------" >> ~/"$tmp"
+        echo "# ------------------------ $var ----------------------------" >> ~/"$tmp"
         curl -fsSL 'https://raw.githubusercontent.com/ko-han/dotfiles/master/bash/'"$var" >> ~/"$tmp"
         echo "" >> ~/"$tmp"
     done
     set -e
 }
 
-function setSetting() {
+function set_setting() {
     cat ~/"$tmp" >> ~/.bashrc
 }
 
-function deleteBashrc() {
+function delete_bashrc() {
     if [ -e ~/.bashrc ]; then
     read -r -p "Do you want delete '~/.bashrc'?[y/n] " input
     case $input in
@@ -37,7 +40,7 @@ function deleteBashrc() {
     fi
 }
 
-function activateNow() {
+function activate_now() {
     read -r -p "Activate now?[Y/N] " input
     case $input in
         [yY][eE][sS]|[yY])
@@ -51,10 +54,12 @@ function activateNow() {
 echo "--------------- han-bashrc ----------------"
 echo ""
 
-getSetting
-deleteBashrc
-setSetting
-activateNow
+delete_tmp
+get_setting
+delete_bashrc
+set_setting
+activate_now
+delete_tmp
 
 
 
