@@ -5,10 +5,15 @@ alias la='ls -a'
 alias ll='ls -l'
 alias cls='clear'
 
+alias which='type -a'
+
 alias sv='brew services'
 alias cask='brew cask'
 
-alias cat='ccat'
+if type ccat >/dev/null 2>&1; then
+  alias cat='ccat'
+fi
+
 alias env='conda env'
 
 alias gam='git commit -a -m'
