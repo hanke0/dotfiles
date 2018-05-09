@@ -45,7 +45,7 @@ function activate_now() {
     read -r -p "Activate now?[Y/N] " input
     case $input in
         [yY][eE][sS]|[yY])
-            [ -e ~/.bashrc ] && . ~/.bashrc
+            source ~/.bashrc
             ;;
         *)
             ;;
