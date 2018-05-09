@@ -27,3 +27,23 @@ extract() {
  done
  return $e
 }
+
+
+# replace `rm`,  put files to trash instead of a real delete action
+function trash() {
+   TRASH_DIR="$HOME/.trash"
+   if [ ! -d $TRASH_DIR ]; then
+       mkdir -p $TRASH_DIR
+   fi
+   for i in $*; do
+       local filename=`realpath $i`
+       if [ -a "$filename" ]; then
+           local DT=`date +%Y-%m-%d`
+           local p=`dirname $TRASH_DIR/$DT/$filename`
+           if [ ! -d "$p" ];then
+               mkdir -p "$p"
+           fi
+           mv -f $filename $TRASH_DIR/$DT$filename
+       fi
+   done
+} 

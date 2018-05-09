@@ -2,7 +2,7 @@
 
 set -e
 
-config=(".bashrc" ".bash_alias" ".bash_path" ".bash_plugin" ".bash_prompt" ".bash_function")
+config=(".bashrc" ".bash_path" ".bash_plugin" ".bash_prompt" ".bash_function" ".bash_alias")
 
 tmp=".bash.tmp"
 

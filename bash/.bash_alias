@@ -36,3 +36,7 @@ fi
 if type icdiff >/dev/null 2>&1; then
     alias diff='icdiff'
 fi
+
+if type trash >/dev/null 2>&1; then
+    alias rm='trash'
+fi
