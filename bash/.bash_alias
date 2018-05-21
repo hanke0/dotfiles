@@ -17,6 +17,7 @@ alias gam='git commit -a -m'
 alias gm='git commit -m'
 alias gs='git status'
 alias ga='git add'
+alias gl='git log --oneline --all --graph --decorate  $*'
 
 alias sa='source activate'
 alias sd='source deactivate'
