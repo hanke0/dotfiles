@@ -1,49 +1,50 @@
 # 解压缩函数
-extract() {
- local e=0 i c
- for i; do
-   if [ -f $i && -r $i ]; then
-       c=
-       case $i in
-         *.tar.bz2) c='tar xjf'    ;;
-         *.tar.gz)  c='tar xzf'    ;;
-         *.bz2)     c='bunzip2'    ;;
-         *.gz)      c='gunzip'     ;;
-         *.tar)     c='tar xf'     ;;
-         *.tbz2)    c='tar xjf'    ;;
-         *.tgz)     c='tar xzf'    ;;
-         *.7z)      c='7z x'       ;;
-         *.Z)       c='uncompress' ;;
-         *.exe)     c='cabextract' ;;
-         *.rar)     c='unrar x'    ;;
-         *.xz)      c='unxz'       ;;
-         *.zip)     c='unzip'      ;;
-         *)     echo "$0: cannot extract \`$i': Unrecognized file extension" >&2; e=1 ;;
-       esac
-       [ $c ] && command $c "$i"
-   else
-       echo "$0: cannot extract \`$i': File is unreadable" >&2; e=2
-   fi
- done
- return $e
+exaract {
+    local e=0 i c
+    for i in $*; do
+        if [ -f $i && -r $i ]; then
+            c=
+            case $i in
+                *.tar.bz2) c='tar xjf'    ;;
+                *.tar.gz)  c='tar xzf'    ;;
+                *.bz2)     c='bunzip2'    ;;
+                *.gz)      c='gunzip'     ;;
+                *.tar)     c='tar xf'     ;;
+                *.tbz2)    c='tar xjf'    ;;
+                *.tgz)     c='tar xzf'    ;;
+                *.7z)      c='7z x'       ;;
+                *.Z)       c='uncompress' ;;
+                *.exe)     c='cabextract' ;;
+                *.rar)     c='unrar x'    ;;
+                *.xz)      c='unxz'       ;;
+                *.zip)     c='unzip'      ;;
+                *)     echo "$0: cannot extract \`$i': Unrecognized file extension" >&2; e=1 ;;
+           esac
+           [ $c ] && command $c "$i"
+        else
+            echo "$0: cannot extract \`$i': File is unreadable" >&2; e=2
+        fi
+    done
 }
 
-
 # replace `rm`,  put files to trash instead of a real delete action
-function trash() {
-   TRASH_DIR="$HOME/.trash"
-   if [ ! -d $TRASH_DIR ]; then
-       mkdir -p $TRASH_DIR
-   fi
-   for i in $*; do
-       local filename=`realpath $i`
-       if [ -a "$filename" ]; then
-           local DT=`date +%Y-%m-%d`
-           local p=`dirname $TRASH_DIR/$DT/$filename`
-           if [ ! -d "$p" ];then
-               mkdir -p "$p"
-           fi
-           mv -f $filename $TRASH_DIR/$DT$filename
-       fi
+trash() {
+    TRASH_DIR="$HOME/.trash"
+    if [ ! -d $TRASH_DIR ]; then
+        mkdir -p $TRASH_DIR
+    fi
+    for i in $*; do
+        if [[ ! $i =~ ^- ]]; then
+            local filename=`realpath $i`
+            if [ -a "$filename" ]; then
+                local DT=`date +%Y-%m-%d`
+                local p=`dirname $TRASH_DIR/$DT/$filename`
+                if [ ! -d "$p" ];then
+                    mkdir -p "$p"
+                fi
+                mv -f $filename $TRASH_DIR/$DT$filename
+            fi
+        fi
+
    done
 } 
