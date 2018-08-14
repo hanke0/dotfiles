@@ -1,26 +1,21 @@
 alias grep='grep --color'
 alias egrep='egrep --color'
 alias ls='ls -G'
-alias la='ls -a'
+alias la='ls -A'
 alias ll='ls -l'
 alias cls='clear'
 alias clsh='history -c'
 
-alias which='type -a'
-
 alias sv='brew services'
 alias cask='brew cask'
 
-alias env='conda env'
+alias env='source .env/bin/activate'
 
 alias gam='git commit -a -m'
 alias gm='git commit -m'
 alias gs='git status'
 alias ga='git add'
 alias gl='git log --oneline --all --graph --decorate  $*'
-
-alias sa='source activate'
-alias sd='source deactivate'
 
 alias ipy='ipython'
 
