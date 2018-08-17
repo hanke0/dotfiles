@@ -1,5 +1,5 @@
 # 解压缩函数
-extract() {
+function extract() {
  local e=0 i c
  for i; do
    if [ -f $i && -r $i ]; then
@@ -31,21 +31,41 @@ extract() {
 # replace `rm`,  put files to trash instead of a real delete action
 trash() {
     TRASH_DIR="$HOME/.trash"
-    if [ ! -d $TRASH_DIR ]; then
-        mkdir -p $TRASH_DIR
+    if [ ! -d "$TRASH_DIR" ]; then
+        mkdir -p "$TRASH_DIR"
     fi
     for i in $*; do
         if [[ ! $i =~ ^- ]]; then
             local filename=`realpath $i`
             if [ -a "$filename" ]; then
                 local DT=`date +%Y-%m-%d`
-                local p=`dirname $TRASH_DIR/$DT/$filename`
+                local p=`dirname "$TRASH_DIR"/"$DT"/"$filename"`
                 if [ ! -d "$p" ];then
                     mkdir -p "$p"
                 fi
-                mv -f $filename $TRASH_DIR/$DT$filename
+                mv -f "$filename" "$TRASH_DIR/$DT$filename"
             fi
         fi
 
    done
 } 
+
+
+_env_activate() {
+    if [ -d "$1/.env" ]; then
+        source "$1/.env/bin/activate"
+    elif [ -d "$1/venv" ]; then
+        source "$1/venv/bin/activate"
+    else
+        echo "don't have env"
+    fi
+}
+
+
+function env() {
+    if [ ! "$1" ]; then
+        _env_activate "."
+    else
+        _env_activate "$1"
+    fi
+}
