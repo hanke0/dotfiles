@@ -4,6 +4,7 @@ alias ls='ls -G'
 alias la='ls -A'
 alias ll='ls -l'
 alias cls='clear'
+alias vi='vim'
 alias clsh='history -c'
 
 alias sv='brew services'
