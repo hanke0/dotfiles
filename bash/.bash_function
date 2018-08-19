@@ -62,7 +62,7 @@ _env_activate() {
 }
 
 
-function env() {
+function aenv() {
     if [ ! "$1" ]; then
         _env_activate "."
     else
