@@ -1,5 +1,9 @@
 export TERM=xterm-256color
 
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
 # check the window size after each command and, if necessary,
 shopt -s checkwinsize
 
