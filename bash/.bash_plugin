@@ -9,13 +9,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
-if [ ! -e ~/.git_completion ]; then
-  . ~/.git_completion
-fi
-
 get_git_completion() {
     curl -fsSLo ~/".git_completion" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 }
+
+[ -f ~/.git_completion ] && . ~/.git_completion
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
