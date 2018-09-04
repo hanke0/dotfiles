@@ -1,5 +1,8 @@
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
 export TERM=xterm-256color
 
@@ -13,7 +16,7 @@ shopt -s checkwinsize
 # history
 HISTSIZE=3000
 HISTFILESIZE=3000
-HISTCONTROL=erasedups
+HISTCONTROL=ignoreboth
 HISTIGNORE=”pwd:ls:ll:la:ipy:python:ipython”
 shopt -s histappend;
 
@@ -28,3 +31,7 @@ bind '"\e[B": history-search-forward'
 for option in autocd globstar; do
     shopt -s "$option" 2> /dev/null;
 done;
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+

@@ -1,14 +1,12 @@
-# git completion
-if [ ! -e ~/.git_completion ]; then
-    curl -fsSLo ~/".git_completion" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
-fi
-. ~/.git_completion
-
 # bash completion
-if [ ! -e ~/.bash_completion ]; then
-    curl -fsSLo ~/.bash_completion https://raw.githubusercontent.com/scop/bash-completion/master/bash_completion
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
 fi
-. ~/.bash_completion
+
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
