@@ -6,7 +6,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion >/dev/null 2>&1
   elif [ -f /usr/local/etc/bash_completion ]; then
     . /usr/local/etc/bash_completion >/dev/null 2>&1
-  elif [ -f ~/.bash_completion ]; then
+  elif [ -f ~/".bash_completion" ]; then
     . ~/.bash_completion >/dev/null 2>&1
   fi
 fi
