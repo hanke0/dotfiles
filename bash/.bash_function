@@ -119,7 +119,7 @@ function memofpid() {
         return 1
     fi
     
-    if [ ! -a "/proc/$2/smaps" ]; then
+    if [ ! -a "/proc/$2" ]; then
         echo "pid $2 not exists"
         return 1
     fi
