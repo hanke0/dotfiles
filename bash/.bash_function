@@ -118,6 +118,12 @@ function memofpid() {
         echo "return result is based on kb"
         return 1
     fi
+    
+    if [ ! -a "/proc/$2/smaps" ]; then
+        echo "pid $2 not exists"
+        return 1
+    fi
+    
     case $1 in
      s|share)
             grep ^Share /proc/$2/smaps  | awk '{sum += $2} END {print sum}'
