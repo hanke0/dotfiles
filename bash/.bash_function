@@ -119,10 +119,7 @@ function memofpid() {
         return 1
     fi
     
-    if [ ! -a "/proc/$2" ]; then
-        echo "pid $2 not exists"
-        return 1
-    fi
+    [[ ! -a /proc/$2 ]] && echo "pid $2 not exist" && return 1; 
     
     case $1 in
      s|share)
