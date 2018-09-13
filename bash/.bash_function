@@ -71,9 +71,13 @@ function aenv() {
 }
 
 stat_history() {
+  if [ -n $1 ]; then
+    __history_limit=$1
+  else
+    __history_limit=10  
   history |\
   awk '{CMD[$2]++;count++;} END { for (a in CMD )print CMD[ a ]" " CMD[ a ]/count*100 "% " a }' |\
-  grep -v "./" | column -c3 -s " " -t |sort -nr | nl | head -n10 
+  grep -v "./" | column -c3 -s " " -t |sort -nr | nl | head -n$__history_limit
 }
 
 
