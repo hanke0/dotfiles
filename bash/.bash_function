@@ -68,6 +68,7 @@ function aenv() {
     fi
 }
 
+
 history-stat() {
   if [ "$1" == "-h" ]; then
     echo "stat history shell command, accept a number like head -n"
@@ -85,7 +86,7 @@ history-stat() {
 
 
 function pidofport() {
-  if [ -z $1 || "$1" == "-h" ]; then
+  if [ -z "$1" -o "$1" == "-h" ]; then
       echo "get pid of process listen on given port"
   else
     __port_pid=$(ss -tnlp | grep ":$1" | tr ',' "\n" | grep "pid" | awk -F '=' '{print $2}')
@@ -93,8 +94,9 @@ function pidofport() {
   fi
 }
 
+
 function cmdofpid() {
-  if [ -z $1 || "$1" == "-h" ]; then
+  if [ -z "$1" -o "$1" == "-h" ]; then
     echo "get process command of given pid"
   else
     ps -F -p 67992 | grep -v CMD | awk '{for(i=11;i<=NF;i++) printf"%s ",$i};NF>11 {print ""}'
@@ -102,7 +104,7 @@ function cmdofpid() {
 }
 
 function topof() {
-  if [ -z $1 || "$1" == "-h" ]; then
+  if [ -z "$1" -o "$1" == "-h" ]; then
     echo "top filter by command names"
   else
     top -c -p $(pgrep -d',' -f $1) -o PID
@@ -111,7 +113,7 @@ function topof() {
 
 
 function memofpid() {
-    if [ ! $# == 2 ]; then
+    if [ $# != 2 ]; then
         echo "Usage: memofpid [share|private|rss|pss|size] [pid]"
         echo "return result is based on kb"
         return 1
