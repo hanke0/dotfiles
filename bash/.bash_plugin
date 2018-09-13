@@ -19,7 +19,7 @@ download-z() {
     curl -fsSLo ~/".z.sh" https://raw.githubusercontent.com/rupa/z/master/z.sh
 }
 
-download-bash-completion {
+download-bash-completion() {
     curl -fsSLo ~/".bash_completion" https://raw.githubusercontent.com/scop/bash-completion/master/bash_completion
 }
 
