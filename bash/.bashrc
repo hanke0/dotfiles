@@ -5,15 +5,15 @@ case $- in
 esac
 
 if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
+    . /etc/bashrc >/dev/null 2>&1
 fi
 
 # check the window size after each command and, if necessary,
 shopt -s checkwinsize
 
-shopt -s histappend;
+shopt -s histappend
 
-shopt -s cdspell;
+shopt -s cdspell
 
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
@@ -22,7 +22,7 @@ bind '"\e[B": history-search-forward'
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
 # * Recursive globbing, e.g. `echo **/*.txt`
 for option in autocd globstar; do
-    shopt -s "$option" 2> /dev/null;
+    shopt -s "$option" >/dev/null 2>&1
 done;
 
 # make less more friendly for non-text input files, see lesspipe(1)

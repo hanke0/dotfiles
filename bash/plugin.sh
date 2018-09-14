@@ -1,14 +1,12 @@
 # bash completion
-if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion >/dev/null 2>&1
-        elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion >/dev/null 2>&1
-        elif [ -f /usr/local/etc/bash_completion ]; then
-        . /usr/local/etc/bash_completion >/dev/null 2>&1
-        elif [ -f ~/".bash_completion" ]; then
-        . ~/.bash_completion >/dev/null 2>&1
-    fi
+if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion >/dev/null 2>&1
+    elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion >/dev/null 2>&1
+    elif [ -f /usr/local/etc/bash_completion ]; then
+    . /usr/local/etc/bash_completion >/dev/null 2>&1
+    elif [ -f ~/".bash_completion" ]; then
+    . ~/.bash_completion >/dev/null 2>&1
 fi
 
 download-git-completion() {
