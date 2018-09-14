@@ -55,7 +55,7 @@ trash() {
 function aenv() {
     local d=$1
     if [ -z $d ]; then
-        $d="."
+        d="."
     fi
     if [ -d "$d/.env" ]; then
         source "$d/.env/bin/activate"
@@ -67,6 +67,7 @@ function aenv() {
         echo "don't have env"
     fi
 }
+
 
 
 function history-stat() {
