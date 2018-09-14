@@ -26,7 +26,7 @@ function extract() {
     done
     return $e
 }
-extract /Users/han/Downloads/hiredis-0.13.3.tar.gz
+
 
 TRASH_DIR="$HOME/.trash"
 
