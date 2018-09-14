@@ -1,7 +1,7 @@
 function extract() {
     local e=0 i c
-    for i; do
-        if [ -f $i && -r $i ]; then
+    for i in $*; do
+        if [ -f $i -a -r $i ]; then
             c=
             case $i in
                 *.tar.bz2) c='tar xjf'    ;;
@@ -19,13 +19,14 @@ function extract() {
                 *.zip)     c='unzip'      ;;
                 *)     echo "$0: cannot extract \`$i': Unrecognized file extension" >&2; e=1 ;;
             esac
-            [ $c ] && command $c "$i"
+            [[ -n $c ]] && command $c "$i"
         else
             echo "$0: cannot extract \`$i': File is unreadable" >&2; e=2
         fi
     done
     return $e
 }
+extract /Users/han/Downloads/hiredis-0.13.3.tar.gz
 
 TRASH_DIR="$HOME/.trash"
 
@@ -34,6 +35,7 @@ trash() {
     if [ ! -d "$TRASH_DIR" ]; then
         mkdir -p "$TRASH_DIR"
     fi
+    local i
     for i in $*; do
         if [[ ! $i =~ ^- ]]; then
             local filename=`realpath $i`
@@ -46,7 +48,6 @@ trash() {
                 mv -f "$filename" "$TRASH_DIR/$DT$filename"
             fi
         fi
-        
     done
 }
 
@@ -74,9 +75,9 @@ function history-stat() {
         return 1
     fi
     if [ -n $1 ]; then
-        __history_limit=$1
+        local __history_limit=$1
     else
-        __history_limit=10
+        local __history_limit=10
     fi
     history |\
     awk '{CMD[$2]++;count++;} END { for (a in CMD )print CMD[ a ]" " CMD[ a ]/count*100 "% " a }' |\
@@ -152,18 +153,16 @@ function __kill_benchmark() {
     [[ -a "./__pid_file_temp" ]] && cat "./__pid_file_temp" | xargs kill >/dev/null 2>&1
     rm -f "./__pid_file_temp"
     set -m
-    set -b
 }
 
 function benchmark() {
     set +m
-    set +b
     if [ -z "$1" -o "$1" == "-h" ]; then
         echo "Usage: benchmark [-n10] command..."
         return 1
     else
         local currency=10
-        local cmd
+        local cmd i
         if [ "${1:0:2}" == "-n" ]; then
             currency=${1#*n}
             cmd=${@:2}
