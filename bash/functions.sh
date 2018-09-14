@@ -69,7 +69,6 @@ function aenv() {
 }
 
 
-
 function history-stat() {
     if [ "$1" == "-h" ]; then
         echo "stat history shell command, accept a number like head -n"
