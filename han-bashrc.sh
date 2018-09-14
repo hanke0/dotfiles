@@ -29,14 +29,14 @@ function set_setting() {
 
 function delete_bashrc() {
     if [ -e ~/.bashrc ]; then
-    read -r -p "Do you want delete '~/.bashrc'?[y/n] " input
-    case $input in
-        [yY][eE][sS]|[yY])
-            rm ~/.bashrc
+        read -r -p "Do you want delete '~/.bashrc'?[y/n] " input
+        case $input in
+            [yY][eE][sS]|[yY])
+                rm ~/.bashrc
             ;;
-        *)
+            *)
             ;;
-    esac
+        esac
     fi
 }
 
@@ -46,9 +46,9 @@ function activate_now() {
     case $input in
         [yY][eE][sS]|[yY])
             source ~/.bashrc
-            ;;
+        ;;
         *)
-            ;;
+        ;;
     esac
     set -e
 }

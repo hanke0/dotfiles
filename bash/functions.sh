@@ -192,3 +192,34 @@ function benchmark() {
         echo FINISH!
     fi
 }
+
+function pip-remove() {
+    local x=($@)
+    if [ -z "$1" -o "$1" == "-h" ]; then
+        echo "Usage: pip-remove [packages]"
+        echo "This will full remove packages and it's requires"
+        return 1
+    else
+        local s=`pip list | grep $1`
+        if [ -z "$s" ]; then
+            echo "no package find"
+            return 1
+        fi
+        local p=$(echo $s | awk '{print $1}' \
+            | xargs pip show | grep ^Requires: | awk -F ":" '{print $2}' \
+        | sed "s/,/ /g")
+        read -r -p "Do you want delete $1 $p?[y/n] " input
+        case $input in
+            [yY][eE][sS]|[yY])
+                pip uninstall $*
+                pip uninstall $p ${x[@]:1}
+            ;;
+            *)
+            return 1
+            ;;
+        esac
+        
+        
+    fi
+    return 0
+}
