@@ -14,8 +14,8 @@ fi
 shopt -s checkwinsize
 
 # history
-HISTSIZE=-1
-HISTFILESIZE=-1
+HISTSIZE=9999
+HISTFILESIZE=9999
 HISTCONTROL=ignoreboth
 HISTIGNORE="pwd:ls:ll:la:ipy:python:"
 shopt -s histappend;
