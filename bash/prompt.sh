@@ -8,6 +8,6 @@ purple='\[\e[0;35m\]'
 greenblue='\[\e[0;36m\]'
 white='\[\e[0;37m\]'
 git_branch='`B=$(git branch 2>/dev/null | sed -e "/^ /d" -e "s/* \(.*\)/\1/"); [[ "$B" != "" ]]\
-    && echo -n -e "($B)"`'
+&& echo -n -e "($B)"`'
 
 PS1="[$green\u$greenblue@$green\h$trans:$blue\w$trans]$purple$git_branch$red\$$trans "

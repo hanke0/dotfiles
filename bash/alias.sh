@@ -34,7 +34,7 @@ alias localip="ipconfig getifaddr en0"
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
 if type ccat >/dev/null 2>&1; then
-  alias cat='ccat'
+    alias cat='ccat'
 fi
 
 if type icdiff >/dev/null 2>&1; then
@@ -42,11 +42,11 @@ if type icdiff >/dev/null 2>&1; then
 fi
 
 if which pyenv >/dev/null 2>&1;then
-  eval "$(pyenv init -)";
-  alias py34="pyenv shell 3.4.8; echo use python 3.4.8"
-  alias py35="pyenv shell 3.5.5; echo use python 3.5.5"
-  alias py="pyenv shell 3.6.6; echo use python 3.6.6"
-  alias py2="pyenv shell 2.7.15; echo use python 2.7.15"
+    eval "$(pyenv init -)";
+    alias py34="pyenv shell 3.4.8; echo use python 3.4.8"
+    alias py35="pyenv shell 3.5.5; echo use python 3.5.5"
+    alias py="pyenv shell 3.6.6; echo use python 3.6.6"
+    alias py2="pyenv shell 2.7.15; echo use python 2.7.15"
 fi
 
 if which pyenv-virtualenv-init >/dev/null 2>&1; then eval "$(pyenv virtualenv-init -)"; fi

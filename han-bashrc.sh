@@ -2,7 +2,7 @@
 
 set -e
 
-config=(".bashrc" ".bash_path" ".bash_plugin" ".bash_prompt" ".bash_function" ".bash_alias")
+config=(".bashrc" "path.sh" "plugin.sh" "prompt.sh" "function.sh" "alias.sh")
 
 tmp=".bash.tmp"
 
@@ -61,7 +61,6 @@ get_setting
 delete_bashrc
 set_setting
 delete_tmp
-activate_now
 
 
 
