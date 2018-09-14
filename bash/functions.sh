@@ -224,9 +224,10 @@ function pip-remove() {
     return 0
 }
 
-function tmux_init() {
+
+function tmux-init() {
     tmux new-session -d -n "local"    # 开启一个会话
     tmux -2 attach-session -d           # tmux -2强制启用256color，连接已开启的tmux
 }
 
-alias t='test -z "$TMUX" && (tmux attach || tmux_init)'
+alias t='test -z "$TMUX" && (tmux attach || tmux-init)'
