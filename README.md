@@ -37,4 +37,4 @@ bash -c "$(curl -sSL https://raw.githubusercontent.com/ko-han/dotfiles/master/ha
 - [ag](https://github.com/ggreer/the_silver_searcher) A code-searching tool similar to ack, but faster.
 - [you-get](https://github.com/soimort/you-get) Dumb downloader that scrapes the web
 - [icdiff](https://github.com/jeffkaufman/icdiff) improved colored diff
-
+- [cheat](https://github.com/chrisallenlane/cheat) cheat allows you to create and view interactive cheatsheets on the command-line. 
