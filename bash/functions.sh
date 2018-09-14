@@ -226,8 +226,14 @@ function pip-remove() {
 
 
 function tmux-init() {
-    tmux new-session -d -n "local"    # 开启一个会话
-    tmux -2 attach-session -d           # tmux -2强制启用256color，连接已开启的tmux
+    if [[ -z "$TMUX" ]] ;then
+        ID="`tmux ls | grep -vm1 attached | cut -d: -f1`" # get the id of a deattached session
+        if [[ -z "$ID" ]] ;then # if not available create a new one
+            tmux -2 new-session # -2 force termial 256 color
+        else
+            tmux -2 attach-session -t "$ID" # if available attach to it
+        fi
+    fi
 }
 
-alias t='test -z "$TMUX" && (tmux attach || tmux-init)'
+alias t=tmux-init
