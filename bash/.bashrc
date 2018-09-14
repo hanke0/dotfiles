@@ -1,23 +1,16 @@
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
-      *) return;;
+    *) return;;
 esac
 
-export TERM=xterm-256color
-
 if [ -f /etc/bashrc ]; then
-        . /etc/bashrc
+    . /etc/bashrc
 fi
 
 # check the window size after each command and, if necessary,
 shopt -s checkwinsize
 
-# history
-HISTSIZE=9999
-HISTFILESIZE=9999
-HISTCONTROL=ignoreboth
-HISTIGNORE="pwd:ls:ll:la:ipy:python:"
 shopt -s histappend;
 
 shopt -s cdspell;
@@ -34,4 +27,3 @@ done;
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-

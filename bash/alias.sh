@@ -1,3 +1,7 @@
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
 alias grep='grep --color'
 alias egrep='egrep --color'
 

@@ -215,7 +215,7 @@ function pip-remove() {
                 pip uninstall $p ${x[@]:1}
             ;;
             *)
-            return 1
+                return 1
             ;;
         esac
         
@@ -223,3 +223,10 @@ function pip-remove() {
     fi
     return 0
 }
+
+function tmux_init() {
+    tmux new-session -d -n "local"    # 开启一个会话
+    tmux -2 attach-session -d           # tmux -2强制启用256color，连接已开启的tmux
+}
+
+alias t='test -z "$TMUX" && (tmux attach || tmux_init)'
