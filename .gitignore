@@ -1,0 +1,12 @@
+**/.idea
+**/.env
+**/venv
+**/.venv
+**/.vscode
+**/.pytest_cache
+**/*.egg-info
+**/build
+**/dist
+**/.tox
+**/.ipynb_checkpoints
+**/*.py[co]
