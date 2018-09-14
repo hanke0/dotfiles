@@ -193,5 +193,3 @@ function benchmark() {
         echo FINISH!
     fi
 }
-
-benchmark $*
