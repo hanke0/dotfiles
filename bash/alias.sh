@@ -13,7 +13,8 @@ else
 fi
 
 alias la='ls -A'
-alias ll='ls -aFl'
+alias ll='ls -li --file-type'
+alias lla='ls -Ali --file-type'
 alias cls='clear'
 alias vi='vim'
 alias clsh='history -c'
