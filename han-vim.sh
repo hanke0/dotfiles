@@ -31,7 +31,7 @@ echo "--------------- han-vim ----------------"
 echo
 while :
     do
-        read -r -p "This will delete '~/.vim' and '~/.vimrc', Continue to install? [Y/n] " input
+        read -r -p "This will delete '~/.vim' and '~/.vimrc', Continue to install? [yes/no] " input
         case $input in
             [yY][eE][sS]|[yY])
                 main

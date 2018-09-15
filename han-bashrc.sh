@@ -29,7 +29,7 @@ function set_setting() {
 
 function delete_bashrc() {
 	if [ -e ~/.bashrc ]; then
-		read -r -p "Do you want delete '~/.bashrc'?[y/n] " input
+		read -r -p "Do you want delete '~/.bashrc'?[yes/No] " input
 		case $input in
 		[yY][eE][sS] | [yY])
 			rm ~/.bashrc
