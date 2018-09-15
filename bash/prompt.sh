@@ -7,16 +7,15 @@ blue='\[\e[0;34m\]'
 purple='\[\e[0;35m\]'
 greenblue='\[\e[0;36m\]'
 white='\[\e[0;37m\]'
-git_branch='$green`B=$(git branch 2>/dev/null | sed -e "/^ /d" -e "s/* \(.*\)/\1/"); [[ "$B" != "" ]]\
-&& echo -n -e "($B)"`$trans'
+git_branch=`B=$(git branch 2>/dev/null | sed -e "/^ /d" -e "s/* \(.*\)/\1/"); [[ "$B" != "" ]]\
+&& echo -n -e "($B)"`
 
 # Displays red prompt if root
 # Displays blue prompt during SSH session
-
 if [[ $(id -u) -eq 0 ]]; then
-  PS1="\[\e[1;31m\][\h:\u]\[\e[m\] \w \[\e[1m\]$git_branchϟ\[\e[m\] "
-elif [[ -n "$SSH_CLIENT" ]]; then
-  PS1="\[\e[1;34m\][\h:\u]\[\e[m\] \w \[\e[1m\]$git_branchϟ\[\e[m\] " 
+    export PS1="\[\e[1;31m\][\h:\u]\[\e[m\] \w \[\e[1m\]$green$git_branch$transϟ\[\e[m\] "
+    elif [[ -n "$SSH_CLIENT" ]]; then
+    export PS1="\[\e[1;34m\][\h:\u]\[\e[m\] \w \[\e[1m\]$green$git_branch$transϟ\[\e[m\] "
 else
-  PS1="\w \[\e[1m\]ϟ\[\e[m\] "
+    export PS1="\w \[\e[1m\]$green$git_branch$transϟ\[\e[m\]"
 fi
