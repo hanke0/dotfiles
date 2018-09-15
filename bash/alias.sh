@@ -18,6 +18,7 @@ alias lla='ls -Ali --file-type'
 alias cls='clear'
 alias vi='vim'
 alias clsh='history -c'
+alias du1='du -h --max-depth=1'
 
 alias sv='brew services'
 alias cask='brew cask'
