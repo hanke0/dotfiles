@@ -1,3 +1,26 @@
+# input  : [ $(read_yes ) ] && echo yes;
+# output : yes
+# $1 is message when read input print
+function _read_yes() {
+    local input yes="0" x=($@)
+    for i in "${x[@]}"
+    do
+        if [ "$i" = "-y" ] ; then
+            return 0
+        fi
+    done
+    read -r -p "$1[yes/No] " input
+    case $input in
+        [yY][eE][sS]|[yY])
+            return 0
+        ;;
+        *)
+            return 1
+        ;;
+    esac
+}
+
+
 function extract() {
     local e=0 i c
     for i in $*; do
@@ -31,7 +54,7 @@ function extract() {
 TRASH_DIR="$HOME/.trash"
 
 # replace `rm`,  put files to trash instead of a real delete action
-trash() {
+function trash() {
     if [ ! -d "$TRASH_DIR" ]; then
         mkdir -p "$TRASH_DIR"
     fi
@@ -51,18 +74,47 @@ trash() {
     done
 }
 
+export PYTHON_ENV_HOME="$HOME/.virtualenvs/"
+
+
+function mkenv() {
+    local args=($@)
+    [ ! -a $PYTHON_ENV_HOME ] && mkdir -p $PYTHON_ENV_HOME
+    virtualenv "$PYTHON_ENV_HOME$1" ${args[@]:1}
+    return $?
+}
+
+
+function rmenv() {
+    _read_yes "Do you want to remove $1?" $*
+    [ $? -eq 0 ] && rm -rf "$PYTHON_ENV_HOME$1" && return 0
+    return 1
+}
+
+
+function workon() {
+    local venv=$1
+    if [ -z $venv ]; then
+        echo "Chose one env:"
+        ls $PYTHON_ENV_HOME
+        return 0
+    fi
+    source "$PYTHON_ENV_HOME$1/bin/activate"
+}
+
 
 function aenv() {
     local d=$1
     if [ -z $d ]; then
         d="."
     fi
+    
     if [ -d "$d/.env" ]; then
-        source "$d/.env/bin/activate"
+        source "$d/.env/bin/activate";
         elif [ -d "$d/venv" ]; then
-        source "$d/venv/bin/activate"
+        source "$d/venv/bin/activate";
         elif [ -d "$d/.venv" ]; then
-        source "$d/.venv/bin/activate"
+        source "$d/.venv/bin/activate";
     else
         echo "don't have env"
     fi
@@ -201,17 +253,17 @@ function pip-remove() {
         echo "This will fully remove package and it's requires if no other package requires."
         return 1
     else
-        local s=`pip list --format=legacy | grep -i $1`
+        local s=`pip list --format=freeze --disable-pip-version-check | grep -i $1`
         if [ -z "$s" ]; then
             echo "can't find package $1"
             return 1
         fi
         # other package requires
-        local Array2=(`pip list --format=legacy | grep -i -v $1 \
-            | awk '{print $1}' | xargs  pip show  | grep ^Requires: \
+        local Array2=(`pip list --format=freeze --disable-pip-version-check | grep -i -v $1 \
+            | awk -F '==' '{print $1}' | xargs  pip show --disable-pip-version-check  | grep ^Requires: \
         | awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq`)
         # package requires
-        local Array1=(`echo $s | awk '{print $1}' | xargs  pip show  | grep ^Requires: \
+        local Array1=(`echo $s | awk -F '==' '{print $1}' | xargs  pip show --disable-pip-version-check  | grep ^Requires: \
         | awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq`)
         
         # find package requires - other package requires
@@ -223,26 +275,8 @@ function pip-remove() {
             done
             [[ -n $skip ]] || Array3+=("$i")
         done
-        local input yes="0"
-        for i in "${x[@]}"
-        do
-            if [ "$i" = "-y" ] ; then
-                yes="1"
-            fi
-        done
-        if [ $yes = "1" ]; then
-            input="y"
-        else
-            read -r -p "Do you want delete $1?[y/n] " input
-        fi
-        case $input in
-            [yY][eE][sS]|[yY])
-                pip uninstall $*
-            ;;
-            *)
-                return 1
-            ;;
-        esac
+        _read_yes "Do you want delete $1?" $x
+        [ $? -eq 0 ] && pip uninstall -y $*
         if [ -n "${Array3[*]}" ]; then
             for i in "${Array3[@]}"; do
                 pip-remove $i ${x[@]:1}
