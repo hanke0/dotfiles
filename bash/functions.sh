@@ -197,17 +197,17 @@ function benchmark() {
 function pip-remove() {
     local x=($@)
     if [ "$1" == "-h" ]; then
-        echo "Usage: pip-remove [packages]"
-        echo "This will full remove packages and it's requires if no other package requires."
+        echo "Usage: pip-remove [package] ..."
+        echo "This will fully remove package and it's requires if no other package requires."
         return 1
     else
-        local s=`pip list --format=legacy | grep $1`
+        local s=`pip list --format=legacy | grep -i $1`
         if [ -z "$s" ]; then
-            echo "no package find $1"
+            echo "can't find package $1"
             return 1
         fi
         # other package requires
-        local Array2=(`pip list --format=legacy | grep -v $1 \
+        local Array2=(`pip list --format=legacy | grep -i -v $1 \
             | awk '{print $1}' | xargs  pip show  | grep ^Requires: \
         | awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq`)
         # package requires
