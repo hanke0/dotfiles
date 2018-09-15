@@ -193,33 +193,61 @@ function benchmark() {
     fi
 }
 
+
 function pip-remove() {
     local x=($@)
-    if [ -z "$1" -o "$1" == "-h" ]; then
+    if [ "$1" == "-h" ]; then
         echo "Usage: pip-remove [packages]"
-        echo "This will full remove packages and it's requires"
+        echo "This will full remove packages and it's requires if no other package requires."
         return 1
     else
-        local s=`pip list | grep $1`
+        local s=`pip list --format=legacy | grep $1`
         if [ -z "$s" ]; then
-            echo "no package find"
+            echo "no package find $1"
             return 1
         fi
-        local p=$(echo $s | awk '{print $1}' \
-            | xargs pip show | grep ^Requires: | awk -F ":" '{print $2}' \
-        | sed "s/,/ /g")
-        read -r -p "Do you want delete $1 $p?[y/n] " input
+        # other package requires
+        local Array2=(`pip list --format=legacy | grep -v $1 \
+            | awk '{print $1}' | xargs  pip show  | grep ^Requires: \
+        | awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq`)
+        # package requires
+        local Array1=(`echo $s | awk '{print $1}' | xargs  pip show  | grep ^Requires: \
+        | awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq`)
+        
+        # find package requires - other package requires
+        local Array3=() i skip
+        for i in "${Array1[@]}"; do
+            skip=
+            for j in "${Array2[@]}"; do
+                [[ $i == $j ]] && { skip=1; break; }
+            done
+            [[ -n $skip ]] || Array3+=("$i")
+        done
+        local input yes="0"
+        for i in "${x[@]}"
+        do
+            if [ "$i" = "-y" ] ; then
+                yes="1"
+            fi
+        done
+        if [ $yes = "1" ]; then
+            input="y"
+        else
+            read -r -p "Do you want delete $1?[y/n] " input
+        fi
         case $input in
             [yY][eE][sS]|[yY])
                 pip uninstall $*
-                pip uninstall $p ${x[@]:1}
             ;;
             *)
                 return 1
             ;;
         esac
-        
-        
+        if [ -n "${Array3[*]}" ]; then
+            for i in "${Array3[@]}"; do
+                pip-remove $i ${x[@]:1}
+            done
+        fi
     fi
     return 0
 }
