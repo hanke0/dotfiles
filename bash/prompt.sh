@@ -21,7 +21,7 @@ function re-prompt() {
 	elif [[ -n "$SSH_CLIENT" ]]; then
 		PS1="$BLUE[\h:\u]\[\e[m\]$RESET \w $GREEN$(parse_git_branch)$RESET» $RESET"
 	else
-		PS1="\w $GREEN$(parse_git_branch)$RESET$BOLD» $RESET"
+		PS1="$YELLOW\w $RESET$GREEN$(parse_git_branch)$RESET$BOLD» $RESET"
 	fi
 }
 
