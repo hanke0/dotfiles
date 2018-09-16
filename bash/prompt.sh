@@ -1,12 +1,13 @@
-trans='\[\e[m\]'
-dark='\[\e[0;30m\]'
-red='\[\e[0;31m\]'
-green='\[\e[0;32m\]'
-yellow='\[\e[0;33m\]'
-blue='\[\e[0;34m\]'
-purple='\[\e[0;35m\]'
-greenblue='\[\e[0;36m\]'
-white='\[\e[0;37m\]'
+RESET='\[\e[m\]'
+BOLD='\[\e[1m\]'
+DARK='\[\e[1;30m\]'
+RED='\[\e[1;31m\]'
+GREEN='\[\e[1;32m\]'
+YELLOW='\[\e[1;33m\]'
+BLUE='\[\e[1;34m\]'
+PURPLE='\[\e[1;35m\]'
+GREENBLUE='\[\e[1;36m\]'
+WHITE='\[\e[1;37m\]'
 
 parse_git_branch() {
 	git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
@@ -16,11 +17,11 @@ function re-prompt() {
 	# Displays red prompt if root
 	# Displays blue prompt during SSH session
 	if [[ $(id -u) -eq 0 ]]; then
-		PS1="\[\e[1;31m\][\h:\u]\[\e[m\] \w \[\e[1m\]$green$(parse_git_branch)$transϟ\[\e[m\] "
+		PS1="$RED[\h:\u]$RESET \w $GREEN$(parse_git_branch)$RESET$BOLD» $RESET"
 	elif [[ -n "$SSH_CLIENT" ]]; then
-		PS1="\[\e[1;34m\][\h:\u]\[\e[m\] \w \[\e[1m\]$green$(parse_git_branch)$transϟ\[\e[m\] "
+		PS1="$BLUE[\h:\u]\[\e[m\]$RESET \w $GREEN$(parse_git_branch)$RESET» $RESET"
 	else
-		PS1="\w \[\e[1m\]$green$(parse_git_branch)$transϟ\[\e[m\] "
+		PS1="\w $GREEN$(parse_git_branch)$RESET$BOLD» $RESET"
 	fi
 }
 
