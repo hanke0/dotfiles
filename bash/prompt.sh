@@ -17,11 +17,11 @@ function re-prompt() {
 	# Displays red prompt if root
 	# Displays blue prompt during SSH session
 	if [[ $(id -u) -eq 0 ]]; then
-		PS1="$RED[\u@\h]$RESET \w $(parse_git_branch)$BOLD\$ $RESET"
+		PS1="$RED[\u@\h]$RESET \w $(parse_git_branch)$BOLD\\$ $RESET"
 	elif [[ -n "$SSH_CLIENT" ]]; then
-		PS1="$BLUE[\u@\h]\[\e[m\]$RESET \w $(parse_git_branch)\$ $RESET"
+		PS1="$BLUE[\u@\h]\[\e[m\]$RESET \w $(parse_git_branch)$BOLD\\$ $RESET"
 	else
-		PS1="\w $(parse_git_branch)$BOLD\$ $RESET"
+		PS1="\w $(parse_git_branch)$BOLD\\$ $RESET"
 	fi
 }
 
