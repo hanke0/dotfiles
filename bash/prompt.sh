@@ -10,18 +10,18 @@ GREENBLUE='\[\e[1;36m\]'
 WHITE='\[\e[1;37m\]'
 
 parse_git_branch() {
-	git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+	git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
 function re-prompt() {
 	# Displays red prompt if root
 	# Displays blue prompt during SSH session
 	if [[ $(id -u) -eq 0 ]]; then
-		PS1="$RED[\h:\u]$RESET \w $GREEN$(parse_git_branch)$RESET$BOLD>> $RESET"
+		PS1="$RED[\h:\u]$RESET \w $(parse_git_branch)$BOLD\$ $RESET"
 	elif [[ -n "$SSH_CLIENT" ]]; then
-		PS1="$BLUE[\h:\u]\[\e[m\]$RESET \w $GREEN$(parse_git_branch)$RESET>> $RESET"
+		PS1="$BLUE[\h:\u]\[\e[m\]$RESET \w $(parse_git_branch)\$ $RESET"
 	else
-		PS1="$YELLOW\w $RESET$GREEN$(parse_git_branch)$RESET$BOLD>> $RESET"
+		PS1="\w $(parse_git_branch)$BOLD\$ $RESET"
 	fi
 }
 
