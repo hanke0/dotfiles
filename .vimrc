@@ -16,10 +16,17 @@ syntax enable   " 开启语法高亮功能
 filetype on     "打开文件类型检测功能
 filetype plugin on    "允许vim加载文件类型插件
 filetype indent on    "允许vim为不同类型的文件定义不同的缩进格式
-set expandtab    " 将制表符扩展为空格
-set tabstop=4    " 设置编辑时制表符占用空格数
-set shiftwidth=4    " 设置格式化时制表符占用空格数
-set softtabstop=4    " 让 vim 把连续数量的空格视为一个制表符
+
+" tab
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set smarttab
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
 set backspace=2  "backspace 可以删除更多字符
 set ru "打开 VIM 的状态栏标尺
 set whichwrap=b,s,<,>,[,]   "光标可以移动到上一行
@@ -28,15 +35,25 @@ set autochdir    "自动切换到文件所在文件夹
 set selection=inclusive    "在选择文本时，光标所在位置也属于被选中的范围
 set nobackup    "取消备份。 视情况自己改
 set noswapfile    "关闭交换文件
+set showmode "显示当前命令模式
 set ignorecase    "设置默认进行大小写不敏感查找
 set smartcase    "如果有一个大写字母，则切换到大小写敏感查找
 set winaltkeys=no    "ALT不映射到菜单栏
 set nobomb    "去掉 BOM
-set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936
+set fileencodings=utf-8
 set encoding=utf-8
+
 set autoread    "文件自动检测外部更改
 autocmd BufWritePost $MYVIMRC source $MYVIMRC   "让配置变更立即生效
-set nofoldenable  " 启动 vim 时关闭折叠代码
+
+"some stuff to get the mouse going in term
+set mouse=a
+if !has("nvim")
+    set ttymouse=xterm2
+endif
+
+set nofoldenable
+
 "运行环境判断
 if(has("win32") || has("win64") || has("win95") || has("win16"))
     let g:isWin = 1
@@ -59,7 +76,6 @@ else
 endif
 
 
-
 "============================== 显示 ==============================
 if g:isGUI
     set encoding=utf-8
@@ -79,33 +95,19 @@ endif
 set splitright  "新分割窗口在右边
 set hlsearch  "高亮搜索词
 set cursorline  "突出显示当前行
-set colorcolumn=120  "80字符限制线
+set colorcolumn=99  "80字符限制线
 set nowrap        "折行
 set shortmess=a    "不显示一些东西如乌干达儿童提示
 set cmdheight=2    "命令行（在状态行下）的高度，默认为1，这里是2
-set number   "行号
-set relativenumber  "相对行号
+
 set showcmd     "显示当前输入的命令
 set showmatch     "输入时显示相对应的括号
-"防止错误整行标红导致看不清
-highlight clear SpellBad
-highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
-highlight clear SpellCap
-highlight SpellCap term=underline cterm=underline
-highlight clear SpellRare
-highlight SpellRare term=underline cterm=underline
-highlight clear SpellLocal
-highlight SpellLocal term=underline cterm=underline
 
-"状态栏
-set laststatus=2
-set statusline=
-set statusline+=%1*[%F%m%r%h%w]
-set statusline+=\ \ \ \ %1*[FORMAT=%2*%{&ff}:%{&fenc!=''?&fenc:&enc}%1*]
-set statusline+=\ %1*[TYPE=%2*%Y%1*]
-set statusline+=\ [COL=%2*%03v%1*]
-set statusline+=\ [ROW=%2*%03l%1*/%3*%L(%p%%)%1*]
-
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
 
 
 "============================== 插件 ==============================
@@ -114,6 +116,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'  "<leader>cu 取消注释 <leader>cc 注释
+Plug 'vim-airline/vim-airline'
 
 "nerdtree
 autocmd StdinReadPre * let s:std_in=1
@@ -138,10 +141,12 @@ endif
 call plug#end()
 
 
-
-
 "============================== 快捷键 ==============================
-let mapleader = "\<Space>"
+let mapleader = ","
+
+" :W sudo saves the file 
+" (useful for handling the permission-denied error)
+command W w !sudo tee % > /dev/null
 
 set pastetoggle=<F6>    "粘贴模式快捷键
 
