@@ -1,6 +1,6 @@
 [core]
-	autocrlf = false
-	excludesfile = ~/.gitignore
+    autocrlf = false
+    excludesfile = ~/.gitignore
 [alias]
     lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
@@ -24,7 +24,6 @@
     s = status -s
     d = pull --rebase
     u = push
-    
 
     rank = shortlog -sn --no-merges
 

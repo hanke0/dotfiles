@@ -29,19 +29,18 @@ function main() {
 
 echo "--------------- han-vim ----------------"
 echo
-while :
-    do
-        read -r -p "This will delete '~/.vim' and '~/.vimrc', Continue to install? [yes/no] " input
-        case $input in
-            [yY][eE][sS]|[yY])
-                main
-                exit 0
-                ;;
-            [nN][oO]|[nN])
-                exit 1
-                ;;
-            *)
-                echo "Invalid input..."
-                ;;
-        esac
+while :; do
+    read -r -p "This will delete '~/.vim' and '~/.vimrc', Continue to install? [yes/no] " input
+    case $input in
+    [yY][eE][sS] | [yY])
+        main
+        exit 0
+        ;;
+    [nN][oO] | [nN])
+        exit 1
+        ;;
+    *)
+        echo "Invalid input..."
+        ;;
+    esac
 done

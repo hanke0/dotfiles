@@ -1,7 +1,7 @@
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-    *) return;;
+*i*) ;;
+*) return ;;
 esac
 
 if [ -f /etc/bashrc ]; then
@@ -23,7 +23,7 @@ bind '"\e[B": history-search-forward'
 # * Recursive globbing, e.g. `echo **/*.txt`
 for option in autocd globstar; do
     shopt -s "$option" >/dev/null 2>&1
-done;
+done
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
