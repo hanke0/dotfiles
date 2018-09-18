@@ -1,0 +1,32 @@
+[core]
+	autocrlf = false
+	excludesfile = ~/.gitignore
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+    filelog = log -u
+    fl = log -u
+    dlc = diff --cached HEAD^
+    la = "!git config -l | grep alias | cut -c 7-"
+    cp = cherry-pick
+    st = status
+    cl = clone
+    ci = commit
+    co = checkout
+    br = branch 
+    diff = diff --word-diff
+    dc = diff --cached
+    ad = add
+    sl = stash list
+    sa = stash apply
+    ss = stash save
+
+    s = status -s
+    d = pull --rebase
+    u = push
+    
+    rank = shortlog -sn --no-merges
+
+    master = checkout master
+    dev = checkout dev
+

@@ -23,15 +23,6 @@ alias du1='du -h --max-depth=1'
 alias sv='brew services'
 alias cask='brew cask'
 
-alias gitam='git commit -a -m'
-alias gitm='git commit -m'
-alias gits='git status'
-alias gita='git add'
-alias gitl='git log --oneline --all --graph --decorate  $*'
-alias gitd='git pull --rebase'
-alias gitu='git push'
-alias gitc='git checkout'
-
 alias ipy='ipython'
 
 if type ccat >/dev/null 2>&1; then
