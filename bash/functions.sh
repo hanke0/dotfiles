@@ -100,6 +100,9 @@ function workon() {
 	source "$PYTHON_ENV_HOME$1/bin/activate"
 }
 
+complete -W "`ls $PYTHON_ENV_HOME`" rmenv
+complete -W "`ls $PYTHON_ENV_HOME`" workon
+
 function aenv() {
 	local d=$1
 	if [ -z $d ]; then
