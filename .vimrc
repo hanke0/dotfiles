@@ -25,10 +25,8 @@ set smarttab
 
 set ai "Auto indent
 set si "Smart indent
-set wrap "Wrap lines
 
 set backspace=2  "backspace 可以删除更多字符
-set ru "打开 VIM 的状态栏标尺
 set whichwrap=b,s,<,>,[,]   "光标可以移动到上一行
 set ambiwidth=double    "防止特殊符号无法正常显示
 set autochdir    "自动切换到文件所在文件夹
@@ -92,6 +90,7 @@ if g:isWin
     source $VIMRUNTIME/mswin.vim
 endif
 
+set t_Co=256
 set splitright  "新分割窗口在右边
 set hlsearch  "高亮搜索词
 set cursorline  "突出显示当前行
