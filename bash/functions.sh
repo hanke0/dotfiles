@@ -255,10 +255,10 @@ function pip-remove() {
         # other package requires
         local Array2=($(pip list --format=freeze --disable-pip-version-check | grep -i -v $1 |
             awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
-            awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq))
+            awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
         # package requires
         local Array1=($(echo $s | awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
-            awk -F ":" '{print $2}' | sed -r 's/,/ /g' | tr ' ' '\n' | grep -v '^$' | uniq))
+            awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
 
         # find package requires - other package requires
         local Array3=() i skip
