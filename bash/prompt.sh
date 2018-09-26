@@ -21,7 +21,7 @@ if [ -f /usr/share/git-core/contrib/completion/git-prompt.sh ]; then
     if [[ $(id -u) -eq 0 ]]; then
         PS1='\[\e[1;31m\][\u@\h]\[\e[m\] \w \[\e[1;34m\]$(__git_ps1)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
     elif [[ -n "$SSH_CLIENT" ]]; then # ssh use blue
-        PS1='\[\e[1;31m\][\u@\h]\[\e[m\] \w \[\e[1;34m\]$(__git_ps1)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
+        PS1='\[\e[1;34m\][\u@\h]\[\e[m\] \w \[\e[1;34m\]$(__git_ps1)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
     else
         PS1='\w \[\e[1;34m\]$(__git_ps1)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
     fi
@@ -29,7 +29,7 @@ else
     if [[ $(id -u) -eq 0 ]]; then
         PS1='\[\e[1;31m\][\u@\h]\[\e[m\] \w \[\e[1;34m\]$(__git_branch)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
     elif [[ -n "$SSH_CLIENT" ]]; then
-        PS1='\[\e[1;31m\][\u@\h]\[\e[m\] \w \[\e[1;34m\]$(__git_branch)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
+        PS1='\[\e[1;34m\][\u@\h]\[\e[m\] \w \[\e[1;34m\]$(__git_branch)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
     else
         PS1='\w \[\e[1;34m\]$(__git_branch)\[\e[m\]\[\e[1m\]\\$ \[\e[m\]'
     fi
