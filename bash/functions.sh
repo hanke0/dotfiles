@@ -295,3 +295,15 @@ function tmux-init() {
 }
 
 alias t=tmux-init
+
+function my-rsync() {
+    rsync -azchP \
+    --exclude '/**/.tox' --exclude "/**/.git" --exclude "/**/.idea" \
+    --exclude "*.pyc" --exclude "*.pyd" --exclude "/**/__pycache__" \
+    --exclude "/**/*.egg-info" --exclude "/**/build" --exclude "/**/dist" \
+    --exclude "/**/.pytest_cache" --exclude "/**/.env" \
+    --exclude "/**/.vscode" --exclude ".DS_Store" --exclude "Thumbs.db" \
+    --exclude "*esktop.ini" --exclude "/**/*.code-workspace" \
+    --exclude "/**/sdist" \
+    $*
+}
