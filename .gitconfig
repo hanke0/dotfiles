@@ -12,6 +12,7 @@
     st = status
     cl = clone
     ci = commit
+    cm = commit -m
     co = checkout
     br = branch 
     diff = diff --word-diff
