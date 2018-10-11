@@ -77,6 +77,8 @@ function trash() {
 
 export PYTHON_ENV_HOME="$HOME/.virtualenvs/"
 
+[ ! -d ${PYTHON_ENV_HOME} ] && mkdir ${PYTHON_ENV_HOME}
+
 function mkenv() {
     local args=($@)
     [ ! -a $PYTHON_ENV_HOME ] && mkdir -p $PYTHON_ENV_HOME
