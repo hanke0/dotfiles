@@ -274,7 +274,7 @@ function pip-remove() {
             done
             [[ -n $skip ]] || Array3+=("$i")
         done
-        _read_yes "Do you want delete $1?" $x
+        _read_yes "Do you want delete $1?" ${x[@]}
         [ $? -eq 0 ] && pip uninstall -y $*
         if [ -n "${Array3[*]}" ]; then
             for i in "${Array3[@]}"; do
