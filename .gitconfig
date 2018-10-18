@@ -29,6 +29,6 @@
     rank = shortlog -sn --no-merges
 
     master = checkout master
-    dev = checkout dev
+    dev = checkout develop
     
     last = log -1 HEAD
