@@ -285,18 +285,26 @@ function pip-remove() {
     return 0
 }
 
-function tmux-init() {
-    if [[ -z "$TMUX" ]]; then
-        ID="$(tmux ls | grep -vm1 attached | cut -d: -f1)" # get the id of a deattached session
-        if [[ -z "$ID" ]]; then # if not available create a new one
-            tmux -2 new-session # -2 force termial 256 color
-        else
-            tmux -2 attach-session -t "$ID" # if available attach to it
-        fi
+function tmux-kill() {
+    if [[ $# -eq 0 ]]; then
+        tmux ls | grep : | cut -d: -f1 | xargs -I{} tmux kill-session -t {}
+    else
+        local i
+        for i in $@; do
+            tmux kill-session -t $i
+        done
     fi
 }
 
-alias t=tmux-init
+function tmux-default() {
+    if [[ -z $(tmux ls | cut -d: -f1 | grep default) ]]; then
+        tmux -2 new -n default -s default
+    else
+        tmux at -t default
+    fi
+}
+
+alias t=tmux-default
 
 function my-rsync() {
     rsync -azchP \
