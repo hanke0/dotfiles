@@ -99,7 +99,7 @@ function workon() {
         ls $PYTHON_ENV_HOME
         return 0
     fi
-    source "$PYTHON_ENV_HOME$1/bin/activate"
+    source "$PYTHON_ENV_HOME/$1/bin/activate"
 }
 
 complete -W "$(ls $PYTHON_ENV_HOME)" rmenv
