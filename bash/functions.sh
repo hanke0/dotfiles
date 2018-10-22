@@ -75,20 +75,20 @@ function trash() {
     done
 }
 
-export PYTHON_ENV_HOME="$HOME/.virtualenvs/"
+export PYTHON_ENV_HOME="$HOME/.virtualenvs"
 
 [ ! -d ${PYTHON_ENV_HOME} ] && mkdir ${PYTHON_ENV_HOME}
 
 function mkenv() {
     local args=($@)
     [ ! -a $PYTHON_ENV_HOME ] && mkdir -p $PYTHON_ENV_HOME
-    virtualenv "$PYTHON_ENV_HOME$1" ${args[@]:1}
+    virtualenv "$PYTHON_ENV_HOME/$1" ${args[@]:1}
     return $?
 }
 
 function rmenv() {
     _read_yes "Do you want to remove $1?" $*
-    [ $? -eq 0 ] && rm -rf "$PYTHON_ENV_HOME$1" && return 0
+    [ $? -eq 0 ] && rm -rf "$PYTHON_ENV_HOME/$1" && return 0
     return 1
 }
 
