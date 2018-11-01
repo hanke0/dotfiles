@@ -297,10 +297,11 @@ function tmux-kill() {
 }
 
 function tmux-default() {
-    if [[ -z $(tmux ls | cut -d: -f1 | grep default) ]]; then
-        tmux -2 new -n default -s default
+    local _user=$(whoami)
+    if [[ -z $(tmux ls | cut -d: -f1 | grep ${_user}) ]]; then
+        tmux -2 new -n ${_user} -s ${_user}
     else
-        tmux at -t default
+        tmux at -t ${_user}
     fi
 }
 
