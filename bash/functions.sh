@@ -296,12 +296,17 @@ function tmux-kill() {
     fi
 }
 
-function tmux-default() {
-    local _user=$(whoami)
-    if [[ -z $(tmux ls | cut -d: -f1 | grep ${_user}) ]]; then
-        tmux -2 new -n ${_user} -s ${_user}
+function tmux-start() {
+    local __session
+    if [ -z $1 ]; then
+        __session=$(whoami)
     else
-        tmux at -t ${_user}
+        __session=$1
+    fi
+    if [[ -z $(tmux ls | cut -d: -f1 | grep ${__session}) ]]; then
+        tmux -2 new -s ${__session}
+    else
+        tmux at -t ${__session}
     fi
 }
 
