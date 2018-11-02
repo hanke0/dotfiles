@@ -1,23 +1,3 @@
-alias cls='clear'
-alias ls='ls -G'
-alias ll='ls -l'
-alias la='ls -a'
-alias sv='brew services'
-alias cask='brew cask'
-alias env='conda env'
-cd ~
-
-# miniconda
-path=(
-    /usr/local/miniconda3/bin
-    $HOME/.local/bin
-    $path
-)
-fpath=(
-    $HOME/.zsh/ zsh-completions/src
-    $fpath
-)
-
 # 自动补全
 # autoload -U compinit
 # compinit
@@ -36,7 +16,7 @@ ttyctl -f
 autoload -U promptinit
 promptinit
 autoload -U colors && colors
-PROMPT="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%1~ %{$reset_color%}% # "
+PROMPT="%{$fg[yellow]%}%1~ %{$reset_color%}% # "
 
 # 目录栈（dirstack）dirs -v
 DIRSTACKFILE="$HOME/.cache/zsh/dirs"
@@ -59,11 +39,12 @@ setopt pushdminus
 zstyle ':completion:*' rehash true
 
 #Plugin
-source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[ -f "/usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] \
+    && source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] \
+    && source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 #auto suggest keyi
 bindkey '^p' autosuggest-accept
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
