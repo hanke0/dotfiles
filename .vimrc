@@ -76,11 +76,9 @@ endif
 
 "============================== 显示 ==============================
 if g:isGUI
-    set encoding=utf-8
     set guifont=Source\ Code\ Pro:h12
     set guioptions-=m     "禁止显示菜单
     set guioptions-=T     "禁止显示工具条
-    set mouse=a     "启用鼠标
 endif
 if g:isWin
     source $VIMRUNTIME/delmenu.vim     "解决菜单乱码
@@ -111,8 +109,6 @@ set tm=500
 
 "============================== 插件 ==============================
 call plug#begin('~/.vim/plugged')
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'  "<leader>cu 取消注释 <leader>cc 注释
 Plug 'vim-airline/vim-airline'
@@ -120,22 +116,8 @@ Plug 'vim-airline/vim-airline'
 "nerdtree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
-"ctrlpvim
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
-let g:ctrlp_working_path_mode = 'a'
-let g:ctrlp_custom_ignore = {
-    \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
-    \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
-    \ }
-if g:isWin
-    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'
-else
-    let g:ctrlp_user_command = 'find %s -type f'
-endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+nnoremap <C-n> :NERDTreeToggle<CR>    "目录
 
 call plug#end()
 
@@ -149,7 +131,6 @@ command W w !sudo tee % > /dev/null
 
 set pastetoggle=<F6>    "粘贴模式快捷键
 
-nnoremap <C-n> :NERDTreeToggle<CR>    "目录
 nnoremap <F2> :set relativenumber! relativenumber?<CR>     "相对行号
 nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>   "代码高亮
 nnoremap <F4> :set wrap! wrap?<CR>    "折行
