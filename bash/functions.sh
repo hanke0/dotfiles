@@ -102,8 +102,10 @@ function workon() {
     source "$PYTHON_ENV_HOME/$1/bin/activate"
 }
 
-complete -W "$(ls $PYTHON_ENV_HOME)" rmenv
-complete -W "$(ls $PYTHON_ENV_HOME)" workon
+if [[ `echo $0` = *bash* ]]; then
+    complete -W "$(ls $PYTHON_ENV_HOME)" rmenv
+    complete -W "$(ls $PYTHON_ENV_HOME)" workon
+fi
 
 function aenv() {
     local d=$1
@@ -310,7 +312,7 @@ function tmux-start() {
     fi
 }
 
-alias t=tmux-default
+alias t=tmux-start
 
 function my-rsync() {
     rsync -azchP \
