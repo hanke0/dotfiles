@@ -6,7 +6,7 @@ alias grep='grep --color'
 alias egrep='egrep --color'
 
 ls --color=auto >/dev/null 2>&1
-if [ $? == 0 ]; then
+if [[ $? -eq 0 ]]; then
     alias ls='ls --color=auto'
 else
     alias ls='ls -G'

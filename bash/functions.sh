@@ -8,7 +8,8 @@ function _read_yes() {
             return 0
         fi
     done
-    read -r -p "$1[yes/No] " input
+    echo -n "$1[yes/No] "
+    read input
     case $input in
     [yY][eE][sS] | [yY])
         return 0
@@ -54,11 +55,10 @@ function extract() {
 
 TRASH_DIR="$HOME/.trash"
 
+[[ ! -d "$TRASH_DIR" ]] && mkdir -p "$TRASH_DIR"
+
 # replace `rm`,  put files to trash instead of a real delete action
 function trash() {
-    if [ ! -d "$TRASH_DIR" ]; then
-        mkdir -p "$TRASH_DIR"
-    fi
     local i
     for i in $*; do
         if [[ ! $i =~ ^- ]]; then
@@ -77,24 +77,24 @@ function trash() {
 
 export PYTHON_ENV_HOME="$HOME/.virtualenvs"
 
-[ ! -d ${PYTHON_ENV_HOME} ] && mkdir ${PYTHON_ENV_HOME}
+[[ ! -d ${PYTHON_ENV_HOME} ]] && mkdir ${PYTHON_ENV_HOME}
 
 function mkenv() {
     local args=($@)
-    [ ! -a $PYTHON_ENV_HOME ] && mkdir -p $PYTHON_ENV_HOME
+    [[ ! -a $PYTHON_ENV_HOME ]] && mkdir -p $PYTHON_ENV_HOME
     virtualenv "$PYTHON_ENV_HOME/$1" ${args[@]:1}
     return $?
 }
 
 function rmenv() {
     _read_yes "Do you want to remove $1?" $*
-    [ $? -eq 0 ] && rm -rf "$PYTHON_ENV_HOME/$1" && return 0
+    [[ $? -eq 0 ]] && rm -rf "$PYTHON_ENV_HOME/$1" && return 0
     return 1
 }
 
 function workon() {
     local venv=$1
-    if [ -z $venv ]; then
+    if [[ -z $venv ]]; then
         echo "Chose one env:"
         ls $PYTHON_ENV_HOME
         return 0
@@ -102,22 +102,22 @@ function workon() {
     source "$PYTHON_ENV_HOME/$1/bin/activate"
 }
 
-if [[ `echo $0` = *bash* ]]; then
+if [[ `ps -p $$` = *bash* ]]; then
     complete -W "$(ls $PYTHON_ENV_HOME)" rmenv
     complete -W "$(ls $PYTHON_ENV_HOME)" workon
 fi
 
 function aenv() {
     local d=$1
-    if [ -z $d ]; then
+    if [[ -z $d ]]; then
         d="."
     fi
 
-    if [ -d "$d/.env" ]; then
+    if [[ -d "$d/.env" ]]; then
         source "$d/.env/bin/activate"
-    elif [ -d "$d/venv" ]; then
+    elif [[ -d "$d/venv" ]]; then
         source "$d/venv/bin/activate"
-    elif [ -d "$d/.venv" ]; then
+    elif [[ -d "$d/.venv" ]]; then
         source "$d/.venv/bin/activate"
     else
         echo "don't have env"
@@ -125,11 +125,11 @@ function aenv() {
 }
 
 function history-stat() {
-    if [ "$1" == "-h" ]; then
+    if [[ "$1" == "-h" ]]; then
         echo "stat history shell command, accept a number like head -n"
         return 1
     fi
-    if [ -n $1 ]; then
+    if [[ -n $1 ]]; then
         local __history_limit=$1
     else
         local __history_limit=10
@@ -140,7 +140,7 @@ function history-stat() {
 }
 
 function pidofport() {
-    if [ -z "$1" -o "$1" == "-h" ]; then
+    if [[ -z "$1" || "$1" = "-h" ]]; then
         echo "get pid of process listen on given port"
         return 1
     else
@@ -150,7 +150,7 @@ function pidofport() {
 }
 
 function cmdofpid() {
-    if [ -z "$1" -o "$1" == "-h" ]; then
+    if [[ -z "$1" || "$1" = "-h" ]]; then
         echo "get process command of given pid"
         return 1
     else
@@ -159,7 +159,7 @@ function cmdofpid() {
 }
 
 function topof() {
-    if [ -z "$1" -o "$1" == "-h" ]; then
+    if [[ -z "$1" || "$1" == "-h" ]]; then
         echo "top filter by command names"
     else
         top -c -p $(pgrep -d',' -f $1) -o PID
@@ -167,7 +167,7 @@ function topof() {
 }
 
 function memofpid() {
-    if [ $# != 2 ]; then
+    if [[ $# != 2 ]]; then
         echo "Usage(kb): memofpid [share|private|rss|pss|size] [pid]"
         return 1
     fi
@@ -209,13 +209,13 @@ function __kill_benchmark() {
 
 function benchmark() {
     set +m
-    if [ -z "$1" -o "$1" == "-h" ]; then
+    if [[ -z "$1" || "$1" == "-h" ]]; then
         echo "Usage: benchmark [-n10] command..."
         return 1
     else
         local currency=10
         local cmd i
-        if [ "${1:0:2}" == "-n" ]; then
+        if [[ "${1:0:2}" == "-n" ]]; then
             currency=${1#*n}
             cmd=${@:2}
         else
@@ -246,13 +246,13 @@ function benchmark() {
 
 function pip-remove() {
     local x=($@)
-    if [ "$1" == "-h" ]; then
+    if [[ "$1" == "-h" ]]; then
         echo "Usage: pip-remove [package] ..."
         echo "This will fully remove package and it's requires if no other package requires."
         return 1
     else
         local s=$(pip list --format=freeze --disable-pip-version-check | grep -i $1)
-        if [ -z "$s" ]; then
+        if [[ -z "$s" ]]; then
             echo "can't find package $1"
             return 1
         fi
@@ -300,7 +300,7 @@ function tmux-kill() {
 
 function tmux-start() {
     local __session
-    if [ -z $1 ]; then
+    if [[ -z $1 ]]; then
         __session=$(whoami)
     else
         __session=$1
@@ -322,6 +322,5 @@ function my-rsync() {
     --exclude "/**/.pytest_cache" --exclude "/**/.env" \
     --exclude "/**/.vscode" --exclude ".DS_Store" --exclude "Thumbs.db" \
     --exclude "*esktop.ini" --exclude "/**/*.code-workspace" \
-    --exclude "/**/sdist" \
-    $*
+    --exclude "/**/sdist" $@
 }
