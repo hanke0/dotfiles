@@ -324,3 +324,20 @@ function my-rsync() {
     --exclude "*esktop.ini" --exclude "/**/*.code-workspace" \
     --exclude "/**/sdist" $@
 }
+
+function saved() {
+    local d=($(\dirs -p)) i
+    echo -n >$HOME/.dirs.history
+    for i in ${d[@]:1}; do
+        echo $i >>$HOME/.dirs.history
+    done
+}
+
+function loadd() {
+    local i
+    for i in $(tac $HOME/.dirs.history); do
+        pushd -n $i
+    done
+}
+
+[[ -f $HOME/.dirs.history ]] && loadd >/dev/null
