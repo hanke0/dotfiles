@@ -1,0 +1,5 @@
+[yapf]
+based_on_style = facebook
+spaces_before_comment = 2
+COLUMN_LIMIT=99
+SPLIT_BEFORE_DOT=true
