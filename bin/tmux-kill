@@ -1,4 +1,4 @@
-#!env /bin/bash
+#!/usr/bin/env bash
 
 if [[ $# -eq 0 ]]; then
     tmux ls | grep : | cut -d: -f1 | xargs -I{} tmux kill-session -t {}

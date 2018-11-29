@@ -1,45 +1,73 @@
-#!env /bin/bash
+#!/usr/bin/env bash
 
-function pip-remove() {
-    local x=($@)
-    if [[ "$1" == "-h" ]]; then
-        echo "Usage: pip-remove [package] ..."
-        echo "This will fully remove package and it's requires if no other package requires."
+accept=
+_read_yes() {
+    [[ -n accept ]] && return 0
+    echo -n "$1[yes/No] "
+    read input
+    case $input in
+    [yY][eE][sS] | [yY])
+        return 0
+        ;;
+    *)
         return 1
-    else
-        local s=$(pip list --format=freeze --disable-pip-version-check | grep -i $1)
-        if [[ -z "$s" ]]; then
-            echo "can't find package $1"
-            return 1
-        fi
-        # other package requires
-        local Array2=($(pip list --format=freeze --disable-pip-version-check | grep -i -v $1 |
-            awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
-            awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
-        # package requires
-        local Array1=($(echo $s | awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
-            awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
+        ;;
+    esac
+}
 
-        # find package requires - other package requires
-        local Array3=() i skip
-        for i in "${Array1[@]}"; do
-            skip=
-            for j in "${Array2[@]}"; do
-                [[ $i == $j ]] && {
-                    skip=1
-                    break
-                }
-            done
-            [[ -n $skip ]] || Array3+=("$i")
+echo-help() {
+    echo "Usage: pip-remove [package] ..."
+    echo "This will fully remove package and it's requires if no other package requires."
+}
+
+remove-one() {
+    local s=$(pip list --format=freeze --disable-pip-version-check | grep -i $1)
+    if [[ -z "$s" ]]; then
+        echo "can't find package $1"
+        return 1
+    fi
+    # other package requires
+    local Array2=($(pip list --format=freeze --disable-pip-version-check | grep -i -v $1 |
+        awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
+        awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
+    # package requires
+    local Array1=($(echo $s | awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
+        awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
+
+    # find package requires - other package requires
+    local Array3=() i skip
+    for i in "${Array1[@]}"; do
+        skip=
+        for j in "${Array2[@]}"; do
+            [[ $i == $j ]] && {
+                skip=1
+                break
+            }
         done
-        _read_yes "Do you want delete $1?" ${x[@]}
-        [ $? -eq 0 ] && pip uninstall -y $*
-        if [ -n "${Array3[*]}" ]; then
-            for i in "${Array3[@]}"; do
-                pip-remove $i ${x[@]:1}
-            done
-        fi
+        [[ -n $skip ]] || Array3+=("$i")
+    done
+    _read_yes "Do you want delete $1?" ${x[@]}
+    [ $? -eq 0 ] && pip uninstall -y $*
+    if [ -n "${Array3[*]}" ]; then
+        for i in "${Array3[@]}"; do
+            pip-remove $i ${x[@]:1}
+        done
     fi
     return 0
 }
-pip-remove $@
+
+if [[ $# -eq 0 ]]; then
+    echo-help
+    exit 1
+fi
+
+while getopts ':hy' OPT; do
+    case $OPT in
+        h)
+            echo-help && exit 0;;
+        y)
+            echo y && accept=yes;;
+        ?)
+            echo args=$OPTARG 
+    esac
+done

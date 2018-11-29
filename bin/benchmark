@@ -1,4 +1,4 @@
-#!env /bin/bash
+#!/usr/bin/env bash
 
 function kill-jobs() {
     jobs -l | awk '{print $2}' | xargs kill
