@@ -1,34 +1,5 @@
-# han-vim
-My vim config
-
-## Installation
-### Shell
-```bash
-bash -c "$(curl -sSL https://raw.githubusercontent.com/ko-han/dotfiles/master/han-vim.sh)"
-```
-This will automatic open vim and run `:PlugInstall`. Maybe some error will occur at first time.
-After PlugInstall finished, close vim. Everything is fine now.
-### Manual
-- Download `.vimrc` to you home dir. you can use this command
-```bash
-curl -Lo ~/.vimrc https://raw.githubusercontent.com/ko-han/han-vim/master/.vimrc
-```
-- install vim-plug, you should check [vim-plug](https://github.com/junegunn/vim-plug). You can use this command
-```bash
-curl -Lo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-```
-- start vim by typing `vim`.
-- run `PlugInstall` to install plugins.
-
-# han-bashrc
-My bash config
-
-## Installation
-### Shell
-```bash
-bash -c "$(curl -sSL https://raw.githubusercontent.com/ko-han/dotfiles/master/han-bashrc.sh)"
-```
+# Start
+type `make all` to install. May run `PlugInstall` in vim to make sure vim plugin is installed.
 
 # Some useful command tools
 - [thefuck](https://github.com/nvbn/thefuck) Magnificent app which corrects your previous console command.

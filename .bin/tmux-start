@@ -1,0 +1,12 @@
+#!env /bin/bash
+
+if [[ -z $1 ]]; then
+    __session=$(whoami)
+else
+    __session=$1
+fi
+if [[ -z $(tmux ls | cut -d: -f1 | grep ${__session}) ]]; then
+    tmux -2 new -s ${__session}
+else
+    tmux at -t ${__session}
+fi
