@@ -1,0 +1,50 @@
+#!env /bin/bash
+
+function kill-jobs() {
+    jobs -l | awk '{print $2}' | xargs kill
+}
+
+function __kill_benchmark() {
+    [[ -e "./__pid_file_temp" ]] && cat "./__pid_file_temp" | xargs kill >/dev/null 2>&1
+    rm -f "./__pid_file_temp"
+    set -m
+}
+
+function benchmark() {
+    set +m
+    if [[ -z "$1" || "$1" == "-h" ]]; then
+        echo "Usage: benchmark [-n10] command..."
+        return 1
+    else
+        local currency=10
+        local cmd i
+        if [[ "${1:0:2}" == "-n" ]]; then
+            currency=${1#*n}
+            cmd=${@:2}
+        else
+            cmd=$*
+        fi
+        [[ -e "./__pid_file_temp" ]] && rm "./__pid_file_temp"
+        echo "COMMAND: $cmd"
+        echo "START $currency jobs"
+        echo
+        trap __kill_benchmark SIGINT
+        trap __kill_benchmark SIGTERM
+
+        for ((i = 1; i < ($currency + 1); i++)); do
+            {
+                local __cost=$(/usr/bin/time -p $cmd 2>&1 | grep real | awk '{print $2}')
+                echo "$(printf "%03d" $i) finish cost $__cost"
+                echo $! >__pid_file_temp
+            } &
+            echo "$(printf "%03d" $i) start"
+        done
+        wait
+
+        __kill_benchmark
+        echo
+        echo FINISH!
+    fi
+}
+
+benchmark $@

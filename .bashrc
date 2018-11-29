@@ -37,9 +37,9 @@ __git_branch() {
     git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 if [[ $(id -u) -eq 0 ]]; then
-    PS1='[\[\e[31m\]\u@\h\[\e[m\]:\w]\[\e[34m\]$(__git_branch)\[\e[m\]\[\e[1m\] \\$ \[\e[m\]'
+    PS1='[\[\e[31m\]\u\[\e[m\]@\[\e[36m\]\h\[\e[m\]:\[\e[33m\]\w\[\e[m\]]\[\e[34m\]$(__git_branch)\[\e[m\]\n\[\e[35m\]» \[\e[m\]'
 else
-    PS1='[\[\e[34m\]\u@\h\[\e[m\]:\w]\[\e[34m\]$(__git_branch)\[\e[m\]\[\e[1m\] \\$ \[\e[m\]'
+    PS1='[\[\e[32m\]\u\[\e[m\]@\[\e[36m\]\h\[\e[m\]:\[\e[33m\]\w\[\e[m\]]\[\e[34m\]$(__git_branch)\[\e[m\]\n\[\e[35m\]» \[\e[m\]'
 fi
 
 if [ -f /etc/bash_completion ]; then
@@ -49,5 +49,5 @@ elif [ -f /usr/share/bash-completion/bash_completion ]; then
 elif [ -f /usr/local/etc/bash_completion ]; then
     . /usr/local/etc/bash_completion >/dev/null 2>&1
 fi
-
 [ -f ~/.z.sh ] && source ~/.z.sh >/dev/null 2>&1
+[ -f ~/.alias ] && . ~/.alias

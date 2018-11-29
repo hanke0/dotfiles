@@ -46,5 +46,3 @@ zstyle ':completion:*' rehash true
 
 #auto suggest keyi
 bindkey '^p' autosuggest-accept
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
