@@ -3,7 +3,7 @@ help:
 	@echo 'type `make all` to install.'
 
 .PHONY: all
-all: bash git tmux zsh conda bin config
+all: bash git tmux zsh conda bin
 
 .PHONY: bash
 bash:
@@ -36,7 +36,3 @@ conda:
 .PHONY: bin
 bin:
 	@ln -siv $(CURDIR)/bin $(HOME)/.bin
-
-.PHONY: config
-config:
-	@ln -siv $(CURDIR)/config $(HOME)/.config
