@@ -50,9 +50,6 @@ setup(
     zip_safe=False,
 )" >${ROOT_PATH}/setup.py
 
-echo "include requirements.txt
-include README.md
-" >${ROOT_PATH}/MANIFEST.in
 
 echo "from .version import __version__" >${ROOT_PATH}/${PACKAGE}/__init__.py
 echo "__version__ = \"0.0.1\"" >${ROOT_PATH}/${PACKAGE}/version.py
@@ -123,4 +120,4 @@ install:
 
 .PHONY: upload
 upload:
-	twine upload dist/* --skip-existing -r $(r)" >${ROOT_PATH}/Makefile
+	twine upload dist/* --skip-existing -r \$(r)" >${ROOT_PATH}/Makefile

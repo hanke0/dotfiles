@@ -1,5 +1,9 @@
-# Start
-type `make all` to install. May run `PlugInstall` in vim to make sure vim plugin is installed.
+# How to Start
+```bash
+git clone --progress  https://github.com/ko-han/dotfiles.git ~/.dotfiles \
+    && cd ~/.dotfiles \
+    && make all
+```
 
 # Some useful command tools
 - [thefuck](https://github.com/nvbn/thefuck) Magnificent app which corrects your previous console command.
