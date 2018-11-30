@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+if [[ -z $1 ]]; then
+    echo "Usage: pystart [ROOT_PATH]"
+    exit 0
+fi
+
+ROOT_PATH=$1
+PACKAGE=$(basename ${ROOT_PATH})
+
+if [ ${ROOT_PATH:-1} = '/' ]; then
+    echo 'path should not be end with /'
+    exit 1
+fi
+
+[[ -d ${ROOT_PATH} ]] && echo ${ROOT_PATH} exists! && exit 2
+
+mkdir -p ${ROOT_PATH}/${PACKAGE}
+
+echo "# -*- coding: utf-8 -*-
+import os
+from setuptools import setup, find_packages
+
+
+def readfile(file):
+    with open(file, \"rt\") as f:
+        return f.read()
+
+with open(os.path.join(\"${PACKAGE}\", \"version.py\"), \"rt\") as f:
+    d = {}
+    exec(f.read(), d, d)
+    version = d[\"__version__\"]
+
+setup(
+    name=\"${PACKAGE}\",
+    version=version,
+    include_package_data=True,
+    packages=find_packages(),
+    install_requires=[],
+    package_data={},
+    python_requires=\">=3\",
+    classifiers=[
+        \"Programming Language :: Python\",
+        \"Programming Language :: Python :: 3\",
+        \"Programming Language :: Python :: 3.4\",
+        \"Programming Language :: Python :: 3.5\",
+        \"Programming Language :: Python :: 3.6\",
+        \"Programming Language :: Python :: 3.7\",
+    ],
+    zip_safe=False,
+)" >${ROOT_PATH}/setup.py
+
+echo "include requirements.txt
+include README.md
+" >${ROOT_PATH}/MANIFEST.in
+
+echo "from .version import __version__" >${ROOT_PATH}/${PACKAGE}/__init__.py
+echo "__version__ = \"0.0.1\"" >${ROOT_PATH}/${PACKAGE}/version.py
+
+touch ${ROOT_PATH}/README.md
+
+echo "[tox]
+envlist = py27,py34,py35,py36,py37
+indexserver =
+    default = https://mirrors.ustc.edu.cn/pypi/web/simple
+
+[testenv]
+deps =
+    pytest
+    pytest-cov
+commands = pytest --cov=${PACKAGE} tests/
+
+[testenv:flake8]
+deps =
+    flake8
+    flake8-colors
+commands =
+    flake8 ${PACKAGE} setup.py
+
+[testenv:pep8]
+deps =
+    flake8
+    flake8-colors
+commands =
+    flake8 ${PACKAGE} setup.py
+
+[pytest]
+addopts = -p no:warnings
+
+[flake8]
+exclude =
+    .tox,
+    .git,
+    __pycache__,
+    build,
+    dist,
+    *.pyc,
+    *.egg-info,
+    .cache,
+    .eggs
+max-complexity = 15
+max-line-length=99
+format = ${cyan}%(path)s${reset}:${yellow_bold}%(row)d${reset}:${green_bold}%(col)d${reset}: ${red_bold}%(code)s${reset} %(text)s
+" >${ROOT_PATH}/tox.ini
+
+echo ".PHONY: build
+build:
+
+.PHONY: clean
+clean:
+	@find . -name *.egg-info -exec rm -rf {} +
+	@find . -name '*.pyc' -exec rm -f {} +
+	@find . -name '*.pyo' -exec rm -f {} +
+	@find . -name '*~' -exec rm -f {} +
+
+.PHONY: clean-all
+clean-all: clean
+	@rm -rf dist build
+
+.PHONY: install
+install:
+	@pip install .
+
+.PHONY: upload
+upload:
+	twine upload dist/* --skip-existing -r $(r)" >${ROOT_PATH}/Makefile
