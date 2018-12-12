@@ -5,9 +5,6 @@
 "        /_/ /_/\__,_/_/ /_/    |___/_/_/ /_/ /_/
 "
 "
-" Q: How to use it?
-" A: bash -c "$(curl -sSL https://github.com/ko-han/dotfiles/blob/master/han-vim.sh)"
-"
 
 
 "============================== 通用 ==============================
