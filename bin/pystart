@@ -101,9 +101,10 @@ max-line-length=99
 format = ${cyan}%(path)s${reset}:${yellow_bold}%(row)d${reset}:${green_bold}%(col)d${reset}: ${red_bold}%(code)s${reset} %(text)s
 " >${ROOT_PATH}/tox.ini
 
-echo ".PHONY: build
+echo "args='sdist'
+.PHONY: build
 build:  ## Build a distribute
-	@python setup.py sdist bdist_wheel
+	@python setup.py $(args)
 
 .PHONY: clean
 clean:   ## Clean cache
@@ -119,10 +120,6 @@ clean-all: clean  ## Clean all cache, include distribute
 .PHONY: install
 install:  ## Install to local storage
 	@pip install .
-
-.PHONY: upload
-upload:  ## Upload to pypi
-	twine upload dist/* --skip-existing -r \$(r)
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
