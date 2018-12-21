@@ -9,8 +9,6 @@ bash:  ## install bash config
 .PHONY: vim
 vim: ## install vim config
 	@ln -siv $(CURDIR)/vimrc $(HOME)/.vimrc
-	@[ ! -f "~/.vim/autoload/plug.vim" ] && curl -S --progress -o ~/.vim/autoload/plug.vim --create-dirs \
-    	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 .PHONY: git
 git:  ## install git config

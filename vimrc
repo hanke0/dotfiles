@@ -37,16 +37,14 @@ set winaltkeys=no    "ALT不映射到菜单栏
 set nobomb    "去掉 BOM
 set fileencodings=utf-8
 set encoding=utf-8
+set completeopt=preview,menu
+set clipboard+=unnamed  " 共享剪贴板
 
 set autoread    "文件自动检测外部更改
 autocmd BufWritePost $MYVIMRC source $MYVIMRC   "让配置变更立即生效
 
 "some stuff to get the mouse going in term
 set mouse=a
-if !has("nvim")
-    set ttymouse=xterm2
-endif
-
 set nofoldenable
 
 "运行环境判断
@@ -87,8 +85,8 @@ endif
 
 set t_Co=256
 set splitright  "新分割窗口在右边
-set hlsearch  "高亮搜索词
-set cursorline  "突出显示当前行
+"set hlsearch  "高亮搜索词
+"set cursorline  "突出显示当前行
 set colorcolumn=99  "80字符限制线
 set nowrap        "折行
 set shortmess=a    "不显示一些东西如乌干达儿童提示
@@ -103,34 +101,61 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" 命令行（在状态行下）的高度，默认为1，这里是2
+set cmdheight=2
 
-"============================== 插件 ==============================
-call plug#begin('~/.vim/plugged')
-Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/nerdcommenter'  "<leader>cu 取消注释 <leader>cc 注释
-Plug 'vim-airline/vim-airline'
+set laststatus=2
+let g:currentmode={
+      \ 'n'  : 'NORMAL ',
+      \ 'no' : 'N·Operator Pending ',
+      \ 'v'  : 'VISUAL ',
+      \ 'V'  : 'V·Line ',
+      \ 'x22' : 'V·Block ',
+      \ 's'  : 'Select ',
+      \ 'S'  : 'S·Line ',
+      \ 'x19' : 'S·Block ',
+      \ 'i'  : 'INSERT ',
+      \ 'R'  : 'REPLACE ',
+      \ 'Rv' : 'V·Replace ',
+      \ 'c'  : 'COMMAND ',
+      \ 'cv' : 'Vim Ex ',
+      \ 'ce' : 'Ex ',
+      \ 'r'  : 'PORMAT ',
+      \ 'rm' : 'MORE ',
+      \ 'r?' : 'CONFIRM ',
+      \ '!'  : 'SHELL ',
+      \ 't'  : 'TERMIANL '
+      \}
+function! PasteForStatusline()
+    let paste_status = &paste
+    if paste_status == 1
+        return "[PASTE] "
+    else
+        return ""
+    endif
+endfunction
+set statusline+=%1*\ %{g:currentmode[mode()]}   " Current mode
+set statusline+=%{PasteForStatusline()}       " paste flag
+set statusline+=%2*\ %F%m%r%h%w
+set statusline+=\ %3*%=
+set statusline+=[FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]
+"[ASCII=\%03.3b]\ [HEX=\%02.2B]
 
-"nerdtree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-nnoremap <C-n> :NERDTreeToggle<CR>    "目录
-
-call plug#end()
-
+hi User1 ctermbg=red    ctermfg=white
+hi User2 ctermbg=black  ctermfg=white
+hi User3 ctermbg=black  ctermfg=green
 
 "============================== 快捷键 ==============================
 let mapleader = ","
 
-" :W sudo saves the file 
+" :W sudo saves the file
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
 
 set pastetoggle=<F6>    "粘贴模式快捷键
 
-nnoremap <F2> :set relativenumber! relativenumber?<CR>     "相对行号
-nnoremap <F3> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>   "代码高亮
-nnoremap <F4> :set wrap! wrap?<CR>    "折行
+nnoremap <F2> :set number! number?<CR>     "相对行号
+nnoremap <F3> :set wrap! wrap?<CR>    "折行
 nnoremap <leader>w :%s/\s\+$//<cr>:let @/=''<CR>    "strip all trailing whitespace in the current file
 nnoremap <leader>W :w !sudo tee % > /dev/null<CR>  " Save a file as root (,W)
 nnoremap <leader><Tab> <C-w><C-w>  " 方便切换 splits
@@ -142,11 +167,12 @@ nnoremap <leader>z za         "打开/关闭当前的折叠
 nnoremap <leader>x :x<CR>     "保存退出
 nnoremap <leader>q :q<CR>     "退出
 
-inoremap <c-h> <ESC>I         "光标移当前行行首
-inoremap <c-j> <ESC><Down>I   "光标移下一行行首
-inoremap <c-k> <ESC><Up>A     "光标移上一行行尾
-inoremap <c-l> <ESC>A         "光标移当前行行尾
+inoremap <C-h> <ESC>I         "光标移当前行行首
+inoremap <C-j> <ESC><Down>I   "光标移下一行行首
+inoremap <C-k> <ESC><Up>A     "光标移上一行行尾
+inoremap <C-l> <ESC>A         "光标移当前行行尾
 
 vnoremap <C-c> "+y        "选中状态下 Ctrl+c 复制
 vnoremap <C-v> "+gP       "选中状态下 Ctrl+v 粘贴
 vnoremap <leader>z zf     "折叠选中文本
+
