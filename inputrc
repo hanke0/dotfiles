@@ -2,3 +2,12 @@
 "\e[B": history-search-forward
 "\e[C": forward-char
 "\e[D": backward-char
+# kvt:
+"\e[H":beginning-of-line
+"\e[F":end-of-line
+# rxvt and konsole (i.e. the KDE-app...)
+"\e[7~":beginning-of-line
+"\e[8~":end-of-line
+# for linux console
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line

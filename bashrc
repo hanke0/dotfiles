@@ -22,8 +22,8 @@ export HISTCONTROL=ignoreboth
 shopt -s checkwinsize
 shopt -s cdspell
 export EDITOR='vim'
-#export TERM=xterm-256color
-export TERM=screen-256color
+export TERM=xterm-256color
+#export TERM=screen-256color
 export GPG_TTY=$(tty)
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
 # * Recursive globbing, e.g. `echo **/*.txt`
