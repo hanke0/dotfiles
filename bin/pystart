@@ -6,9 +6,11 @@ if [[ -z $1 ]]; then
 fi
 
 ROOT_PATH=$1
-PACKAGE=$(basename ${ROOT_PATH})
+PACKAGE_NAME=$(basename ${ROOT_PATH} | sed s/_/-/g)
+PACKAGE=$(echo ${PACKAGE_NAME} | sed s/-/_/g)
 
-if [ ${ROOT_PATH:-1} = '/' ]; then
+
+if [[ ${ROOT_PATH:-1} = '/' ]]; then
     echo 'path should not be end with /'
     exit 1
 fi
@@ -17,28 +19,31 @@ fi
 
 mkdir -p ${ROOT_PATH}/${PACKAGE}
 
+touch ${ROOT_PATH}/README.md
+
+echo "# -*- coding: utf-8 -*-
+__version__ = \"0.0.1\"
+" >${ROOT_PATH}/${PACKAGE}/__init__.py
+
 echo "# -*- coding: utf-8 -*-
 import os
+import re
 from setuptools import setup, find_packages
 
 
-def readfile(file):
-    with open(file, \"rt\") as f:
-        return f.read()
+with open(os.path.join(\"${PACKAGE}\", \"__init__.py\"), \"rt\") as f:
+    value = f.read()
+    match = re.search(r\"\"\"__version__ ?= ?[\"'](?P<version>.+?)[\"']\s*\$\"\"\", value)
+    version = match.groupdict()[\"version\"]
 
-
-with open(os.path.join(\"${PACKAGE}\", \"version.py\"), \"rt\") as f:
-    d = {}
-    exec(f.read(), d, d)
-    version = d[\"__version__\"]
 
 setup(
-    name=\"${PACKAGE}\",
+    name=\"${PACKAGE_NAME}\",
     version=version,
-    include_package_data=True,
     packages=find_packages(),
     install_requires=[],
-    package_data={},
+    extras_require={\"dev\": [\"pytest\"]},
+    package_data={\"${PACKAGE}\": [\"*\"]},
     python_requires=\">=3\",
     classifiers=[
         \"Programming Language :: Python\",
@@ -52,59 +57,10 @@ setup(
 )" >${ROOT_PATH}/setup.py
 
 
-echo "from .version import __version__" >${ROOT_PATH}/${PACKAGE}/__init__.py
-echo "__version__ = \"0.0.1\"" >${ROOT_PATH}/${PACKAGE}/version.py
-
-touch ${ROOT_PATH}/README.md
-
-echo "[tox]
-envlist = py27,py34,py35,py36,py37
-indexserver =
-    default = https://mirrors.ustc.edu.cn/pypi/web/simple
-
-[testenv]
-deps =
-    pytest
-    pytest-cov
-commands = pytest --cov=${PACKAGE} tests/
-
-[testenv:flake8]
-deps =
-    flake8
-    flake8-colors
-commands =
-    flake8 ${PACKAGE} setup.py
-
-[testenv:pep8]
-deps =
-    flake8
-    flake8-colors
-commands =
-    flake8 ${PACKAGE} setup.py
-
-[pytest]
-addopts = -p no:warnings
-
-[flake8]
-exclude =
-    .tox,
-    .git,
-    __pycache__,
-    build,
-    dist,
-    *.pyc,
-    *.egg-info,
-    .cache,
-    .eggs
-max-complexity = 15
-max-line-length=99
-format = ${cyan}%(path)s${reset}:${yellow_bold}%(row)d${reset}:${green_bold}%(col)d${reset}: ${red_bold}%(code)s${reset} %(text)s
-" >${ROOT_PATH}/tox.ini
-
-echo "args='sdist'
+echo "BUILDFLAGS='sdist'
 .PHONY: build
 build:  ## Build a distribute
-	@python setup.py $(args)
+	@python setup.py \$(BUILDFLAGS)
 
 .PHONY: clean
 clean:   ## Clean cache
@@ -120,6 +76,10 @@ clean-all: clean  ## Clean all cache, include distribute
 .PHONY: install
 install:  ## Install to local storage
 	@pip install .
+
+.PHONY: test
+test:  ## Unit test
+    @pytest  -p no:warnings .
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
