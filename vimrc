@@ -44,7 +44,7 @@ set autoread    "文件自动检测外部更改
 autocmd BufWritePost $MYVIMRC source $MYVIMRC   "让配置变更立即生效
 
 "some stuff to get the mouse going in term
-set mouse=a
+"set mouse=a
 set nofoldenable
 
 "运行环境判断
