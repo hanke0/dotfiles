@@ -50,5 +50,5 @@ elif [ -f /usr/share/bash-completion/bash_completion ]; then
 elif [ -f /usr/local/etc/bash_completion ]; then
     . /usr/local/etc/bash_completion >/dev/null 2>&1
 fi
-[ -f ~/.z.sh ] && source ~/.z.sh >/dev/null 2>&1
+[ -f /usr/local/etc/profile.d/z.sh ] && source /usr/local/etc/profile.d/z.sh >/dev/null 2>&1
 [ -f ~/.alias ] && . ~/.alias
