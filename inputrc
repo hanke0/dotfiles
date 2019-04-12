@@ -1,8 +1,8 @@
 $include /etc/inputrc
-"\e[A": history-search-backward
-"\e[B": history-search-forward
-"\e[C": forward-char
-"\e[D": backward-char
+"\e[B": history-search-forward  # down
+"\e[A": history-search-backward # up
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
 # kvt:
 "\e[H":beginning-of-line
 "\e[F":end-of-line
