@@ -1,89 +1,39 @@
 #!/usr/bin/env bash
+set -e
 
 if [[ -z $1 ]]; then
-    echo "Usage: pystart [ROOT_PATH]"
+    echo "Usage: pystart [PACKAGE_FULL_PATH]"
     exit 0
 fi
+echo $0
+SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
 
-ROOT_PATH=$1
-PACKAGE_NAME=$(basename ${ROOT_PATH} | sed s/_/-/g)
-PACKAGE=$(echo ${PACKAGE_NAME} | sed s/-/_/g)
+case $1 in
+  /*) USER_INPUT=${USER_INPUT};;
+  *) USER_INPUT=$PWD/$1;;
+esac
 
+ROOT_PATH=$(dirname ${USER_INPUT})
 
-if [[ ${ROOT_PATH:-1} = '/' ]]; then
-    echo 'path should not be end with /'
-    exit 1
-fi
+PACKAGE_NAME=$(basename ${USER_INPUT} | sed s/_/-/g)
 
-[[ -d ${ROOT_PATH} ]] && echo ${ROOT_PATH} exists! && exit 2
+PACKAGE=${PACKAGE_NAME//-/_}
 
-mkdir -p ${ROOT_PATH}/${PACKAGE}
+FULL_PATH=${ROOT_PATH}/${PACKAGE_NAME}
 
-touch ${ROOT_PATH}/README.md
+[[ -d ${FULL_PATH} ]] && echo ${FULL_PATH} exists! && exit 2
+
+mkdir -p ${FULL_PATH}/${PACKAGE}
 
 echo "# -*- coding: utf-8 -*-
-__version__ = \"0.0.1\"
-" >${ROOT_PATH}/${PACKAGE}/__init__.py
+__version__ = \"0.0.1\"" > ${FULL_PATH}/${PACKAGE}/__init__.py
 
-echo "# -*- coding: utf-8 -*-
-import os
-import re
-from setuptools import setup, find_packages
+cp -r ${SHELL_FOLDER}/.pystart/ ${FULL_PATH}/
 
-
-with open(os.path.join(\"${PACKAGE}\", \"__init__.py\"), \"rt\") as f:
-    value = f.read()
-    match = re.search(r\"\"\"__version__ ?= ?[\"'](?P<version>.+?)[\"']\s*\$\"\"\", value)
-    version = match.groupdict()[\"version\"]
-
-
-setup(
-    name=\"${PACKAGE_NAME}\",
-    version=version,
-    packages=find_packages(),
-    install_requires=[],
-    extras_require={\"dev\": [\"pytest\"]},
-    package_data={\"${PACKAGE}\": [\"*\"]},
-    python_requires=\">=3\",
-    classifiers=[
-        \"Programming Language :: Python\",
-        \"Programming Language :: Python :: 3\",
-        \"Programming Language :: Python :: 3.4\",
-        \"Programming Language :: Python :: 3.5\",
-        \"Programming Language :: Python :: 3.6\",
-        \"Programming Language :: Python :: 3.7\",
-    ],
-    zip_safe=False,
-)" >${ROOT_PATH}/setup.py
-
-
-echo "BUILDFLAGS='sdist'
-.PHONY: build
-build:  ## Build a distribute
-	@python setup.py \$(BUILDFLAGS)
-
-.PHONY: clean
-clean:   ## Clean cache
-	@find . -name *.egg-info -exec rm -rf {} +
-	@find . -name '*.pyc' -exec rm -f {} +
-	@find . -name '*.pyo' -exec rm -f {} +
-	@find . -name '*~' -exec rm -f {} +
-
-.PHONY: clean-all
-clean-all: clean  ## Clean all cache, include distribute
-	@rm -rf dist build
-
-.PHONY: install
-install:  ## Install to local storage
-	@pip install .
-
-.PHONY: test
-test:  ## Unit test
-    @pytest  -p no:warnings .
-
-# Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-.PHONY: help
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*\$\$' \$(MAKEFILE_LIST) | awk 'BEGIN {FS = \":.*?## \"}; {printf \"\033[36m%-30s\033[0m %s\n\", \$\$1, \$\$2}'
-
-.DEFAULT_GOAL := build" >${ROOT_PATH}/Makefile
+for P in '/scripts' '/etc' '/etc/supervisord.d' ''; do
+    PATH=${FULL_PATH}${P}
+    for F in $(/bin/ls ${PATH}); do
+        [[ ! -f "${PATH}/$F" ]] && continue
+        /usr/bin/sed "s/example/${PACKAGE_NAME}/g" "${PATH}/$F" | /usr/bin/tee "${PATH}/$F" >/dev/null
+    done
+done
