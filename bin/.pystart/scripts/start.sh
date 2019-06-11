@@ -99,10 +99,10 @@ echo-around "Python Path: ${PYTHON_BIN_PATH}"
 
 case ${cmd} in
     celery)
-         ${PYTHON_BIN_PATH}/celery -A rqscenario_analysis.server.celery worker --hostname worker-${PACKAGE}-${RANDOM}@%h $@
+         ${PYTHON_BIN_PATH}/celery -A example.server.celery worker --hostname worker-${PACKAGE}-${RANDOM}@%h $@
         ;;
     server)
-        ${PYTHON_BIN_PATH}/gunicorn --worker-class="meinheld.gmeinheld.MeinheldWorker" rqscenario_analysis.server.flask:app $@
+        ${PYTHON_BIN_PATH}/gunicorn --worker-class="meinheld.gmeinheld.MeinheldWorker" example.server.flask:app $@
         ;;
     *)
         >&2 echo 'Unknown Command'
