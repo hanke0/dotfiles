@@ -29,9 +29,16 @@ run-as-user() {
     su -s /bin/bash -g $1 $1  -c "$2"
 }
 
+user-name() {
+    s=$(id $1 | awk '{print $1}' | awk -F= '{print $2}' | awk -F'(' '{print $2}')
+    echo ${s:0:-1}
+}
+
 chown -R 1000:1000 ${REMOTE_ROOT}/${PACKAGE}
 
-run-as-user 1000 "
+runuser=$(user-name 1000)
+
+run-as-user ${runuser}  "
     cd /home/rice/projects/${PACKAGE} \
     && source /home/rice/.bashrc \
     && source activate ${PACKAGE} \
