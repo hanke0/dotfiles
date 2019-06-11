@@ -3,7 +3,7 @@ set -e
 
 PACKAGE=example
 PACKAGE_UPPER=$(echo ${PACKAGE} | tr '[:lower:]' '[:upper:]')
-CONFIG=${PACKAGE_UPPER//-/-}_CONFIG
+CONFIG=${PACKAGE_UPPER//-/_}_CONFIG
 
 echo-around() {
     local n=$((${#1} + 6))
