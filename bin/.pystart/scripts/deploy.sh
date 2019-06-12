@@ -3,20 +3,21 @@ set -e
 
 # NOTE: Run this script in project directory!!
 PACKAGE=example
+MODULE=${PACKAGE//-/_}
 REMOTE_ROOT=/home/rice/projects
 DEVELOP_PWD=example
 DEVELOP_HOST=example
 
 tag=$(git log --pretty=%h -1)
-basic_version=$(grep -E -o '__version__ = ".*"' ${PACKAGE//-/_}/__init__.py | sed 's/__version__ //g' | sed 's/"//g' | sed 's/= //g')
+basic_version=$(grep -E -o '__version__ = ".*"' ${MODULE}/__init__.py | sed 's/__version__ //g' | sed 's/"//g' | sed 's/= //g')
 version=${basic_version}.dev${tag}
 
 build-dev() {
-    sed -iabc -e s/__version__\ =.*/__version__\ =\ \"${version}\"/ ${PACKAGE//-/_}/__init__.py
-    rm -f ${PACKAGE//-/_}/__init__.pyabc
-    grep __version__ ${PACKAGE//-/_}/__init__.py
+    sed -iabc -e s/__version__\ =.*/__version__\ =\ \"${version}\"/ ${MODULE}/__init__.py
+    rm -f ${MODULE}/__init__.pyabc
+    grep __version__ ${MODULE}/__init__.py
     python setup.py -q sdist
-    git checkout -- ${PACKAGE//-/_}/__init__.py
+    git checkout -- ${MODULE}/__init__.py
 }
 
 develop() {

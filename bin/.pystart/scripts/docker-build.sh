@@ -3,6 +3,7 @@
 set -e
 
 PACKAGE=example
+MODULE=${PACKAGE//-/_}
 [[ -n $1 ]] && DOCKER_HUB_URL=$1
 [[ -n $2  ]] && DOCKER_IMAGE_TAG=$2
 
@@ -32,7 +33,7 @@ echo-around() {
 [[ -z ${DOCKER_HUB_URL} ]] && error-exit 'empty docker-hub-url, use environment 'DOCKER_HUB_URL' or positional argument.'
 
 
-PACKAGE_VERSION=$(grep -o -E "__version__ ?= ?[\'\"].+[\'\"]" ${PACKAGE//-/_}/__init__.py  | awk -F= '{print $2}' | sed s/\"//g | sed s/\'//g | sed s/\ //g)
+PACKAGE_VERSION=$(grep -o -E "__version__ ?= ?[\'\"].+[\'\"]" ${MODULE}/__init__.py  | awk -F= '{print $2}' | sed s/\"//g | sed s/\'//g | sed s/\ //g)
 
 [[ -z ${DOCKER_IMAGE_TAG} ]] && DOCKER_IMAGE_TAG=${PACKAGE_VERSION}
 

@@ -2,8 +2,9 @@
 set -e
 
 PACKAGE=example
-PACKAGE_UPPER=$(echo ${PACKAGE} | tr '[:lower:]' '[:upper:]')
-CONFIG=${PACKAGE_UPPER//-/_}_CONFIG
+MODULE=${PACKAGE//-/_}
+MODULE_UPPER=$(echo ${MODULE} | tr '[:lower:]' '[:upper:]')
+CONFIG=${MODULE_UPPER}_CONFIG
 
 echo-around() {
     local n=$((${#1} + 6))
@@ -99,10 +100,10 @@ echo-around "Python Path: ${PYTHON_BIN_PATH}"
 
 case ${cmd} in
     celery)
-         ${PYTHON_BIN_PATH}/celery -A example.server.celery worker --hostname worker-${PACKAGE}-${RANDOM}@%h $@
+         ${PYTHON_BIN_PATH}/celery -A ${MODULE}.server.celery worker --hostname worker-${PACKAGE}-${RANDOM}@%h $@
         ;;
     server)
-        ${PYTHON_BIN_PATH}/gunicorn --worker-class="meinheld.gmeinheld.MeinheldWorker" example.server.flask:app $@
+        ${PYTHON_BIN_PATH}/gunicorn --worker-class="meinheld.gmeinheld.MeinheldWorker" ${MODULE}.server.flask:app $@
         ;;
     *)
         >&2 echo 'Unknown Command'

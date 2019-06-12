@@ -3,6 +3,7 @@ set -e
 
 version=$1
 PACKAGE=example
+MODULE=${PACKAGE//-/_}
 REMOTE_ROOT=/root/projects
 [[ -z ${version} ]] && >&2 echo version needed && exit 1
 
