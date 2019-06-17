@@ -96,7 +96,7 @@ if [[ -z ${PYTHON_BIN_PATH} ]]; then
 fi
 
 echo-around "Python Path: ${PYTHON_BIN_PATH}"
-
+echo-around "Config Path: ${!CONFIG}"
 
 case ${cmd} in
     celery)
