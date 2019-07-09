@@ -4,23 +4,23 @@
 [alias]
     lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
-    filelog = log -u
     fl = log -u
-    dlc = diff --cached HEAD^
+
     la = "!git config -l | grep alias | cut -c 7-"
+
     cp = cherry-pick
     st = status
     cl = clone
     ci = commit
     cm = commit -m
     co = checkout
-    br = branch 
-    diff = diff --word-diff
-    dc = diff --cached
+    br = branch
+
     ad = add
     sl = stash list
     sa = stash apply
-    ss = stash save
+    ss = stash push
+    sp = stash pop
 
     s = status -s
     d = pull --rebase
@@ -32,16 +32,16 @@
     dev = checkout develop
     
     last = log -1 HEAD
-    
-[alias]
-  showtool = "!f() { git difftool $1^ $1; }; f"
-  added = difftool --cached
+
+    dc = diff --cached
+    da = difftool --cached
+
 [diff]
   tool = icdiff
 [difftool]
   prompt = false
 [difftool "icdiff"]
-  cmd = /usr/bin/icdiff --line-numbers $LOCAL $REMOTE
+  cmd = icdiff --line-numbers --highlight $LOCAL $REMOTE
 [pager]
   difftool = true
 [merge]
