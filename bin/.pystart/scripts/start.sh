@@ -53,41 +53,46 @@ fi
 
 echo-around "LD_PRELOAD=$LD_PRELOAD"
 
-shift_num=0
-c_set=
-p_set=
-while 2>/dev/null getopts "c:hp:" opt
-do
-    case ${opt} in
-        c)
-            if [[ -z ${c_set} ]]; then
-                if [[ -e $OPTARG ]]; then
-                    export ${CONFIG}=$OPTARG
-                else
-                    echo "Config file not exist"
-                    exit 1
-                fi
-                shift_num=$((${shift_num} + 2))
-                c_set=1
-            fi
-            ;;
-        h)
-            usage
-            exit 0
-            ;;
-        p)
-            if [[ -z ${p_set} ]]; then
-                export PYTHON_BIN_PATH=$OPTARG
-                shift_num=$((${shift_num} + 2))
-                p_set=1
-            fi
-            ;;
-        :|?)
-           ;;
-    esac
-done
 
-[[ ${shift_num} -ne 0 ]] && shift ${shift_num}
+stop=0
+
+while [[ stop -eq 0 ]]
+do
+    case $1 in
+        -c)
+            if [[ -e $2 ]]; then
+                export ${CONFIG}=$2
+            else
+                echo "Config file not exist"
+                exit 1
+            fi
+            shift 2
+            ;;
+        -h)
+            usage
+            exit 1
+            ;;
+        -p)
+            if [[ -d $2 ]]; then
+                export PYTHON_BIN_PATH=$2
+            else
+                echo "invalid python path"
+                exit 1
+            fi
+            shift 2
+            ;;
+        --)
+            stop=1
+            shift
+            echo stop
+            ;;
+        *)
+            stop=1
+            exit 1
+            ;;
+    esac
+    [[ $# -eq 0 ]] && stop=1
+done
 
 
 if [[ -z ${PYTHON_BIN_PATH} ]]; then
@@ -97,6 +102,7 @@ fi
 
 echo-around "Python Path: ${PYTHON_BIN_PATH}"
 echo-around "Config Path: ${!CONFIG}"
+echo-around "Argument: $*"
 
 case ${cmd} in
     celery)

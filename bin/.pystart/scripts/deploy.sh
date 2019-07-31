@@ -10,7 +10,7 @@ DEVELOP_HOST=example
 
 tag=$(git log --pretty=%h -1)
 basic_version=$(grep -E -o '__version__ = ".*"' ${MODULE}/__init__.py | sed 's/__version__ //g' | sed 's/"//g' | sed 's/= //g')
-version=${basic_version}.dev${tag}
+version=${basic_version}.dev0+${tag}
 
 build-dev() {
     sed -iabc -e s/__version__\ =.*/__version__\ =\ \"${version}\"/ ${MODULE}/__init__.py
