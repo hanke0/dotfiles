@@ -5,22 +5,24 @@ version=$1
 PACKAGE=example
 MODULE=${PACKAGE//-/_}
 REMOTE_ROOT=/root/projects
-[[ -z ${version} ]] && >&2 echo version needed && exit 1
+#[[ -z ${version} ]] && >&2 echo version needed && exit 1
 
 supervisor-restart() {
+    local ascending=$@
+    local descending
     local program
-    for program in $@
+    for program in $ascending
     do
-        supervisorctl stop ${program}
+        descending="${program} ${descending}"
+        supervisorctl stop ${program} || true
     done
-
     sleep 2
-    for program in $@
+    for program in $descending
     do
-        supervisorctl start ${program}
+        supervisorctl start ${program} || true
     done
 
-    for program in $@
+    for program in $descending
     do
         supervisorctl status ${program}
     done
