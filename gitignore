@@ -15,6 +15,6 @@
 **/.coverage.*
 **/.mypy_cache
 .DS_Store
-Thumbs.db
 [Dd]esktop.ini
 **/*.code-workspace
+*.db
