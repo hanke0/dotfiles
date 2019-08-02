@@ -88,7 +88,6 @@ do
             ;;
         *)
             stop=1
-            exit 1
             ;;
     esac
     [[ $# -eq 0 ]] && stop=1
