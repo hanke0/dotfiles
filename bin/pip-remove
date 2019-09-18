@@ -1,20 +1,46 @@
 #!/usr/bin/env python
+from __future__ import print_function
+import argparse
 import sys
 import pkg_resources
 import subprocess
-from functools import lru_cache
 
-PIP = [sys.executable, '-m', 'pip', "--disable-pip-version-check"]
+try:
+    from functools import lru_cache
+except ImportError:
+    def lru_cache(*args):
+        def decorator(f):
+            return f
+
+        return decorator
+
+executable = sys.executable
+
+
+def _input(msg):
+    if sys.version_info[0] < 3:
+        return raw_input(msg)
+    return input(msg)
+
+
+def cmd(*args):
+    rv = [executable, '-m', 'pip', "--disable-pip-version-check"]
+    rv.extend(args)
+    return rv
 
 
 def find_all_packages():
-    output = subprocess.check_output(PIP + ['freeze'])
-    return [o.split("==", 1)[0].replace("-", "_").lower() for o in output.decode().splitlines()]
+    output = subprocess.check_output(cmd('freeze'))
+    output = output.decode(sys.getdefaultencoding())
+    return [o.split("==", 1)[0].replace("-", "_").lower() for o in output.splitlines()]
 
 
 @lru_cache(None)
 def find_requires(pkg_name):
-    pkg = pkg_resources.get_distribution(pkg_name)
+    try:
+        pkg = pkg_resources.get_distribution(pkg_name)
+    except pkg_resources.DistributionNotFound:
+        return []
     deps = pkg.requires()
     return [p.name.lower().replace("-", "_") for p in deps]
 
@@ -46,26 +72,28 @@ def deep_delete_package(pkg_name, ask=False):
         msg = "Will delete package %s" % pkg_name
         if pending_deps:
             msg += " and it's dependence '%s'" % (', '.join(pending_deps),)
-        rv = input(msg + " [yes/No]: ").upper()
+        rv = _input(msg + " [yes/No]: ").upper()
         if rv != "Y" and rv != "YES":
             return
 
-    subprocess.call(PIP + ["uninstall -y"] + [pkg_name] + pending_deps)
+    subprocess.call(cmd("uninstall", "-y", pkg_name, *pending_deps))
 
 
 def main():
-    if len(sys.argv) == 1:
-        return
-    pkgs = sys.argv[1:]
-    yes = False
-    for i in pkgs:
-        if i == '-y':
-            yes = True
-            pkgs.remove(i)
-            break
+    global executable
+    parse = argparse.ArgumentParser("pip-remove")
+    parse.add_argument(
+        "-y", "--yes", action='store_true', default=False, help="Don't ask for confirmation of uninstall deletions."
+    )
+    parse.add_argument('-p', '--python', help="Python executable path")
+    parse.add_argument("packages", action='append')
 
-    for pkg in pkgs:
-        deep_delete_package(pkg, not yes)
+    args = parse.parse_args()
+    if args.python:
+        executable = args.python
+
+    for pkg in args.packages:
+        deep_delete_package(pkg, not args.yes)
 
 
 if __name__ == '__main__':
