@@ -1,73 +1,72 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
+import sys
+import pkg_resources
+import subprocess
+from functools import lru_cache
 
-accept=
-_read_yes() {
-    [[ -n accept ]] && return 0
-    echo -n "$1[yes/No] "
-    read input
-    case $input in
-    [yY][eE][sS] | [yY])
-        return 0
-        ;;
-    *)
-        return 1
-        ;;
-    esac
-}
+PIP = [sys.executable, '-m', 'pip', "--disable-pip-version-check"]
 
-echo-help() {
-    echo "Usage: pip-remove [package] ..."
-    echo "This will fully remove package and it's requires if no other package requires."
-}
 
-remove-one() {
-    local s=$(pip list --format=freeze --disable-pip-version-check | grep -i $1)
-    if [[ -z "$s" ]]; then
-        echo "can't find package $1"
-        return 1
-    fi
-    # other package requires
-    local Array2=($(pip list --format=freeze --disable-pip-version-check | grep -i -v $1 |
-        awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
-        awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
-    # package requires
-    local Array1=($(echo $s | awk -F '==' '{print $1}' | xargs pip show --disable-pip-version-check | grep ^Requires: |
-        awk -F ":" '{print $2}' | tr ',' '\n' | grep -v '^[[:blank:]]$' | uniq))
+def find_all_packages():
+    output = subprocess.check_output(PIP + ['freeze'])
+    return [o.split("==", 1)[0].replace("-", "_").lower() for o in output.decode().splitlines()]
 
-    # find package requires - other package requires
-    local Array3=() i skip
-    for i in "${Array1[@]}"; do
-        skip=
-        for j in "${Array2[@]}"; do
-            [[ $i == $j ]] && {
-                skip=1
-                break
-            }
-        done
-        [[ -n $skip ]] || Array3+=("$i")
-    done
-    _read_yes "Do you want delete $1?" ${x[@]}
-    [ $? -eq 0 ] && pip uninstall -y $*
-    if [ -n "${Array3[*]}" ]; then
-        for i in "${Array3[@]}"; do
-            pip-remove $i ${x[@]:1}
-        done
-    fi
-    return 0
-}
 
-if [[ $# -eq 0 ]]; then
-    echo-help
-    exit 1
-fi
+@lru_cache(None)
+def find_requires(pkg_name):
+    pkg = pkg_resources.get_distribution(pkg_name)
+    deps = pkg.requires()
+    return [p.name.lower().replace("-", "_") for p in deps]
 
-while getopts ':hy' OPT; do
-    case $OPT in
-        h)
-            echo-help && exit 0;;
-        y)
-            echo y && accept=yes;;
-        ?)
-            echo args=$OPTARG 
-    esac
-done
+
+def find_should_removed_deps(pkg_name):
+    pending = find_requires(pkg_name)
+    all_packages = find_all_packages()
+
+    need_check = set(all_packages) - set(pending)
+    need_check.discard(pkg_name)
+    pending_remove = set(pending)
+    should_not_remove = set()
+    for pkg in pending:
+        deps = find_requires(pkg)
+        union = set(deps) & pending_remove
+        should_not_remove.update(union)
+
+    pending_remove.difference_update(should_not_remove)
+    for pkg in need_check:
+        deps = find_requires(pkg)
+        pending_remove.difference_update(deps)
+
+    return [i for i in pending if i in pending_remove]
+
+
+def deep_delete_package(pkg_name, ask=False):
+    pending_deps = find_should_removed_deps(pkg_name)
+    if ask:
+        msg = "Will delete package %s" % pkg_name
+        if pending_deps:
+            msg += " and it's dependence '%s'" % (', '.join(pending_deps),)
+        rv = input(msg + " [yes/No]: ").upper()
+        if rv != "Y" and rv != "YES":
+            return
+
+    subprocess.call(PIP + ["uninstall -y"] + [pkg_name] + pending_deps)
+
+
+def main():
+    if len(sys.argv) == 1:
+        return
+    pkgs = sys.argv[1:]
+    yes = False
+    for i in pkgs:
+        if i == '-y':
+            yes = True
+            pkgs.remove(i)
+            break
+
+    for pkg in pkgs:
+        deep_delete_package(pkg, not yes)
+
+
+if __name__ == '__main__':
+    main()
