@@ -54,6 +54,31 @@ str_match() {
   fi
 }
 
+str_ltrim() {
+  local str=${1:-}
+  if (( $# < 2 )); then
+    printf '%s\n' "${str#"${str%%[![:space:]]*}"}"
+  else
+    printf '%s\n' "${str##$2}"
+  fi
+}
+
+str_rtrim() {
+  local str=${1:-}
+  if (( $# < 2 )); then
+    printf '%s\n' "${str%"${str##*[![:space:]]}"}"
+  else
+    printf '%s\n' "${str%%$2}"
+  fi
+}
+
+str_trim() {
+  local str=${1:-}
+  shift
+  str=$(str_rtrim "$str" "$@")
+  str_ltrim "$str" "$@"
+}
+
 #--------------------------
 #        ARRAY
 #--------------------------

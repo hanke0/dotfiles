@@ -10,6 +10,17 @@ test_str_match() {
   return $?
 }
 
+test_str_trim_space() {
+  local s
+  s=$(str_trim ' aaa c aaa  ')
+  assert_eq "$s" 'aaa c aaa'
+}
+test_str_trim_word() {
+  local s
+  s=$(str_trim 'aaa c aaa' "a")
+  assert_eq "$s" 'aa c aa'
+}
+
 test_dict_get_item() {
   declare -A a=()
   dict_put a "a" "a"
