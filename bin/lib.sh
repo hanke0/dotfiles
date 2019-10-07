@@ -186,7 +186,8 @@ get_term_size() {
   # (:;:) is a micro sleep to ensure the variables are
   # exported immediately.
   shopt -s checkwinsize; (:;:)
-  printf '%s\n' "$LINES $COLUMNS"
+  echo "$LINES"
+  echo "$COLUMNS"
 }
 
 bar() {
