@@ -5,7 +5,7 @@ if [[ -z $1 ]]; then
 else
     __session=$1
 fi
-if [[ -z $(tmux ls | cut -d: -f1 | grep ${__session}) ]]; then
+if tmux ls | cut -d: -f1 | grep ${__session}; then
     tmux -2 new -s ${__session}
 else
     tmux at -t ${__session}

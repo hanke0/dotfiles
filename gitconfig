@@ -1,50 +1,50 @@
 [core]
-    autocrlf = false
-    excludesfile = ~/.gitignore
+autocrlf = false
+excludesfile = ~/.gitignore
 [alias]
-    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
-    fl = log -u
+lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+fl = log -u
 
-    la = "!git config -l | grep alias | cut -c 7-"
+la = "!git config -l | grep alias | cut -c 7-"
 
-    cp = cherry-pick
-    st = status
-    cl = clone
-    ci = commit
-    cm = commit -m
-    co = checkout
-    br = branch
+cp = cherry-pick
+st = status
+cl = clone
+ci = commit
+cm = commit -m
+co = checkout
+br = branch
 
-    ad = add
-    sl = stash list
-    sa = stash apply
-    ss = stash push
-    sp = stash pop
+ad = add
+sl = stash list
+sa = stash apply
+ss = stash push
+sp = stash pop
 
-    s = status -s
-    d = pull --rebase
-    u = push
+s = status -s
+d = pull --rebase
+u = push
 
-    rank = shortlog -sn --no-merges
+rank = shortlog -sn --no-merges
 
-    master = checkout master
-    dev = checkout develop
-    
-    last = log -1 HEAD
+master = checkout master
+dev = checkout develop
 
-    dc = diff --cached
-    da = difftool --cached
+last = log -1 HEAD
+
+dc = diff --cached
+da = difftool --cached
 
 [diff]
-  tool = icdiff
+tool = icdiff
 [difftool]
-  prompt = false
+prompt = false
 [difftool "icdiff"]
-  cmd = icdiff --line-numbers --highlight $LOCAL $REMOTE
+cmd = icdiff --line-numbers --highlight $LOCAL $REMOTE
 [pager]
-  difftool = true
+difftool = true
 [merge]
-	ff = false
+ff = false
 [pull]
-	rebase = true
+rebase = true
