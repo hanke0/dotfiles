@@ -64,3 +64,5 @@ PS1+="\$(__git_branch)\n${COLOR_PURPLE}» ${COLOR_RESET}"
 [[ -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 [[ -f /usr/local/etc/bash_completion ]] && . /usr/local/etc/bash_completion
 [[ -f /usr/local/etc/profile.d/z.sh ]] && . /usr/local/etc/profile.d/z.sh
+# shellcheck disable=SC1090
+[[ -n "$HOME" && -f "$HOME/.alias" ]] && . "$HOME/.alias"
