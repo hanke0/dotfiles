@@ -47,8 +47,9 @@ assert_true() {
 runtest() {
   local exit_code=0
   log_header "$1"
-  for var in $(declare | grep "^test_"); do
-    if [[ $(type -t "$var") != function ]]; then
+  for var in $(declare -F); do
+    var=$(echo "$var" | cut -d' ' -f3)
+    if [[ $var != test* ]]; then
       continue
     fi
     printf "[TEST %s]:: " "$var"
