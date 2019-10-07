@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# ONLY BASH >= 4
+if [[ ${BASH_VERSION:0:1} -lt 4 ]]; then
+  echo "Bash version should >=4, current is $BASH_VERSION please upgrade your bash." >&2
+  return 1
+fi
+
 #--------------------------
 # STRING
 #--------------------------
@@ -202,12 +208,6 @@ bar() {
 
   printf '%s\r' "[${prog// /-}${total}]"
 }
-
-# ONLY BASH >= 4
-if [[ ${BASH_VERSION:0:1} -lt 4 ]]; then
-  echo "Bash version should >=4, current is $BASH_VERSION please upgrade your bash." >&2
-  return 1
-fi
 
 #-----------------
 # DICT
