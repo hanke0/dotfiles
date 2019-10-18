@@ -9,26 +9,21 @@ esac
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
 # history about
-shopt -s histappend
 export HISTIGNORE="?"
 export HISTSIZE=32768
 export HISTFILESIZE=32768
 export HISTCONTROL=ignoreboth
 
+shopt -s histappend
 # check the window size after each command and, if necessary,
 shopt -s checkwinsize
-shopt -s cdspell
+# * Recursive globbing, e.g. `echo **/*.txt`
+shopt -s "globstar" >/dev/null 2>&1
+
 export EDITOR='vim'
 export TERM=xterm-256color
 #export TERM=screen-256color
 export GPG_TTY=$(tty)
-# * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
-# * Recursive globbing, e.g. `echo **/*.txt`
-for option in autocd globstar; do
-  shopt -s "$option" >/dev/null 2>&1
-done
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 COLOR_RESET=$(echo -en '\001\033[0m\002')
 COLOR_WHITE=$(echo -en '\001\033[01;37m\002')
