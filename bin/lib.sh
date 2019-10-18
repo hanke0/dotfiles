@@ -209,6 +209,14 @@ bar() {
   printf '%s\r' "[${prog// /-}${total}]"
 }
 
+striking-print() {
+    local s="$*"
+    local n=$((${#s} + 6))
+    printf '%*s' ${n} '' | tr ' ' '*' && printf '\n'
+    echo '* ' ${s} ' *'
+    printf '%*s' ${n} '' | tr ' ' '*' && printf '\n'
+}
+
 #-----------------
 # DICT
 #-----------------
