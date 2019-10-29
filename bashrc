@@ -25,35 +25,24 @@ export TERM=xterm-256color
 #export TERM=screen-256color
 export GPG_TTY=$(tty)
 
-COLOR_RESET=$(echo -en '\001\033[0m\002')
-COLOR_WHITE=$(echo -en '\001\033[01;37m\002')
-COLOR_RED=$(echo -en '\001\033[00;31m\002')
-COLOR_GREEN=$(echo -en '\001\033[00;32m\002')
-COLOR_YELLOW=$(echo -en '\001\033[00;33m\002')
-COLOR_BLUE=$(echo -en '\001\033[00;34m\002')
-COLOR_MAGENTA=$(echo -en '\001\033[00;35m\002')
-COLOR_PURPLE=$(echo -en '\001\033[00;35m\002')
-COLOR_CYAN=$(echo -en '\001\033[00;36m\002')
-COLOR_LIGHTGRAY=$(echo -en '\001\033[00;37m\002')
-COLOR_LIGHTRED=$(echo -en '\001\033[01;31m\002')
-COLOR_LIGHTGREEN=$(echo -en '\001\033[01;32m\002')
-COLOR_LIGHTYELLOW=$(echo -en '\001\033[01;33m\002')
-COLOR_LIGHTBLUE=$(echo -en '\001\033[01;34m\002')
-COLOR_LIGHTMAGENTA=$(echo -en '\001\033[01;35m\002')
-COLOR_LIGHTPURPLE=$(echo -en '\001\033[01;35m\002')
-COLOR_LIGHTCYAN=$(echo -en '\001\033[01;36m\002')
+COLOR_RESET='\e[0m'
+COLOR_RED='\e[31m'
+COLOR_GREEN='\e[32m'
+COLOR_YELLOW='\e[33m'
+COLOR_BLUE='\e[34m'
+COLOR_PURPLE='\e[35m'
+COLOR_CYAN='\e[36m'
+COLOR_LIGHTGRAY='\e[37m'
 
 #prompt
 __git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 if [[ $(id -u) -eq 0 ]]; then
-  PS1="[${COLOR_RED}\u${COLOR_RESET}"
+    PS1='[\[\e[31m\]\u\[\e[m\]@\[\e[36m\]\h\[\e[m\]:\[\e[33m\]\w\[\e[m\]]\[\e[34m\]$(__git_branch)\[\e[m\]\n\[\e[35m\]» \[\e[m\]'
 else
-  PS1="[${COLOR_GREEN}\u${COLOR_RESET}"
+    PS1='[\[\e[32m\]\u\[\e[m\]@\[\e[36m\]\h\[\e[m\]:\[\e[33m\]\w\[\e[m\]]\[\e[34m\]$(__git_branch)\[\e[m\]\n\[\e[35m\]» \[\e[m\]'
 fi
-PS1+="@${COLOR_CYAN}\h${COLOR_RESET}:${COLOR_YELLOW}\w${COLOR_RESET}]${COLOR_BLUE}"
-PS1+="\$(__git_branch)\n${COLOR_PURPLE}» ${COLOR_RESET}"
 
 [[ -f /etc/bash_completion ]] && . /etc/bash_completion
 [[ -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
