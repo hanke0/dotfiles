@@ -1,6 +1,11 @@
 channels:
+  - msys2
+  - bioconda
+  - menpo
+  - pytorch
+  - simpleitk
+  - conda-forge
   - defaults
-  - custom_channels
 show_channel_urls: true
 channel_alias: https://mirrors.tuna.tsinghua.edu.cn/anaconda
 default_channels:
