@@ -18,6 +18,7 @@
     br = branch
     
     ad = add
+    ada = add -A
     sl = stash list
     sa = stash apply
     ss = stash push
