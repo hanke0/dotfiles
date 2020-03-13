@@ -21,7 +21,7 @@ conda:  ## install conda config
 	@ln -siv $(CURDIR)/condarc $(HOME)/.condarc
 
 bin:  ## install scripts
-	@ln -siv $(CURDIR)/bin $(HOME)/.bin
+	@[[ !-f "$(HOME)/.bin" ]] && ln -siv $(CURDIR)/bin $(HOME)/.bin
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
