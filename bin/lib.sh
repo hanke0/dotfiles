@@ -259,3 +259,32 @@ dict_echo() {
   local item
   eval "for item in "\${!$1[@]}"; do echo "\$item=\${$1[\$item]}"; done"
 }
+
+ts2date() {
+  date -d @"$1" +%Y-%m-%dT%H:%M:%S%z 2>/dev/null || date -r "$1" +%Y-%m-%dT%H:%M:%S%z
+}
+
+int2hex() {
+  printf "%x\n" "$1"
+}
+
+hex2int() {
+  printf "%d\n" 0x"$1"
+}
+
+char2hex() {
+  printf "%s" "$1" | od -t x1
+}
+
+chr2int() {
+  printf "%d\n" "'A"
+}
+
+int2char() {
+  # shellcheck disable=SC2059
+  printf \\"$(printf "%03o" "$1")"\\n
+}
+
+ts2long() {
+  echo $((($2 << 32) + $1))
+}
