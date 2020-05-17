@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if [[ $# -eq 0 ]]; then
-  tmux ls 2>/dev/null | grep : | cut -d: -f1 |xargs -I{} tmux kill-session -t {}
-else
-  for i in "$@"; do
-    tmux kill-session -t "$i"
-  done
-fi

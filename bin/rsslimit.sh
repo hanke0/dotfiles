@@ -20,7 +20,7 @@ usage() {
 wrong-usage() {
     echo 'Wrong Usage' $1
     usage
-    exit -1
+    exit 2
 }
 
 quiet=0
@@ -28,33 +28,31 @@ interval=1
 
 IsNum='^[0-9]+$'
 
-while getopts s:qm:h opt
-do
+while getopts s:qm:h opt; do
     case ${opt} in
-        s)
-            interval=$OPTARG
-            ;;
-        q)
-            quiet=1
-            ;;
-        m)
-            MAX=$OPTARG
-            ;;
-        h)
-            usage
-            exit 0
-            ;;
-        :|?)
-           usage
-           exit 1
-           ;;
+    s)
+        interval=$OPTARG
+        ;;
+    q)
+        quiet=1
+        ;;
+    m)
+        MAX=$OPTARG
+        ;;
+    h)
+        usage
+        exit 0
+        ;;
+    : | ?)
+        usage
+        exit 1
+        ;;
     esac
 done
 
 shift $(($OPTIND - 1))
 
-
-[[ $# -ne 2 ]] &&  wrong-usage
+[[ $# -ne 2 ]] && wrong-usage
 
 [[ -n $1 ]] && PID=$1
 
@@ -63,16 +61,15 @@ shift $(($OPTIND - 1))
 
 [[ ! ${interval} =~ ${IsNum} ]] && wrong-usage 'wrong interval'
 
-[[ ! -e /proc/${PID}/smaps ]] && >&2 echo PID not exists && exit -1
+[[ ! -e /proc/${PID}/smaps ]] && echo >&2 PID not exists && exit 1
 
 echo Listen PID ${PID} RssLimit ${MAX} KB
 
-while :
-do
+while :; do
     _rss=$(RssOf ${PID})
-    [[ ${quiet} -eq 0 ]] && >&2 echo USE ${_rss} kb
+    [[ ${quiet} -eq 0 ]] && echo >&2 USE ${_rss} kb
     if [[ ${_rss} -gt ${MAX} ]]; then
-        >&2 echo Overflow, kill PID ${PID}
+        echo >&2 Overflow, kill PID ${PID}
         kill ${PID}
         exit 1
     fi

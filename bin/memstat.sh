@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Size：表示该映射区域在虚拟内存空间中的大小。
-# Rss：表示该映射区域当前在物理内存中占用了多少空间　　　　　　
+# Rss：表示该映射区域当前在物理内存中占用了多少空间
 # Shared_Clean：和其他进程共享的未被改写的page的大小
 # Shared_Dirty： 和其他进程共享的被改写的page的大小
 # Private_Clean：未被改写的私有页面的大小。
@@ -16,10 +16,10 @@ MEMTYPE="$2"
 [[ -z "$2" ]] && MEMTYPE="rss"
 
 case "$MEMTYPE" in
-    rss) GREP="^Rss" ;;
-    share) GREP="^share" ;;
-    swap)  GREP='^Swap' ;;
-    *) GREP="$MEMTYPE" ;;
+rss) GREP="^Rss" ;;
+share) GREP="^share" ;;
+swap) GREP='^Swap' ;;
+*) GREP="$MEMTYPE" ;;
 esac
 
-grep "$GREP" /proc/"$PID"/smaps  | awk '{sum += $2} END {print sum "\tkb"}'
+grep "$GREP" /proc/"$PID"/smaps | awk '{sum += $2} END {print sum "\tkb"}'

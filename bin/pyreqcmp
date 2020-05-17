@@ -8,7 +8,6 @@ if [[ -z "$1" || -z "$2" ]]; then
     exit 1
 fi
 
-
-patterns=($(awk -F= '{print $1}' "$1" | sed '/^[[:space:]]*$/d' | tr '[:upper:]' '[:lower:]'| tr '_' '-' | xargs printf -- '-e\n%s\n' ))
+patterns=($(awk -F= '{print $1}' "$1" | sed '/^[[:space:]]*$/d' | tr '[:upper:]' '[:lower:]' | tr '_' '-' | xargs printf -- '-e\n%s\n'))
 # remove bom
 grep -i ${patterns[@]} <(cat "$2" | tr '_' '-') | sed "1s/$(printf '\357\273\277')//"

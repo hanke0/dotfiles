@@ -14,8 +14,6 @@ except ImportError:
 
         return decorator
 
-executable = sys.executable
-
 
 def _input(msg):
     if sys.version_info[0] < 3:
@@ -23,16 +21,17 @@ def _input(msg):
     return input(msg)
 
 
-def cmd(*args):
-    rv = [executable, '-m', 'pip', "--disable-pip-version-check"]
+def pip_cmd(*args):
+    rv = [sys.executable, '-m', 'pip', "--disable-pip-version-check"]
     rv.extend(args)
     return rv
 
 
 def find_all_packages():
-    output = subprocess.check_output(cmd('freeze'))
+    output = subprocess.check_output(pip_cmd('freeze'))
     output = output.decode(sys.getdefaultencoding())
-    return [o.split("==", 1)[0].replace("-", "_").lower() for o in output.splitlines()]
+    return [o.split("==", 1)[0].replace("-", "_").lower() for o in
+            output.splitlines()]
 
 
 @lru_cache(None)
@@ -76,21 +75,21 @@ def deep_delete_package(pkg_name, ask=False):
         if rv != "Y" and rv != "YES":
             return
 
-    subprocess.call(cmd("uninstall", "-y", pkg_name, *pending_deps))
+    subprocess.call(pip_cmd("uninstall", "-y", pkg_name, *pending_deps))
 
 
 def main():
-    global executable
     parse = argparse.ArgumentParser("pip-remove")
     parse.add_argument(
-        "-y", "--yes", action='store_true', default=False, help="Don't ask for confirmation of uninstall deletions."
+        "-y", "--yes", action='store_true', default=False,
+        help="Don't ask for confirmation of uninstall deletions."
     )
-    parse.add_argument('-p', '--python', help="Python executable path")
     parse.add_argument("packages", action='append')
 
     args = parse.parse_args()
-    if args.python:
-        executable = args.python
+
+    sys.stderr.write("python path: %s\n" % sys.executable)
+    sys.stderr.flush()
 
     for pkg in args.packages:
         deep_delete_package(pkg, not args.yes)
