@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+from pkg_resources import get_distribution
+
+
+class Pkg:
+    def __init__(self, name, indirect=False):
+        pkg = get_distribution(name)
+        self.name = pkg.project_name
+        self.requires = [req.project_name for req in pkg.requires()]
+        self.version = pkg.version
+        self.indirect = indirect
+
+    def __str__(self):
+        s = "%s==%s" % (self.name, self.version)
+        if self.indirect:
+            s += "  # indirect"
+        return s
+
+
+def recursive_dependents(pkgs, store):
+    for name in pkgs:
+        if name in store:
+            pkg = store[name]
+        else:
+            pkg = Pkg(name, indirect=True)
+            store[name] = pkg
+
+        recursive_dependents(pkg.requires, store)
+
+
+def write_output(pkgs, f):
+    for k in sorted(pkgs):
+        f.write(str(pkgs[k]))
+        f.write("\n")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output", default=None)
+    parser.add_argument("requires", nargs="+", default=[])
+    parser.add_argument("-v", "--verbose", action="store_true")
+
+    args = parser.parse_args()
+    verbose = args.verbose
+    if verbose:
+        sys.stderr.write("# python: ")
+        sys.stderr.write(sys.executable)
+        sys.stderr.write("\n")
+        sys.stderr.flush()
+
+    pkgs = {}
+    for n in args.requires:
+        pkg = Pkg(n)
+        pkgs.setdefault(pkg.name, pkg)
+    recursive_dependents(list(pkgs.keys()), pkgs)
+
+    if not args.output:
+        write_output(pkgs, sys.stdout)
+        return
+
+    sys.stderr.write("# write to ")
+    sys.stderr.write(args.output)
+    sys.stderr.write("\n")
+    sys.stderr.flush()
+    with open(args.output, "wt", encoding="utf8") as f:
+        write_output(pkgs, f)
+
+
+if __name__ == '__main__':
+    main()
