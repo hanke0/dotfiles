@@ -61,10 +61,11 @@ def main():
         write_output(pkgs, sys.stdout)
         return
 
-    sys.stderr.write("# write to ")
-    sys.stderr.write(args.output)
-    sys.stderr.write("\n")
-    sys.stderr.flush()
+    if verbose:
+        sys.stderr.write("# write to ")
+        sys.stderr.write(args.output)
+        sys.stderr.write("\n")
+        sys.stderr.flush()
     with open(args.output, "wt", encoding="utf8") as f:
         write_output(pkgs, f)
 
