@@ -6,6 +6,15 @@ esac
 
 # -- Generate Settings --------------------------------------------------------
 [[ -n "$HOME" ]] && export HOME=$(echo ~)
+[[ -f /etc/bashrc ]] && . /etc/bashrc
+[[ -f /etc/bash_completion ]] && . /etc/bash_completion
+if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+    . /usr/share/bash-completion/bash_completion
+fi
+[[ -f /usr/local/etc/bash_completion ]] && . /usr/local/etc/bash_completion
+[[ -f /usr/local/etc/profile.d/z.sh ]] && . /usr/local/etc/profile.d/z.sh
+[[ -f "$HOME/.z.sh" ]] && . "$HOME/.z.sh"
+
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
 # history about
@@ -137,14 +146,8 @@ unset-git-proxy() {
 }
 
 # -- Other source files -------------------------------------------------------
-[[ -f /etc/bashrc ]] && . /etc/bashrc
-[[ -f /etc/bash_completion ]] && . /etc/bash_completion
-[[ -f /usr/share/bash-completion/bash_completion ]] &&
-    . /usr/share/bash-completion/bash_completion
-[[ -f /usr/local/etc/bash_completion ]] && . /usr/local/etc/bash_completion
-[[ -f /usr/local/etc/profile.d/z.sh ]] && . /usr/local/etc/profile.d/z.sh
-[[ -f "$HOME/.z.sh" ]] && . "$HOME/.z.sh"
-[[ -f "$HOME/.alias" ]] && . "$HOME/.alias"
+
+
 
 # -- Alias --------------------------------------------------------------------
 alias workon='conda deactivate && conda activate'
@@ -152,3 +155,4 @@ alias cls='clear'
 alias g=git
 alias ll='ls -Alhb'
 alias tt='tmux-open'
+[[ -f "$HOME/.alias" ]] && . "$HOME/.alias"
