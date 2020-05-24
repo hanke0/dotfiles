@@ -13,7 +13,7 @@ export HISTIGNORE="?"
 export HISTSIZE=32768
 export HISTFILESIZE=32768
 export HISTCONTROL=ignoreboth
-
+export PROMPT_COMMAND='history -a'
 shopt -s histappend
 # check the window size after each command and, if necessary,
 shopt -s checkwinsize
