@@ -125,6 +125,17 @@ o() {
     fi
 }
 
+use-git-proxy() {
+    local proxy='${1-socks5://127.0.0.1:10808}'
+    git config --global https.proxy "$proxy"  
+    git config --global http.proxy "$proxy" 
+}
+
+unset-git-proxy() {
+    git config --global --unset http.proxy
+    git config --global --unset https.proxy
+}
+
 # -- Other source files -------------------------------------------------------
 [[ -f /etc/bashrc ]] && . /etc/bashrc
 [[ -f /etc/bash_completion ]] && . /etc/bash_completion
