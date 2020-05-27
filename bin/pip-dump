@@ -42,9 +42,11 @@ def main():
     parser.add_argument("-o", "--output", default=None)
     parser.add_argument("requires", nargs="+", default=[])
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-a", "--append", action="store_true")
 
     args = parser.parse_args()
     verbose = args.verbose
+    append = args.append
     if verbose:
         sys.stderr.write("# python: ")
         sys.stderr.write(sys.executable)
@@ -66,7 +68,8 @@ def main():
         sys.stderr.write(args.output)
         sys.stderr.write("\n")
         sys.stderr.flush()
-    with open(args.output, "wt", encoding="utf8") as f:
+
+    with open(args.output, "at" if append else "wt", encoding="utf8") as f:
         write_output(pkgs, f)
 
 
