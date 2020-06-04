@@ -28,10 +28,9 @@ def pip_cmd(*args):
 
 
 def find_all_packages():
-    output = subprocess.check_output(pip_cmd('freeze'))
-    output = output.decode(sys.getdefaultencoding())
-    return [o.split("==", 1)[0].replace("-", "_").lower() for o in
-            output.splitlines()]
+    return [
+        pkg.project_name for pkg in pkg_resources.working_set
+    ]
 
 
 @lru_cache(None)
@@ -41,7 +40,7 @@ def find_requires(pkg_name):
     except pkg_resources.DistributionNotFound:
         return []
     deps = pkg.requires()
-    return [p.name.lower().replace("-", "_") for p in deps]
+    return [p.name for p in deps]
 
 
 def find_should_removed_deps(pkg_name):
@@ -66,6 +65,10 @@ def find_should_removed_deps(pkg_name):
 
 
 def deep_delete_package(pkg_name, ask=False):
+    try:
+        pkg_resources.get_distribution(pkg_name)
+    except pkg_resources.DistributionNotFound:
+        return
     pending_deps = find_should_removed_deps(pkg_name)
     if ask:
         msg = "Will delete package %s" % pkg_name
