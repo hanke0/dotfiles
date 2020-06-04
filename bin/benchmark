@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-useage() {
+usage() {
     echo "Usage: benchmark [-n10] command..." >&2
 }
 
 benchmark() {
     if [[ -z "$1" || "$1" == "-h" ]]; then
-        useage
+        usage
         exit 1
     fi
     local n
