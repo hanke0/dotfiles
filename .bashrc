@@ -135,8 +135,10 @@ unset-git-proxy() {
 }
 
 set-shortcuts() {
-  bind '"\e[A": history-search-backward'
-  bind '"\e[B": history-search-forward'
+  bind '"\e[1;5A":history-search-backward'  # CTRL+UP
+  bind '"\e[1;5B":history-search-forward'   # CTRL+DOWN
+  bind '"\e[1;5C":forward-word'             # CTRL+RIGHT
+  bind '"\e[1;5D":backward-word'            # CTRL+LEFT
 }
 
 # -- Alias --------------------------------------------------------------------
