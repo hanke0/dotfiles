@@ -18,9 +18,6 @@ filetype indent on  " use different indent in different file type
 set expandtab       " don't use tab
 set tabstop=4       " tab expand to 4 space
 set shiftwidth=4    "
-set smarttab        "
-set ai              " Auto indent
-set si              " Smart indent
 
 set backspace=2             " use backspace delete more character
 set whichwrap=b,s,<,>,[,]   " cursor could move to any line
