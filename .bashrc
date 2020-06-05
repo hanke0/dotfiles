@@ -1,9 +1,3 @@
-# If not running interactively, don't do anything
-case $- in
-*i*) ;;
-*) return ;;
-esac
-
 # -- Generate Settings --------------------------------------------------------
 [[ -n "$HOME" ]] && export HOME=$(echo ~)
 [[ -f /etc/bashrc ]] && . /etc/bashrc
