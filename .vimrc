@@ -18,6 +18,7 @@ filetype indent on  " use different indent in different file type
 set expandtab       " don't use tab
 set tabstop=4       " tab expand to 4 space
 set shiftwidth=4    "
+set softtabstop=4   "
 
 set backspace=2             " use backspace delete more character
 set whichwrap=b,s,<,>,[,]   " cursor could move to any line
@@ -46,6 +47,9 @@ set cmdheight=2             "
 set showcmd                 "
 set showmatch               "
 set nofoldenable
+
+highlight WhiteSpaceEOL ctermbg=darkgreen guibg=lightgreen " line end space
+match WhiteSpaceEOL /\s$/
 
 " config
 set autoread                " auto detect outer changes
