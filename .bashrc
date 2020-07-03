@@ -43,6 +43,12 @@ __git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
+__ps1_proxy() {
+    if [ -n "$(echo "$http_proxy")" ]; then
+        printf " ✈"
+    fi
+}
+
 PS1='['
 if [[ $(id -u) -eq 0 ]]; then
   PS1+='\[\e[31m\]\u\[\e[m\]'
@@ -54,6 +60,7 @@ PS1+='\[\e[36m\]\h\[\e[m\]:'
 PS1+='\[\e[33m\]\w\[\e[m\]'
 PS1+=']'
 PS1+='\[\e[34m\]$(__git_branch)\[\e[m\]'
+PS1+='$(__ps1_proxy)'
 PS1+='\n'
 PS1+='\[\e[35m\]» \[\e[m\]'
 export PS1
