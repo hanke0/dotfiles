@@ -140,8 +140,11 @@ set-shortcuts() {
   bind '"\e[B": history-search-forward'   # DOWN
 }
 
+condaon() {
+    conda deactivate && conda activate "$@" && type python && pip -V
+}
+
 # -- Alias --------------------------------------------------------------------
-alias workon='conda deactivate && conda activate'
 alias cls='clear'
 alias g=git
 alias ll='ls -Alhb'
