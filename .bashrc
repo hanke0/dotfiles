@@ -124,17 +124,6 @@ o() {
   fi
 }
 
-use-git-proxy() {
-  local proxy="${1-socks5://127.0.0.1:10808}"
-  git config --global https.proxy "$proxy"
-  git config --global http.proxy "$proxy"
-}
-
-unset-git-proxy() {
-  git config --global --unset http.proxy
-  git config --global --unset https.proxy
-}
-
 set-shortcuts() {
   bind '"\e[A": history-search-backward'  # UP
   bind '"\e[B": history-search-forward'   # DOWN
