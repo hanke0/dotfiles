@@ -1,52 +1,52 @@
 [core]
-    autocrlf = false
-    excludesfile = ~/.gitignore
-	editor = vim
+autocrlf = false
+excludesfile = ~/.gitignore
+editor = vim
 [alias]
-    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%an]" --decorate
-    fl = log -u
-    
-    la = "!git config -l | grep alias | cut -c 7-"
-    
-    cp = cherry-pick
-    st = status
-    cl = clone
-    ci = commit
-    cm = commit -m
-    co = checkout
-    br = branch
-    
-    ad = add
-    ada = add -A
-    sl = stash list
-    sa = stash apply
-    ss = stash push
-    sp = stash pop
-    
-    s = status -s
-    d = pull --rebase
-    u = push
-    
-    rank = shortlog -sn --no-merges
-    
-    master = checkout master
-    dev = checkout develop
-    
-    last = log -1 HEAD
-    
-    dc = diff --cached
-    da = difftool --cached
+lg = log --color --graph --pretty=format:'%C(blue)[%ai]%Creset %C(green)%h%Creset -%C(yellow)%d%Creset %s %C(green)<%an>%Creset' --abbrev-commit
+ls = log --pretty=format:'%C(blue)[%ai]%Creset %C(green)%h%Cred%d %Creset%s %C(yellow)<%an>%Creset' --decorate
+fl = log -u
+
+la = "!git config -l | grep alias | cut -c 7-"
+
+cp = cherry-pick
+st = status
+cl = clone
+ci = commit
+cm = commit -m
+co = checkout
+br = branch
+
+ad = add
+ada = add -A
+sl = stash list
+sa = stash apply
+ss = stash push
+sp = stash pop
+
+s = status -s
+d = pull --rebase
+u = push
+
+rank = shortlog -sn --no-merges
+
+master = checkout master
+dev = checkout develop
+
+last = log -1 HEAD
+
+dc = diff --cached
+da = difftool --cached
 
 [diff]
-    tool = icdiff
+tool = icdiff
 [difftool]
-    prompt = false
+prompt = false
 [difftool "icdiff"]
-    cmd = icdiff --line-numbers --highlight $LOCAL $REMOTE
+cmd = icdiff --line-numbers --highlight $LOCAL $REMOTE
 [pager]
-    difftool = true
+difftool = true
 [merge]
-    ff = false
+ff = false
 [pull]
-    rebase = true
+rebase = true

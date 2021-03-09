@@ -12,7 +12,12 @@ __han_dotfiles=(
   bin
 )
 
+__han_dotfiles_ask=false
+
 __ask_user_permit() {
+  if [[ $__han_dotfiles_ask = "true" ]]; then
+    return 0
+  fi
   printf "%s" "Do you wish to overwrite ${1}?[y/N] "
   local answer
   read -r answer
@@ -55,6 +60,10 @@ case "$1" in
 -h | --help | help)
   echo "$0" "[-n --dry-run] [-h --help]"
   ;;
+-y | --yes)
+  __han_dotfiles_ask=true
+  __setup_han_dotfiles
+  ;;
 *)
   __setup_han_dotfiles
   ;;
@@ -63,3 +72,4 @@ esac
 unset __setup_han_dotfiles
 unset __han_dotfiles
 unset __ask_user_permit
+unset __han_dotfiles_ask
