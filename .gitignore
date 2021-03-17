@@ -6,11 +6,12 @@ $RECYCLE.BIN/
 
 # Swap
 [._]*.s[a-v][a-z]
-!*.svg  # comment out if you don't need vector files
 [._]*.sw[a-p]
 [._]s[a-rt-v][a-z]
 [._]ss[a-gi-z]
 [._]sw[a-p]
+# Persistent undo
+[._]*.un~
 
 # Session
 Session.vim
@@ -18,10 +19,52 @@ Sessionx.vim
 
 # Temporary
 .netrwhist
-*~
 # Auto-generated tag files
 tags
-# Persistent undo
-[._]*.un~
+
+## C++
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+## end C++
+
+## VSCODE
+.vscode/*
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+## end VSCODE
 
 .idea/
+tmp/
+CPPLINT.cfg
