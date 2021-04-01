@@ -27,6 +27,8 @@
 #     * z -x      # remove the current directory from the datafile
 #     * z -h      # show a brief help message
 
+# https://github.com/rupa/z @125f4dc47e15891739dd8262d5b23077fe8fb9ab Commits on Sep 29, 2020
+
 [ -d "${_Z_DATA:-$HOME/.z}" ] && {
     echo "ERROR: z.sh's datafile (${_Z_DATA:-$HOME/.z}) is a directory."
 }
