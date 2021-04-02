@@ -6,7 +6,7 @@ editor = vim
 lg = log --color --graph --pretty=format:'%C(blue)[%ai]%Creset %C(green)%h%Creset -%C(yellow)%d%Creset %s %C(green)<%an>%Creset' --abbrev-commit
 ls = log --pretty=format:'%C(blue)[%ai]%Creset %C(green)%h%Cred%d %Creset%s %C(yellow)<%an>%Creset' --decorate
 fl = log -u
-
+amend = commit --amend --date=now
 la = "!git config -l | grep alias | cut -c 7-"
 
 cp = cherry-pick
