@@ -103,19 +103,6 @@ char2hex() {
     printf "%s" "$1" | od -t x1
 }
 
-chr2int() {
-    printf "%d\n" "'A"
-}
-
-int2char() {
-    # shellcheck disable=SC2059
-    printf \\"$(printf "%03o" "$1")"\\n
-}
-
-ts2long() {
-    echo $((($2 << 32) + $1))
-}
-
 # `o` with no arguments opens the current directory, otherwise opens the given
 # location
 o() {
@@ -137,7 +124,6 @@ condaon() {
 
 # -- Alias --------------------------------------------------------------------
 alias cls='clear'
-alias g=git
 alias ll='ls -Alhb'
 alias tt='tmux-open'
 [[ -f "$HOME/.alias" ]] && . "$HOME/.alias"
