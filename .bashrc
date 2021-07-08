@@ -1,4 +1,5 @@
 # -- Generate Settings --------------------------------------------------------
+[[ -f /etc/bashrc ]] && . /etc/bashrc
 [[ -f ~/bin/z.sh ]] && . ~/bin/z.sh
 
 pathmunge() {
