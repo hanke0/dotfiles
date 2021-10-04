@@ -20,23 +20,23 @@ _put_content() {
 }
 
 # bashrc config
-_put_content "export PAHT=\"\$PATH:$ROOT_DIR/bin\" # modified by han" ~/.bashrc
-_put_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'  # modified by han" ~/.bashrc
+_put_content "export PAHT=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
+_put_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
 
 # git config
 git config --global include.path "$ROOT_DIR/.gitconfig"
 
 # tmux config
-_put_content "source-file $ROOT_DIR/.tmux.conf  # modified by han" ~/.tmux.conf
+_put_content "source-file $ROOT_DIR/.tmux.conf" ~/.tmux.conf
 
 # vim config
-_put_content "source $ROOT_DIR/.vimrc \" modified by han" ~/.vimrc
+_put_content "source $ROOT_DIR/.vimrc" ~/.vimrc
 
 # zsh config
-_put_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'  # modified by han" ~/.zshrc
+_put_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
 
 # input config
-_put_content "\$include $ROOT_DIR/.inputrc # modified by han" ~/.inputrc
+_put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
 # cronjob auto update
 CRON_JOB="su -s /bin/sh nobody -c 'cd $ROOT_DIR && /usr/bin/git pull -q origin master'"
@@ -51,14 +51,17 @@ if type crontab 2>&1 >/dev/null; then
     fi
 fi
 
-cat <<EOF
-Success setup! All configuration will active in next login.
-
+echo "Success setup! All configuration will active in next login."
+optional_sh="/tmp/han-dotfiles-optional-$RANDOM.sh"
+tee "$optional_sh" <<EOF
 # Optional configuration
 
 # git ignore
-cp -f $ROOT_DIR/.gitignore ~/.gitignore
+ln -s $ROOT_DIR/.gitignore $(echo ~)/.gitignore
 
 # condarc
-cp -f $ROOT_DIR/.condarc ~/.condarc
+ln -s  $ROOT_DIR/.condarc $(echo ~)/.condarc
 EOF
+
+echo "Execute the following command to activate the above options."
+echo "sh $optional_sh"
