@@ -41,6 +41,7 @@ _put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 # cronjob auto update
 CRON_JOB="su -s /bin/sh nobody -c 'cd $ROOT_DIR && /usr/bin/git pull -q origin master'"
 if type crontab 2>&1 >/dev/null; then
+    crontab -l || true # ignore error of no cron job for user.
     if crontab -l | grep "$CRON_JOB" 2>&1 >/dev/null; then
         echo "already has cron job"
     else
