@@ -5,10 +5,10 @@ ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
 
 _has_content() {
-    if [[ ! -f $2 ]]; then
+    if [[ ! -f "$2" ]]; then
         return 1
     fi
-    grep "$1" "$2" 2>&1 >/dev/null
+    grep "$1" "$2" >/dev/null 2>&1
 }
 
 _put_content() {
@@ -40,14 +40,14 @@ _put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
 # cronjob auto update
 CRON_JOB="su -s /bin/sh nobody -c 'cd $ROOT_DIR && /usr/bin/git pull -q origin master'"
-if type crontab 2>&1 >/dev/null; then
+if type crontab >/dev/null 2>&1; then
     crontab -l || true # ignore error of no cron job for user.
-    if crontab -l | grep "$CRON_JOB" 2>&1 >/dev/null; then
+    if crontab -l | grep "$CRON_JOB" >/dev/null 2>&1; then
         echo "already has cron job"
     else
         (
             crontab -l
-            printf "* * * * * $CRON_JOB\r\n"
+            printf "%s" "* * * * * $CRON_JOB\r\n"
         ) | crontab -
     fi
 fi

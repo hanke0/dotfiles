@@ -7,7 +7,7 @@ SERVICE_NAME=""
 DIR=""
 read -r -p "Executeable: " EXEC
 if [[ -z "$EXEC" ]]; then
-    EXEC="$@"
+    EXEC="$*"
     if [[ -z "$EXEC" ]]; then
         echo >&2 "please input the executable empty"
         exit 1
@@ -20,7 +20,7 @@ if [[ -z "$DIR" ]]; then
 fi
 
 getbase() {
-    echo $* | sed -E 's/[[:blank:]].*//g' | xargs basename
+    echo "$@" | sed -E 's/[[:blank:]].*//g' | xargs basename
 }
 
 read -r -p "User: " USER
@@ -56,7 +56,7 @@ WantedBy=multi-user.target
 "
 
 TMP_FILE="/tmp/systemd-$SERVICE_NAME-$RANDOM.service"
-printf "$FILE_CONTENT" >"$TMP_FILE"
+printf "%s" "$FILE_CONTENT" >"$TMP_FILE"
 echo
 cat "$TMP_FILE"
 DST_FILE="/etc/systemd/system/$SERVICE_NAME.service"
