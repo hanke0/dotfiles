@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
@@ -39,17 +39,15 @@ _put_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
 _put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
 # cronjob auto update
-CRON_JOB="su -s /bin/sh nobody -c 'cd $ROOT_DIR && /usr/bin/git pull -q origin master'"
+CRON_JOB="cd $ROOT_DIR && /usr/bin/git pull -q origin master"
 if type crontab >/dev/null 2>&1; then
     crontab -l || true # ignore error of no cron job for user.
-    if crontab -l | grep "$CRON_JOB" >/dev/null 2>&1; then
-        echo "already has cron job"
-    else
-        (
-            crontab -l
-            printf "%s\n" "* * * * * $CRON_JOB"
-        ) | crontab -
-    fi
+    cronfile=/tmp/handotfiles-cron-xxx.job
+    # `&& echo` make sure empty crontab content will not make `grep -v` exist with error
+    crontab -l && echo | grep -v "$CRON_JOB" >$cronfile
+    printf "%s\n" "* * * * * $CRON_JOB" >>$cronfile
+    # Tips for mac user: add cron to the Full Disk Access group
+    cat $cronfile | crontab -
 fi
 
 echo "Success setup! All configuration will active in next login."
