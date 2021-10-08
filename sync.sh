@@ -47,7 +47,7 @@ if type crontab >/dev/null 2>&1; then
     else
         (
             crontab -l
-            printf "%s\r\n" "* * * * * $CRON_JOB"
+            printf "%s\n" "* * * * * $CRON_JOB"
         ) | crontab -
     fi
 fi
