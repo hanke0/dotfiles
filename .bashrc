@@ -1,6 +1,5 @@
 # -- Generate Settings --------------------------------------------------------
 [[ -f /etc/bashrc ]] && . /etc/bashrc
-[[ -f ~/bin/z.sh ]] && . ~/bin/z.sh
 
 pathmunge() {
     case ":${PATH}:" in
@@ -123,6 +122,26 @@ condaon() {
     conda deactivate && conda activate "$@" && type python && pip -V
 }
 
+update_z() {
+    rm -f ~/.z.sh/z.sh
+    mkdir -p ~/.z.sh
+    curl -sSL -o ~/.z.sh/z.sh https://raw.githubusercontent.com/rupa/z/master/z.sh
+    curl -sSL -o /usr/local/share/man/man1/z.1 https://raw.githubusercontent.com/rupa/z/master/z.1
+}
+
+[[ -f ~/.z.sh/z.sh ]] && . ~/.z.sh/z.sh
+if ! command -v 'z' >/dev/null 2>&1; then
+    # z not exists
+    _download_z() {
+        echo "downloading z..."
+        update_z
+        # this will change z alias to real z
+        . ~/.z.sh/z.sh
+        echo "active z success!"
+    }
+    alias z='_download_z'
+fi
+
 # -- Alias --------------------------------------------------------------------
 alias cls='clear'
 alias ll='ls -Alhb'
@@ -130,7 +149,7 @@ alias tt='tmux-open'
 [[ -f "$HOME/.alias" ]] && . "$HOME/.alias"
 # Normalize `open` across Linux, macOS, and Windows.
 # This is needed to make the `o` function (see below) cross-platform.
-if [ ! $(uname -s) = 'Darwin' ]; then
+if [ ! "$(uname -s)" = 'Darwin' ]; then
     if grep -q Microsoft /proc/version; then
         # Ubuntu on Windows using the Linux subsystem
         alias open='explorer.exe'
