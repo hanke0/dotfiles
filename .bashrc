@@ -1,22 +1,19 @@
-# -- Generate Settings --------------------------------------------------------
-[[ -f /etc/bashrc ]] && . /etc/bashrc
+# ~/.dotfiles/.bashrc
 
 pathmunge() {
     case ":${PATH}:" in
     *:"$1":*) ;;
 
     *)
-        if [ "$2" = "after" ]; then
-            PATH=$PATH:$1
-        else
+        if [ "$2" = "before" ]; then
             PATH=$1:$PATH
+        else
+            PATH=$PATH:$1
         fi
+        export PATH
         ;;
     esac
 }
-
-pathmunge ~/bin after
-export PATH
 
 # history about
 export HISTIGNORE="?"
@@ -31,9 +28,6 @@ shopt -s checkwinsize
 shopt -s "globstar" >/dev/null 2>&1
 
 export EDITOR='vim'
-export TERM=xterm-256color
-#export TERM=screen-256color
-export GPG_TTY=$(tty)
 
 COLOR_RESET='\e[0m'
 COLOR_RED='\e[31m'
@@ -112,6 +106,16 @@ o() {
         open "$@"
     fi
 }
+# Normalize `open` across Linux, macOS, and Windows.
+# This is needed to make the `o` function (see below) cross-platform.
+if [ ! "$(uname -s)" = 'Darwin' ]; then
+    if grep -q Microsoft /proc/version; then
+        # Ubuntu on Windows using the Linux subsystem
+        alias open='explorer.exe'
+    else
+        alias open='xdg-open'
+    fi
+fi
 
 set-shortcuts() {
     bind '"\e[A": history-search-backward' # UP
@@ -146,14 +150,3 @@ fi
 alias cls='clear'
 alias ll='ls -Alhb'
 alias tt='tmux-open'
-[[ -f "$HOME/.alias" ]] && . "$HOME/.alias"
-# Normalize `open` across Linux, macOS, and Windows.
-# This is needed to make the `o` function (see below) cross-platform.
-if [ ! "$(uname -s)" = 'Darwin' ]; then
-    if grep -q Microsoft /proc/version; then
-        # Ubuntu on Windows using the Linux subsystem
-        alias open='explorer.exe'
-    else
-        alias open='xdg-open'
-    fi
-fi
