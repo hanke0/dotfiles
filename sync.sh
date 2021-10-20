@@ -20,7 +20,7 @@ _put_content() {
 }
 
 # bashrc config
-_put_content "export PAHT=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
+_put_content "export PATH=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
 _put_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
 
 # git config
