@@ -44,13 +44,13 @@ if type crontab >/dev/null 2>&1; then
     crontab -l || true # ignore error of no cron job for user.
     cronfile=/tmp/handotfiles-cron-xxx.job
     # `&& echo` make sure empty crontab content will not make `grep -v` exist with error
-    crontab -l && echo | grep -v "$CRON_JOB" >$cronfile
-    printf "%s\n" "* * * * * $CRON_JOB" >>$cronfile
+    crontab -l && echo | grep -v "cd $ROOT_DIR" >$cronfile
+    printf "%s\n" "* * * * * $CRON_JOB && echo \`date\` </tmp/han-dotfiles-cron.txt" >>$cronfile
     # Tips for mac user: add cron to the Full Disk Access group
     cat $cronfile | crontab -
 fi
 
-echo "Success setup! All configuration will active in next login."
+echo "Success setup! All confguration will active in next login."
 optional_sh="/tmp/han-dotfiles-optional-$RANDOM.sh"
 tee "$optional_sh" <<EOF
 # Optional configuration
