@@ -50,7 +50,7 @@ __ps1_proxy() {
 }
 
 PS1='['
-if [[ $(id -u) -eq 0 ]]; then
+if [ "$(id -u)" = "0" ] ; then
     PS1+='\[\e[31m\]\u\[\e[m\]'
 else
     PS1+='\[\e[32m\]\u\[\e[m\]'
@@ -67,7 +67,7 @@ export PS1
 
 # -- Functions --------------------------------------------------------------
 
-tmux-open() {
+tmux_open() {
     if tmux ls 2>/dev/null | grep han; then
         tmux attach-session -t han
     else
@@ -75,7 +75,7 @@ tmux-open() {
     fi
 }
 
-tmux-clean() {
+tmux_clean() {
     if tmux ls 1>/dev/null 2>&1; then
         tmux ls 2>/dev/null | grep : | cut -d: -f1 | xargs tmux kill-session -t
     fi
@@ -117,7 +117,7 @@ if [ ! "$(uname -s)" = 'Darwin' ]; then
     fi
 fi
 
-set-shortcuts() {
+set_shortcuts() {
     bind '"\e[A": history-search-backward' # UP
     bind '"\e[B": history-search-forward'  # DOWN
 }
@@ -133,7 +133,7 @@ update_z() {
     curl -sSL -o /usr/local/share/man/man1/z.1 https://raw.githubusercontent.com/rupa/z/master/z.1
 }
 
-[[ -f ~/.z.sh/z.sh ]] && . ~/.z.sh/z.sh
+[ -f ~/.z.sh/z.sh ] && . ~/.z.sh/z.sh
 if ! command -v 'z' >/dev/null 2>&1; then
     # z not exists
     _download_z() {
