@@ -21,11 +21,13 @@ export HISTSIZE=32768
 export HISTFILESIZE=32768
 export HISTCONTROL=ignoreboth
 export PROMPT_COMMAND='history -a'
-shopt -s histappend
-# check the window size after each command and, if necessary,
-shopt -s checkwinsize
-# * Recursive globbing, e.g. `echo **/*.txt`
-shopt -s "globstar" >/dev/null 2>&1
+if [ -n "${BASH_VERSION-}" ]; then
+    shopt -s histappend
+    # check the window size after each command and, if necessary,
+    shopt -s checkwinsize
+    # * Recursive globbing, e.g. `echo **/*.txt`
+    shopt -s "globstar" >/dev/null 2>&1
+fi
 
 export EDITOR='vim'
 
@@ -50,7 +52,7 @@ __ps1_proxy() {
 }
 
 PS1='['
-if [ "$(id -u)" = "0" ] ; then
+if [ "$(id -u)" = "0" ]; then
     PS1+='\[\e[31m\]\u\[\e[m\]'
 else
     PS1+='\[\e[32m\]\u\[\e[m\]'
