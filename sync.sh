@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-set -ex
+
+set -e
+
+case "$DEBUG" in
+true | 1 | on)
+    set -x
+    ;;
+*) ;;
+esac
 
 ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
@@ -18,6 +26,18 @@ _put_content() {
     fi
     echo "modified $2"
     echo "$1" >>"$2"
+}
+
+append_content() {
+    file="$1"
+    content="$2"
+    patten="$3"
+    if [ -z "$patten" ]; then
+        patten="$content"
+    fi
+    if ! grep -qF "$patten" "$file"; then
+        echo "$content" >>"$file"
+    fi
 }
 
 # bashrc config
@@ -40,20 +60,20 @@ _put_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
 _put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
 # cronjob auto update
-CRON_JOB="cd $ROOT_DIR && /usr/bin/git pull -q origin master"
+CRON_JOB="/bin/bash $ROOT_DIR/update.sh"
 if type crontab >/dev/null 2>&1; then
-    crontab -l || true # ignore error of no cron job for user.
+    crontab -l >/dev/null || true # ignore error of no cron job for user.
     cronfile="/tmp/handotfiles-cron-$ME.job"
-    # `&& echo` make sure empty crontab content will not make `grep -v` exist with error
-    crontab -l && echo | grep -v "cd $ROOT_DIR" >"$cronfile"
-    printf "%s\n" "* * * * * $CRON_JOB && echo \`date\` </tmp/han-dotfiles-cron.txt" >>"$cronfile"
+    data="$(crontab -l)"
+    echo "$data" | grep -v "$ROOT_DIR" >"$cronfile"
+    printf "%s\n" "* * * * * $CRON_JOB" >>"$cronfile"
     # Tips for mac user: add cron to the Full Disk Access group
-    cat "$cronfile" | crontab -
+    cat "$cronfile" | grep -E -v "^$" | crontab -
 fi
 
 echo "Success setup! All confguration will active in next login."
 optional_sh="/tmp/han-dotfiles-optional-$ME.sh"
-tee "$optional_sh" <<EOF
+cat >"$optional_sh" <<EOF
 # Optional configuration
 
 # git ignore
