@@ -10,4 +10,3 @@ export GIT_SSL_NO_VERIFY=1
 cd "$ROOT_DIR"
 
 /usr/bin/git pull -q origin master
-date >/tmp/han-dotfiles-cron.txt
