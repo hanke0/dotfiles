@@ -65,7 +65,7 @@ if type crontab >/dev/null 2>&1; then
     crontab -l >/dev/null || true # ignore error of no cron job for user.
     cronfile="/tmp/handotfiles-cron-$ME.job"
     data="$(crontab -l)"
-    echo "$data" | grep -v "$ROOT_DIR" >"$cronfile"
+    echo "$data" | grep -v -F "$ROOT_DIR" || true >"$cronfile"
     printf "%s\n" "* * * * * $CRON_JOB" >>"$cronfile"
     # Tips for mac user: add cron to the Full Disk Access group
     cat "$cronfile" | grep -E -v "^$" | crontab -
