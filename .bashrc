@@ -149,6 +149,14 @@ if ! command -v 'z' >/dev/null 2>&1; then
 fi
 
 # -- Alias --------------------------------------------------------------------
-alias cls='clear'
+alias ls='ls --color=auto'
 alias ll='ls -Alhb'
+alias ll='ls -alF'
+alias la='ls -ACF'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+alias cls='clear'
 alias tt='tmux-open'
