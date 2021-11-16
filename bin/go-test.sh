@@ -12,4 +12,5 @@ run_and_print() {
     "$@"
 }
 
+run_and_print go clean -testcache
 run_and_print go test -gcflags=all=-l "${args[@]}"
