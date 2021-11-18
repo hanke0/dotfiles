@@ -13,4 +13,4 @@ esac
 top -b -d1 | grep --line-buffered -E "$1" |
     grep --line-buffered -v "grep --line-buffered -E $1" |
     grep -v --line-buffered "$0" |
-    awk '{print strftime("%Y-%m-%e %H:%M:%S"),$1,$6,$9}'
+    awk '{print strftime("%Y-%m-%e %H:%M:%S"),$1,$6,$9;fflush(stdout)}'
