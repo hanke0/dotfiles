@@ -2,16 +2,65 @@
 
 set -e
 
-case "$DEBUG" in
-true | 1 | on)
-    set -x
-    ;;
-*) ;;
-esac
+ALWAYS_YES=false
+DRYRUN=
+
+print_help() {
+    cat <<EOF
+Usage: $(basename "$ABS_PATH") [OPTION]...
+
+OPTION:
+  -y --yes       Don't ask for confirmation of install options.
+  -n --dry-run   Show what this script would do
+  -v --verbose   Verbose output command
+EOF
+}
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+    -y | --yes)
+        ALWAYS_YES=true
+        shift
+        ;;
+    -n | --dry-run)
+        DRYRUN='echo +'
+        shift
+        ;;
+    -h | --help)
+        print_help
+        exit 1
+        ;;
+    -v | --verbose)
+        set -x
+        shift
+        ;;
+    *)
+        echo >&2 "Bad options: $1"
+        echo >&2 "Use -h or --help or more informations."
+        exit 1
+        ;;
+    esac
+done
 
 ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
 ME="$(whoami)"
+
+read_yes() {
+    if [ "$ALWAYS_YES" = "true" ]; then
+        return 0
+    fi
+    local answer=
+    read -r -p "$@" answer
+    case "$answer" in
+    y* | Y* | '')
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
+    esac
+}
 
 _has_content() {
     if [[ ! -f "$2" ]]; then
@@ -36,7 +85,7 @@ append_content() {
         patten="$content"
     fi
     if ! grep -qF "$patten" "$file"; then
-        echo "$content" >>"$file"
+        $DRYRUN echo "$content" >>"$file"
     fi
 }
 
@@ -45,7 +94,7 @@ _put_content "export PATH=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
 _put_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
 
 # git config
-git config --global include.path "$ROOT_DIR/.gitconfig"
+$DRYRUN git config --global include.path "$ROOT_DIR/.gitconfig"
 
 # tmux config
 _put_content "source-file $ROOT_DIR/.tmux.conf" ~/.tmux.conf
@@ -59,29 +108,42 @@ _put_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
 # input config
 _put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
-# cronjob auto update
-CRON_JOB="/bin/bash $ROOT_DIR/update.sh"
-if type crontab >/dev/null 2>&1; then
-    crontab -l >/dev/null || true # ignore error of no cron job for user.
-    cronfile="/tmp/handotfiles-cron-$ME.job"
-    data="$(crontab -l)"
-    echo "$data" | grep -v -F "$ROOT_DIR" || true >"$cronfile"
-    printf "%s\n" "* * * * * $CRON_JOB" >>"$cronfile"
-    # Tips for mac user: add cron to the Full Disk Access group
-    cat "$cronfile" | grep -E -v "^$" | crontab -
+if read_yes "Add cronjob for updating: [Y/n]: "; then
+    # cronjob auto update
+    CRON_JOB="/bin/bash $ROOT_DIR/update.sh"
+    if type crontab >/dev/null 2>&1; then
+        cronfile="/tmp/handotfiles-cron-$ME.job"
+        echo >"$cronfile"
+        data="$(crontab -l 2>/dev/null | true)"
+        echo "$data" | grep -v -F "$ROOT_DIR" >"$cronfile"
+        printf "%s\n" "* * * * * $CRON_JOB" >>"$cronfile"
+        # Tips for mac user: add cron to the Full Disk Access group
+        cdata="$(cat "$cronfile" | grep -E -v "^$")"
+        if [ -z "$DRYRUN" ]; then
+            echo "$cdata" | crontab -
+        else
+            $DRYRUN "echo $cdata | contab -"
+        fi
+    fi
+fi
+
+link_yes() {
+    if [ ! -f "$2" ]; then
+        $DRYRUN ln -s "$1" "$2"
+    else
+        if read_yes "$2 Exists, do you want delete it? [Y/n]: "; then
+            $DRYRUN rm "$2"
+            $DRYRUN ln -s "$1" "$2"
+        fi
+    fi
+}
+
+if read_yes "Link ~/.gitignore? [Y/n]: "; then
+    link_yes $ROOT_DIR/.gitignore ~/.gitignore
+fi
+
+if read_yes "Link ~/.condarc [Y/n]: "; then
+    link_yes $ROOT_DIR/.condarc ~/.condarc
 fi
 
 echo "Success setup! All confguration will active in next login."
-optional_sh="/tmp/han-dotfiles-optional-$ME.sh"
-cat >"$optional_sh" <<EOF
-# Optional configuration
-
-# git ignore
-ln -s $ROOT_DIR/.gitignore $(echo ~)/.gitignore
-
-# condarc
-ln -s $ROOT_DIR/.condarc $(echo ~)/.condarc
-EOF
-
-echo "Execute the following command to activate the above options."
-echo "sh $optional_sh"
