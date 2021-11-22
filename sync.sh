@@ -67,6 +67,9 @@ in_dryrun() {
 }
 
 has_content() {
+    if [ ! -f "$2" ]; then
+        return 1
+    fi
     grep -qF "$1" "$2"
 }
 
