@@ -101,8 +101,8 @@ add_cronjob() {
     fi
     f="$(mktemp /tmp/handotfiles-cron.$ME.XXXX)"
     data="$(crontab -l 2>/dev/null || true)"
-    printf "%s" "$data" >"$f"
-    data="$(grep -qF "$remove_pattern" "$f")"
+    echo "$data" >"$f"
+    data="$(grep -v "$remove_pattern" "$f")"
     printf "%s" "$data" >"$f"
     printf "\n%s %s" "$schedule" "$commander" >>"$f"
     data="$(cat "$f")"
