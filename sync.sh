@@ -62,68 +62,81 @@ read_yes() {
     esac
 }
 
-_has_content() {
-    if [[ ! -f "$2" ]]; then
-        return 1
-    fi
-    grep "$1" "$2" >/dev/null 2>&1
+in_dryrun() {
+    test -n "$DRYRUN"
 }
 
-_put_content() {
-    if _has_content "$1" "$2"; then
-        return 0
-    fi
-    echo "modified $2"
-    echo "$1" >>"$2"
+has_content() {
+    grep -qF "$1" "$2"
 }
 
 append_content() {
-    file="$1"
-    content="$2"
+    file="$2"
+    content="$1"
     patten="$3"
     if [ -z "$patten" ]; then
         patten="$content"
     fi
-    if ! grep -qF "$patten" "$file"; then
-        $DRYRUN echo "$content" >>"$file"
+    if ! has_content "$patten" "$file"; then
+        if in_dryrun; then
+            $DRYRUN "echo \"$content\" >>\"$file\""
+        else
+            echo "$content" >>"$file"
+        fi
     fi
 }
 
+add_cronjob() {
+    local schedule="$1"
+    local commander="$2"
+    local remove_pattern="$3"
+    local f=
+    local data=
+
+    if [ -z "$3" ]; then
+        remove_pattern="$2"
+    fi
+    f="$(mktemp /tmp/handotfiles-cron.$ME.XXXX)"
+    data="$(crontab -l 2>/dev/null || true)"
+    printf "%s" "$data" >"$f"
+    data="$(grep -qF "$remove_pattern" "$f")"
+    printf "%s" "$data" >"$f"
+    printf "\n%s %s" "$schedule" "$commander" >>"$f"
+    data="$(cat "$f")"
+    # remove leading whitespace characters
+    data="${data#"${data%%[![:space:]]*}"}"
+    if ! in_dryrun; then
+        echo "$data" | crontab -
+    else
+        $DRYRUN "echo $data | contab -"
+    fi
+    rm "$f"
+}
+
 # bashrc config
-_put_content "export PATH=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
-_put_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
+append_content "export PATH=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
+append_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
 
 # git config
 $DRYRUN git config --global include.path "$ROOT_DIR/.gitconfig"
 
 # tmux config
-_put_content "source-file $ROOT_DIR/.tmux.conf" ~/.tmux.conf
+append_content "source-file $ROOT_DIR/.tmux.conf" ~/.tmux.conf
 
 # vim config
-_put_content "source $ROOT_DIR/.vimrc" ~/.vimrc
+append_content "source $ROOT_DIR/.vimrc" ~/.vimrc
 
 # zsh config
-_put_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
+append_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
 
 # input config
-_put_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
+append_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
 if read_yes "Add cronjob for updating: [Y/n]: "; then
     # cronjob auto update
     CRON_JOB="/bin/bash $ROOT_DIR/update.sh"
     if type crontab >/dev/null 2>&1; then
-        cronfile="/tmp/handotfiles-cron-$ME.job"
-        echo >"$cronfile"
-        data="$(crontab -l 2>/dev/null | true)"
-        echo "$data" | grep -v -F "$ROOT_DIR" >"$cronfile"
-        printf "%s\n" "* * * * * $CRON_JOB" >>"$cronfile"
-        # Tips for mac user: add cron to the Full Disk Access group
-        cdata="$(cat "$cronfile" | grep -E -v "^$")"
-        if [ -z "$DRYRUN" ]; then
-            echo "$cdata" | crontab -
-        else
-            $DRYRUN "echo $cdata | contab -"
-        fi
+        add_cronjob "* * * * *" "$CRON_JOB" "$ROOT_DIR"
     fi
 fi
 
@@ -139,11 +152,11 @@ link_yes() {
 }
 
 if read_yes "Link ~/.gitignore? [Y/n]: "; then
-    link_yes $ROOT_DIR/.gitignore ~/.gitignore
+    link_yes "$ROOT_DIR/.gitignore" ~/.gitignore
 fi
 
 if read_yes "Link ~/.condarc [Y/n]: "; then
-    link_yes $ROOT_DIR/.condarc ~/.condarc
+    link_yes "$ROOT_DIR/.condarc" ~/.condarc
 fi
 
 echo "Success setup! All confguration will active in next login."
