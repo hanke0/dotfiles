@@ -148,8 +148,16 @@ if ! command -v 'z' >/dev/null 2>&1; then
     alias z='_download_z'
 fi
 
+is_macOS() {
+    [ "$(uname)" = "Darwin" ]
+}
+
 # -- Alias --------------------------------------------------------------------
-alias ls='ls --color=auto'
+if is_macOS; then
+    alias ls='ls -G'
+else
+    alias ls='ls --color=auto'
+fi
 alias ll='ls -Alhb'
 alias ll='ls -alF'
 alias la='ls -ACF'
