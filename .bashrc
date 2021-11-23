@@ -1,16 +1,19 @@
 # ~/.dotfiles/.bashrc
 
-pathmunge() {
+path_append() {
     case ":${PATH}:" in
     *:"$1":*) ;;
-
     *)
-        if [ "$2" = "before" ]; then
-            PATH=$1:$PATH
-        else
-            PATH=$PATH:$1
-        fi
-        export PATH
+        export PATH="$PATH:$1"
+        ;;
+    esac
+}
+
+path_push() {
+    case ":${PATH}:" in
+    *:"$1":*) ;;
+    *)
+        export PATH="$1:$PATH"
         ;;
     esac
 }

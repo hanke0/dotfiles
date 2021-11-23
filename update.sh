@@ -6,7 +6,7 @@ path_append() {
     case ":${PATH}:" in
     *:"$1":*) ;;
     *)
-        export PATH=$PATH:$1
+        export PATH="$PATH:$1"
         ;;
     esac
 }
