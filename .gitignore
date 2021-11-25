@@ -67,4 +67,4 @@ tags
 
 .idea/
 tmp/
-CPPLINT.cfg
+!go.mod
