@@ -10,6 +10,15 @@ case "$1" in
 *) ;;
 esac
 
+# avoid using ~/.toprc
+tp="$(mktemp)"
+rm "$tp"
+ln -s "$(type -p top)" "$tp"
+trapfinish() {
+    rm "$tp"
+}
+trap 'trapfinish' EXIT
+
 pids="$(pgrep -d, -f "$1")"
 # output format
 # yyyy-mm-dd hh-mm-ss pid res %cpu command
