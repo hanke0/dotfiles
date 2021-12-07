@@ -7,10 +7,10 @@ else
     args=(./...)
 fi
 
-run_and_print() {
+vexec() {
     echo "$@"
     "$@"
 }
 
-run_and_print go clean -testcache
-run_and_print go test -gcflags=all=-l "${args[@]}"
+vexec go clean -testcache
+vexec go test -gcflags=all=-l "${args[@]}"
