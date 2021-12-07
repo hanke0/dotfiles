@@ -10,7 +10,8 @@ case "$1" in
 *) ;;
 esac
 
-top -b -d1 | grep --line-buffered -E "$1" |
-    grep --line-buffered -v "grep --line-buffered -E $1" |
-    grep -v --line-buffered "$0" |
-    awk '{print strftime("%Y-%m-%e %H:%M:%S"),$1,$6,$9;fflush(stdout)}'
+# output format
+# yyyy-mm-dd hh-mm-ss pid res %cpu command
+top -w 512 -c -b -d1 -p "$(pgrep -d ' ' -f "$1")" |
+    grep --line-buffered "^ *[0-9]" |
+    awk '{print strftime("%Y-%m-%d %H:%M:%S"),$1,$6,$9,$12; fflush(stdout)}'
