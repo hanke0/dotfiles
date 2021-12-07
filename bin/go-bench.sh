@@ -14,6 +14,5 @@ vexec() {
 
 vexec go clean -testcache
 vexec go test -gcflags=all=-l --bench=. --run=^$ \
-    -cpuprofile=prof.out -memprofile mem.out \
     -benchmem \
     "${args[@]}"
