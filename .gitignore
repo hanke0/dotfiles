@@ -58,7 +58,7 @@ tags
 ## end C++
 
 ## VSCODE
-.vscode/*
+.vscode
 *.code-workspace
 
 # Local History for Visual Studio Code
