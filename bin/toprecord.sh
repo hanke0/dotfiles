@@ -22,7 +22,7 @@ trap 'trapfinish' EXIT
 pids="$(pgrep -d, -f "$1")"
 # output format
 # yyyy-mm-dd hh-mm-ss pid res %cpu command
-top -w 512 -c -b -d1 -p "$pids" |
+"$tp" -w 512 -c -b -d1 -p "$pids" 
     grep --line-buffered "^ *[0-9]" |
-    grep -v --line-buffered "$0" |
+    grep --line-buffered -v "$0" |
     awk '{print strftime("%Y-%m-%d %H:%M:%S"),$1,$6,$9,$12; fflush(stdout)}'
