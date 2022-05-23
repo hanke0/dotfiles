@@ -1,30 +1,18 @@
 #!/bin/bash
 
-# Program to sort the entries in a multi TB file (pseudo map-reduce).
-# Version: 1.0
-
-### Usage: sort-large-file.sh <inputfile>
-
-## Assumptions:
-# 1. There is no other file in the folder with filename starting with "$SORT_TMP_PREFIX"
-# 2. There is enough free disk space to create a copy of input file and to store the output results file. In the worst the case I would suggest to have available disk space equal to twice the size of the input file.
-# 3. Two instance of the script wont be run simultaneously in a same folder. As temporarily (_tmp) files generated may conflict. Will fix this in next version
-
-## Performance tuning
-# To best utilize the script, try to set 'temp_filesize' to be smaller than the number of lines in your input file.
-# 'temp_filesize' represents number of lines of input data that are processed as a unit.
-# Based on available RAM, # of cores, and number of lines in the input file, set optimal value for 'temp_filesize'
-
-###---- Default value: You may want to change
+set -e
+set -o pipefail
 
 SCRIPT_NAME="$(basename "$0")"
+DIR="$(pwd || exit 1)"
 
 FILENAME=""
-SORT_TMP_PREFIX="__tmp"
-TMP_FILESIZE=65536
+SORT_TMP_PREFIX="__tmp$RANDOM"
+TMP_LINES=65535
 PARALLEL=1
 SORT_ARGUMENT=
 OUTPUT=""
+TEST=0
 
 die() {
     echo >&2 "$@"
@@ -45,18 +33,45 @@ set_filename() {
     FILENAME="$1"
 }
 
+VERSION="1.0"
+
 usage() {
-    echo "Usage: $SCRIPT_NAME [--parallel parallel] [--filesize bytes] [--prefix __tmp] [-o filename] [--extra-sort-option string]  <input_file>"
+    cat <<EOF
+Usage: $SCRIPT_NAME [OPTION]... <input_file>
+
+Version: 1.0
+Objetive: Program to sort lines in a multi TB file (pseudo map-reduce).
+Dependences: bash, sort, find, split, read, printf, rm, xargs
+
+Assumptions:
+1. There is no other file in the folder with filename starting with input prefix.
+2. There is enough free disk space to create a copy of input file and to store
+   the output results file. In the worst the case I would suggest to have
+   available disk space equal to twice the size of the input file.
+3. Two instance of the script would be run simultaneously in a same folder with
+   different prefixes. As temporarily files generated may conflict, same prefix
+   won't works. Default behaviour uses random number, which gets from \$RANDOM,
+   to avoid filename conflict.
+
+Options:
+       --extra-sort-option  extra flags that sends to sort.
+    -h --help               display this help and exit.
+    -l --lines=NUMBER       NUMBER lines per temp file (default: 65535).
+    -o --output=FILE        output FILE (default to  input file with a '.sorted' suffix).
+    -p --parallel=NUMBER    change the number of sorts run concurrently to NUMBER (default to 1).
+       --prefix             PREFIX of the temporaily files (default: __tmp and a random number).
+       --version            ouput version information and exit.
+EOF
 }
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
-    --parallel)
+    -p | --parallel)
         PARALLEL="$(checked_argument "$1" "$2")"
         shift 2
         ;;
-    --filesize)
-        TMP_FILESIZE="$(checked_argument "$1" "$2")"
+    -l | --lines)
+        TMP_LINES="$(checked_argument "$1" "$2")"
         shift 2
         ;;
     --prefix)
@@ -74,6 +89,15 @@ while [ "$#" -gt 0 ]; do
     --extra-sort-option)
         SORT_ARGUMENT="$(checked_argument "$1" "$2")"
         shift 2
+        ;;
+    --test)
+        TEST=1
+        shift 1
+        ;;
+    --version)
+        echo "$SCRIPT_NAME $VERSION"
+        echo "Written by ko-han."
+        exit 0
         ;;
     --)
         if [ "$#" -ne 2 ]; then
@@ -106,30 +130,53 @@ fi
 if [ -f "$OUTPUT" ]; then
     die "output file exists: $OUTPUT"
 fi
+INPUT_DIR="$(dirname "$FILENAME" || exit 1)"
+if [ -z "$INPUT_DIR" ]; then
+    die "cannot get input file folder name".
+fi
+BASE_FILENAME="$(basename "$FILENAME")"
 
-function __sort_large_file_subsort {
-    subfilename=$1
-    subfilename_tmp=$1".u"
+TEMP_FILES=()
+
+list_temp_files() {
+    while IFS= read -r -d $'\0'; do
+        TEMP_FILES+=("$REPLY")
+    done < <(find "$INPUT_DIR" -name "${SORT_TMP_PREFIX}*" -type f -print0)
+}
+
+clean() {
+    find "$INPUT_DIR" -name "${SORT_TMP_PREFIX}*" -type f -exec rm {} +
+}
+
+__sort_large_file_subsort() {
+    subfilename="$1"
+    subfilename_tmp="${subfilename}.u"
 
     sort $SORT_ARGUMENT ${subfilename} -o ${subfilename_tmp}
     mv ${subfilename_tmp} ${subfilename}
 }
 export -f __sort_large_file_subsort
 
-clean() {
-    rm -f "$SORT_TMP_PREFIX"*
-}
-
-echo "1/4: splitting inputfile, cores available ${PARALLEL}"
-split -a 7 -l "${TMP_FILESIZE}" "$FILENAME" "$SORT_TMP_PREFIX"
-
 trap 'clean' EXIT
 
-echo "2/4: processing individual files" ## processing individual files
-ls "$SORT_TMP_PREFIX"* | xargs -P "${PARALLEL}" -n 1 -I % bash -c '__sort_large_file_subsort %' _ {}
+echo "1/4: splitting input file"
+cd "$INPUT_DIR"
+split -a 12 -d -l "${TMP_LINES}" "$BASE_FILENAME" "$SORT_TMP_PREFIX"
+cd "$DIR"
+list_temp_files
 
-echo "3/4: merging results" ## merging results
-sort $SORT_ARGUMENT -m "$SORT_TMP_PREFIX"* -o "${OUTPUT}"
+echo "2/4: processing individual files."
+printf "%s\0" "${TEMP_FILES[@]}" | xargs --null -P "${PARALLEL}" -n 1 -I % bash -c '__sort_large_file_subsort %' _ {}
 
-echo "4/4: cleaning" ## cleaning
+echo "3/4: merging results"
+sort $SORT_ARGUMENT -m ${TEMP_FILES[@]} -o "${OUTPUT}"
+
+echo "4/4: cleaning"
 clean
+
+if [ "$TEST" -ne 0 ]; then
+    _test_out=/tmp/sort-large-file.sh.testout
+    echo "extra: sort result $_test_out"
+    sort -o "$_test_out" $SORT_ARGUMENT "$FILENAME"
+    diff -a "$OUTPUT" "$_test_out"
+fi
