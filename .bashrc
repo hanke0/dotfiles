@@ -28,7 +28,7 @@ path_push() {
 if [ -n "$ROOT_DIR" ]; then
     if [ -d "$ROOT_DIR/bin" ]; then
         path_append "$ROOT_DIR/bin"
-        [ -f "$ROOT_DIR" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
+        [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
     fi
 fi
 
