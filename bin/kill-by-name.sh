@@ -2,7 +2,13 @@
 
 usage() {
     cat <<EOF
-Usage: ${0##*/} [-signum] <pattern>
+Usage: ${0##*/} [-n -s] [-y] <pattern>
+
+OPTION:
+    -y                no ask.
+    -h --help         print this help and exit.
+    -n sig            SIG is a signal number.
+    -s sig            SIG is a signal name.
 EOF
 }
 
@@ -11,6 +17,14 @@ sig=""
 noyes=0
 while [ $# -gt 0 ]; do
     case "$1" in
+    -n)
+        sig="-n $2"
+        shift 2
+        ;;
+    -s)
+        sig="-n $2"
+        shift 2
+        ;;
     -[0-9]*)
         sig=$1
         shift

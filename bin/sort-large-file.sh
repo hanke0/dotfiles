@@ -57,7 +57,7 @@ Options:
        --extra-sort-option  extra flags that sends to sort.
     -h --help               display this help and exit.
     -l --lines=NUMBER       NUMBER lines per temp file (default: 65535).
-    -o --output=FILE        output FILE (default to  input file with a '.sorted' suffix).
+    -o --output=FILE        output FILE (default to input file with a '.sorted' suffix).
     -p --parallel=NUMBER    change the number of sorts run concurrently to NUMBER (default to 1).
        --prefix             PREFIX of the temporaily files (default: __tmp and a random number).
        --version            ouput version information and exit.

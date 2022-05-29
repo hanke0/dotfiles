@@ -46,6 +46,11 @@ ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
 ME="$(whoami)"
 
+if [ -z "$ROOT_DIR" ]; then
+    echo >&2 "cannot get folder"
+    exit 1
+fi
+
 read_yes() {
     if [ "$ALWAYS_YES" = "true" ]; then
         return 0
@@ -117,7 +122,6 @@ add_cronjob() {
 }
 
 # bashrc config
-append_content "export PATH=\"\$PATH:$ROOT_DIR/bin\"" ~/.bashrc
 append_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
 
 # git config

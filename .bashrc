@@ -1,4 +1,11 @@
-# ~/.dotfiles/.bashrc
+#!/bin/bash
+
+ME="${BASH_SOURCE[0]}"
+[ -z "$ME" ] && exit 0
+ABS_PATH="$(realpath "$ME")"
+if [ -n "$ABS_PATH" ]; then
+    ROOT_DIR="$(dirname "$ABS_PATH")"
+fi
 
 path_append() {
     case ":${PATH}:" in
@@ -17,6 +24,13 @@ path_push() {
         ;;
     esac
 }
+
+if [ -n "$ROOT_DIR" ]; then
+    if [ -d "$ROOT_DIR/bin" ]; then
+        path_append "$ROOT_DIR/bin"
+        [ -f "$ROOT_DIR" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
+    fi
+fi
 
 # history about
 export HISTIGNORE="?"
