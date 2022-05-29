@@ -25,7 +25,7 @@ while [ $# -gt 0 ]; do
         ;;
     --)
         shift 1
-        args+="$@"
+        args+=("$@")
         break
         ;;
     -*)
@@ -57,15 +57,15 @@ toCamel() {
 }
 
 toSnake() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1_\L\2/g' -e 'y/- /__/' | tr [[:upper:]] [[:lower:]]
+    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1_\L\2/g' -e 'y/- /__/' | tr '[:upper:]' '[:lower:]'
 }
 
 toSpinal() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1-\L\2/g' -e 'y/_ /--/' | tr [[:upper:]] [[:lower:]]
+    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1-\L\2/g' -e 'y/_ /--/' | tr '[:upper:]' '[:lower:]'
 }
 
 toSpace() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1 \L\2/g' -e 'y/-_/  /' | tr [[:upper:]] [[:lower:]]
+    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1 \L\2/g' -e 'y/-_/  /' | tr '[:upper:]' '[:lower:]'
 }
 
 if [ ${#args[@]} -eq 0 ]; then
@@ -90,4 +90,4 @@ if [ $noyes -eq 0 ]; then
     esac
 fi
 
-echo "${processes}" | awk '{print $2}' | xargs kill $sig
+echo "${processes[@]}" | awk '{print $2}' | xargs kill $sig

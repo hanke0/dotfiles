@@ -25,7 +25,7 @@ while [ $# -gt 0 ]; do
         ;;
     --)
         shift 1
-        args+="$@"
+        args+=("$@")
         break
         ;;
     -*)
