@@ -56,6 +56,6 @@ _common_option_complete() {
     esac
 }
 
-complete -W "camel snake pascal spinal space" convcase.sh
+complete -W "--help camel snake pascal spinal space" convcase.sh
 complete -F _common_option_complete kill-by-name.sh
 complete -F _common_option_complete sort-large-file.sh
