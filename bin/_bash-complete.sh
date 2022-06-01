@@ -45,17 +45,18 @@ _common_option_complete() {
         fi
     fi
     case "$cur" in
-        -*)
-            COMPREPLY=($(compgen -W "$opts" -- $cur))
-            ;;
-        *)
-            compopt -o nospace
-            compopt -o filenames 2>/dev/null
-            COMPREPLY=($(compgen -f -- "$cur"))
-            ;;
+    -*)
+        COMPREPLY=($(compgen -W "$opts" -- $cur))
+        ;;
+    *)
+        compopt -o nospace
+        compopt -o filenames 2>/dev/null
+        COMPREPLY=($(compgen -f -- "$cur"))
+        ;;
     esac
 }
 
 complete -W "--help camel snake pascal spinal space" convcase.sh
 complete -F _common_option_complete kill-by-name.sh
 complete -F _common_option_complete sort-large-file.sh
+complete -F _common_option_complete catlines.sh
