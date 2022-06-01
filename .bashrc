@@ -2,6 +2,11 @@
 
 ME="${BASH_SOURCE[0]}"
 [ -z "$ME" ] && exit 0
+
+command -v realpath >/dev/null 2>&1 ||  realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
 ABS_PATH="$(realpath "$ME")"
 if [ -n "$ABS_PATH" ]; then
     ROOT_DIR="$(dirname "$ABS_PATH")"
