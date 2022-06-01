@@ -17,6 +17,10 @@ path_append "/usr/bin"
 path_append "/sbin"
 path_append "/usr/sbin"
 
+command -v realpath >/dev/null 2>&1 ||  realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
 ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
 
