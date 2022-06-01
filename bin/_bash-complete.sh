@@ -28,6 +28,7 @@ _common_option_complete() {
             [[ "$line" =~ ^([[:space:]]+(-[A-Za-z0-9])?[[:space:]]*--[-A-Za-z0-9]+=PATH)|(^[[:space:]]+-[A-Za-z0-9]=PATH) ]] && printf '%s ' "${BASH_REMATCH[0]%%=FILE}"
         done
     )"
+    IFS=$PREIFS
 
     if [ -n "$prev" ]; then
         if [[ " $pathopts " =~ [[:space:]]${prev}[[:space:]] ]]; then
@@ -43,8 +44,16 @@ _common_option_complete() {
             return
         fi
     fi
-    IFS=$PREIFS
-    COMPREPLY=($(compgen -W "$opts" -- $cur))
+    case "$cur" in
+        -*)
+            COMPREPLY=($(compgen -W "$opts" -- $cur))
+            ;;
+        *)
+            compopt -o nospace
+            compopt -o filenames 2>/dev/null
+            COMPREPLY=($(compgen -f -- "$cur"))
+            ;;
+    esac
 }
 
 complete -W "camel snake pascal spinal space" convcase.sh
