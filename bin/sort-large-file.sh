@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 set -o pipefail
@@ -10,7 +10,7 @@ FILENAME=""
 SORT_TMP_PREFIX="__tmp$RANDOM"
 TMP_LINES=65535
 PARALLEL=1
-SORT_ARGUMENT=
+SORT_ARGUMENT=()
 OUTPUT=""
 TEST=0
 
@@ -87,7 +87,9 @@ while [ "$#" -gt 0 ]; do
         shift 2
         ;;
     --extra-sort-option)
-        SORT_ARGUMENT="$(checked_argument "$1" "$2")"
+        # want split words here.
+        # shellcheck disable=SC2207
+        SORT_ARGUMENT+=($(checked_argument "$1" "$2"))
         shift 2
         ;;
     --test)
@@ -152,8 +154,8 @@ __sort_large_file_subsort() {
     subfilename="$1"
     subfilename_tmp="${subfilename}.u"
 
-    sort $SORT_ARGUMENT ${subfilename} -o ${subfilename_tmp}
-    mv ${subfilename_tmp} ${subfilename}
+    sort "${SORT_ARGUMENT[@]}" "${subfilename}" -o "${subfilename_tmp}"
+    mv "${subfilename_tmp}" "${subfilename}"
 }
 export -f __sort_large_file_subsort
 
@@ -169,7 +171,7 @@ echo "2/4: processing individual files."
 printf "%s\0" "${TEMP_FILES[@]}" | xargs --null -P "${PARALLEL}" -n 1 -I % bash -c '__sort_large_file_subsort %' _ {}
 
 echo "3/4: merging results"
-sort $SORT_ARGUMENT -m ${TEMP_FILES[@]} -o "${OUTPUT}"
+sort "${SORT_ARGUMENT[@]}" -m "${TEMP_FILES[@]}" -o "${OUTPUT}"
 
 echo "4/4: cleaning"
 clean
@@ -177,6 +179,6 @@ clean
 if [ "$TEST" -ne 0 ]; then
     _test_out=/tmp/sort-large-file.sh.testout
     echo "extra: sort result $_test_out"
-    sort -o "$_test_out" $SORT_ARGUMENT "$FILENAME"
+    sort -o "$_test_out" "${SORT_ARGUMENT[@]}" "$FILENAME"
     diff -a "$OUTPUT" "$_test_out"
 fi

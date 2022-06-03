@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
     cat <<EOF
@@ -57,15 +57,15 @@ toCamel() {
 }
 
 toSnake() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1_\L\2/g' -e 'y/- /__/' | tr [[:upper:]] [[:lower:]]
+    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1_\L\2/g' -e 'y/- /__/' | tr '[:upper:]' '[:lower:]'
 }
 
 toSpinal() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1-\L\2/g' -e 'y/_ /--/' | tr [[:upper:]] [[:lower:]]
+    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1-\L\2/g' -e 'y/_ /--/' | tr '[:upper:]' '[:lower:]'
 }
 
 toSpace() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1 \L\2/g' -e 'y/-_/  /' | tr [[:upper:]] [[:lower:]]
+    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1 \L\2/g' -e 'y/-_/  /' | tr '[:upper:]' '[:lower:]'
 }
 
 if [ ${#args[@]} -eq 0 ]; then

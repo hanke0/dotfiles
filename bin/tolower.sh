@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
     cat <<EOF
@@ -7,27 +7,26 @@ EOF
 }
 
 declare -a args
-toreplace=[[:upper:]]
-replace=[[:lower:]]
+toreplace='[[:upper:]]'
+replace='[[:lower:]]'
 
 while [ $# -gt 0 ]; do
     case "$1" in
-    -h|--help)
+    -h | --help)
         usage
         exit 0
         ;;
     -u | --upper)
-        toreplace=[[:lower:]]
-        replace=[[:upper:]]
+        toreplace='[[:lower:]]'
+        replace='[[:upper:]]'
         shift 1
         ;;
     --)
-        shift 1
-        args+="$@"
+        args+=("$@")
         break
         ;;
     -*)
-        echo >&2 "unknown option: $1";
+        echo >&2 "unknown option: $1"
         exit 1
         ;;
     *)
@@ -43,9 +42,9 @@ if [ ${#args[@]} -gt 1 ]; then
 fi
 
 if [ ${#args[@]} -eq 0 ]; then
-    tr $toreplace $replace
+    tr "$toreplace" "$replace"
 else
     for file in "${args[@]}"; do
-        cat "$file" | tr $toreplace $replace
+        tr "$toreplace" "$replace" <"$file"
     done
 fi

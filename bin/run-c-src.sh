@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-cc -o /tmp/a.out "$@" && /tmp/a.out
+cc -g -o /tmp/a.out "$@" && /tmp/a.out

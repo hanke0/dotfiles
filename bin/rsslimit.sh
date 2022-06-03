@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
 set -e
-
-RssOf() {
-    grep ^Rss /proc/"$1"/smaps | awk '{sum += $2} END {print sum}'
-}
+set -o pipefail
 
 usage() {
     cat <<EOF
-Usage: ${0##*/} [OPTION] <rss-bytes> <max-kilobytes> 
-Warning process if it reach max limit.
+Usage: ${0##*/} [OPTION] <pid> <max-kilobytes> 
+Warn a message if the process's rss usage reach max limit.
 
 Option:
     -s    interval in seconds, positive number.
@@ -32,7 +29,7 @@ IsNum='^[0-9]+$'
 PID=
 MAX=
 KILL=0
-KILLARGS=
+KILLARGS=()
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -52,8 +49,12 @@ while [ $# -gt 0 ]; do
         KILL=1
         ;;
     -n)
-        KILLARGS="-n $2"
+        KILLARGS+=(-n "$2")
         shift 2
+        ;;
+    -*)
+        echo >&2 "unknown option: $1"
+        exit 1
         ;;
     *)
         if [ -n "$PID" ]; then
@@ -77,18 +78,22 @@ done
 [[ -z ${PID} || ! ${PID} =~ ${IsNum} ]] && wrong-usage 'wrong PID'
 [[ ! ${interval} =~ ${IsNum} ]] && wrong-usage 'wrong interval'
 
-[[ ! -e /proc/${PID}/smaps ]] && echo >&2 PID not exists && exit 1
+[[ ! -f /proc/${PID}/smaps ]] && echo >&2 PID not exists && exit 1
 
 echo Listen PID "${PID}" RssLimit "${MAX}" KB
 
+RssOf() {
+    grep ^Rss /proc/"$1"/smaps | awk '{sum += $2} END {print sum}'
+}
+
 while true; do
     _rss=$(RssOf "${PID}")
-    [[ ${quiet} -eq 0 ]] && echo >&2 "USE ${_rss} KB"
+    [[ ${quiet} -eq 0 ]] && echo "USE ${_rss} kB"
     if [[ ${_rss} -gt ${MAX} ]]; then
-        echo >&2 "Overflow of pid ${PID} RSS: ${_rss}KB"
+        echo "Overflow of pid ${PID} RSS: ${_rss}kB"
         if [ $KILL -ne 0 ]; then
-            echo >&2 "kill $KILLARGS ${PID}"
-            kill $KILLARGS $PID
+            echo "kill ${KILLARGS[*]} ${PID}"
+            kill "${KILLARGS[@]}" "$PID"
         fi
         exit 1
     fi

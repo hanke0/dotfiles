@@ -9,7 +9,7 @@ read -r -p "Executeable: " EXEC
 if [[ -z "$EXEC" ]]; then
     EXEC="$*"
     if [[ -z "$EXEC" ]]; then
-        echo >&2 "please input the executable empty"
+        echo >&2 "please input the executable command"
         exit 1
     fi
 fi
@@ -19,24 +19,24 @@ if [[ -z "$DIR" ]]; then
     DIR=/tmp
 fi
 
-getbase() {
-    echo "$@" | sed -E 's/[[:blank:]].*//g' | xargs basename
-}
-
 read -r -p "User: " USER
 if [[ -z "$USER" ]]; then
-    USER=$(whoami)
+    USER="$(whoami)"
 fi
 
-read -r -p "Service name: " SERVICE_NAME
+read -r -p "Service name[$(getbase "$EXEC")]: " SERVICE_NAME
 if [[ -z "$SERVICE_NAME" ]]; then
-    SERVICE_NAME=$(getbase $EXEC)
+    SERVICE_NAME="$(getbase "$EXEC")"
 fi
 
 read -r -p "Description: " DESCRIPTION
 if [[ -z "$DESCRIPTION" ]]; then
     DESCRIPTION=$FILENAME
 fi
+
+getbase() {
+    echo "$@" | sed -E 's/[[:blank:]].*//g' | xargs basename
+}
 
 FILE_CONTENT="
 [Unit]

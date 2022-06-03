@@ -12,7 +12,7 @@ Usage: $(basename "$0") [OPTIONS]... [CYCLO_LIMIT=5]
 print the sum of the cyclo over CYCLO_LIMIT
 
 OPTIONS:
-  -h --help print this text and exit.
+  -h --help        print this text and exit.
 EOF
     exit 0
     ;;

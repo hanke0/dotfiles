@@ -42,7 +42,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-command -v realpath >/dev/null 2>&1 ||  realpath() {
+command -v realpath >/dev/null 2>&1 || realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 

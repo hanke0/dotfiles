@@ -3,7 +3,7 @@
 ME="${BASH_SOURCE[0]}"
 [ -z "$ME" ] && exit 0
 
-command -v realpath >/dev/null 2>&1 ||  realpath() {
+command -v realpath >/dev/null 2>&1 || realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 
@@ -33,6 +33,8 @@ path_push() {
 if [ -n "$ROOT_DIR" ]; then
     if [ -d "$ROOT_DIR/bin" ]; then
         path_append "$ROOT_DIR/bin"
+        # relative path is not realy a problem here.
+        # shellcheck disable=SC1091
         [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
     fi
 fi
@@ -53,14 +55,14 @@ fi
 
 export EDITOR='vim'
 
-COLOR_RESET='\e[0m'
-COLOR_RED='\e[31m'
-COLOR_GREEN='\e[32m'
-COLOR_YELLOW='\e[33m'
-COLOR_BLUE='\e[34m'
-COLOR_PURPLE='\e[35m'
-COLOR_CYAN='\e[36m'
-COLOR_LIGHTGRAY='\e[37m'
+export COLOR_RESET='\e[0m'
+export COLOR_RED='\e[31m'
+export COLOR_GREEN='\e[32m'
+export COLOR_YELLOW='\e[33m'
+export COLOR_BLUE='\e[34m'
+export COLOR_PURPLE='\e[35m'
+export COLOR_CYAN='\e[36m'
+export COLOR_LIGHTGRAY='\e[37m'
 
 # -- Prompt -------------------------------------------------------------------
 __git_branch() {
@@ -68,7 +70,7 @@ __git_branch() {
 }
 
 __ps1_proxy() {
-    if [ -n "$(echo "$http_proxy")" ]; then
+    if [ -n "$http_proxy" ]; then
         printf " ✈"
     fi
 }
@@ -92,7 +94,7 @@ export PS1
 # -- Functions --------------------------------------------------------------
 
 tmux_open() {
-    if tmux ls 2>/dev/null | grep han; then
+    if tmux 'ls' 2>/dev/null | grep han; then
         tmux attach-session -t han
     else
         tmux -2 -u new-session -s han
@@ -100,8 +102,8 @@ tmux_open() {
 }
 
 tmux_clean() {
-    if tmux ls 1>/dev/null 2>&1; then
-        tmux ls 2>/dev/null | grep : | cut -d: -f1 | xargs tmux kill-session -t
+    if tmux 'ls' 1>/dev/null 2>&1; then
+        tmux 'ls' 2>/dev/null | grep : | cut -d: -f1 | xargs tmux kill-session -t
     fi
 }
 
@@ -157,6 +159,8 @@ update_z() {
     curl -sSL -o /usr/local/share/man/man1/z.1 https://raw.githubusercontent.com/rupa/z/master/z.1
 }
 
+# ~ is allowed here.
+# shellcheck disable=SC1090
 [ -f ~/.z.sh/z.sh ] && . ~/.z.sh/z.sh
 if ! command -v 'z' >/dev/null 2>&1; then
     # z not exists
@@ -164,6 +168,7 @@ if ! command -v 'z' >/dev/null 2>&1; then
         echo "downloading z..."
         update_z
         # this will change z alias to real z
+        # shellcheck disable=SC1090
         . ~/.z.sh/z.sh
         echo "active z success!"
     }

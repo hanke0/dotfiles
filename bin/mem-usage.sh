@@ -9,17 +9,49 @@
 # Swap：表示非mmap内存（也叫anonymous memory，比如malloc动态分配出来的内存）由于物理内存不足被swap到交换空间的大小。
 # Pss：该虚拟内存区域平摊计算后使用的物理内存大小(有些内存会和其他进程共享，例如mmap进来的)。比如该区域所映射的物理内存部分同时也被另一个进程映射了，且该部分物理内存的大小为1000KB，那么该进程分摊其中一半的内存，即Pss=500KB。
 
-PID=$1
-MEMTYPE="$2"
+usage() {
+    cat <<EOF
+Usage: ${0##*/} [OPTION]... [PID]...
+Print memory usages of specific pid(s) from '/proc/*/smaps'.
 
-[[ -z "$1" ]] && exit 1
-[[ -z "$2" ]] && MEMTYPE="rss"
+Options:
+  -t --type     memory type. see at /proc/self/smaps
+  -h --help     print this help and exit
+EOF
+}
 
-case "$MEMTYPE" in
-rss) GREP="^Rss" ;;
-share) GREP="^share" ;;
-swap) GREP='^Swap' ;;
-*) GREP="$MEMTYPE" ;;
-esac
+declare -a args
+TYPE="Rss"
 
-grep "$GREP" /proc/"$PID"/smaps | awk '{sum += $2} END {print sum "\tkb"}'
+while [ $# -gt 0 ]; do
+    case "$1" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -t | --type)
+        TYPE="$2"
+        shift 2
+        ;;
+    --)
+        args+=("$@")
+        break
+        ;;
+    -*)
+        echo >&2 "unknown option: $1"
+        exit 1
+        ;;
+    *)
+        args+=("$1")
+        shift 1
+        ;;
+    esac
+done
+
+for pid in "${args[@]}"; do
+    if [ -f "/proc/$pid/smaps" ]; then
+        grep -E -i "^$TYPE" "/proc/$pid/smaps" | awk -F' ' "{sum += \$2} END {print \"${pid}\t\" sum \"kB\"}"
+    else
+        echo >&2 "pid not exist: $pid"
+    fi
+done

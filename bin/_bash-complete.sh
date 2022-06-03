@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 _common_option_complete() {
-    local cur prev words cword opts fileopts pathopts
+    local cur prev opts fileopts pathopts
     cur="$2"
     prev="$3"
-    words=("$COMP_WORDS")
+    # words=("$COMP_WORDS")
     # current index of cwords
-    cword="${COMP_CWORD}"
+    # cword="${COMP_CWORD}"
 
     COMPREPLY=()
     local PREIFS=$IFS
@@ -34,24 +34,24 @@ _common_option_complete() {
         if [[ " $pathopts " =~ [[:space:]]${prev}[[:space:]] ]]; then
             compopt -o nospace
             compopt -o filenames 2>/dev/null
-            COMPREPLY=($(compgen -d -- "$cur"))
+            COMPREPLY=("$(compgen -d -- "$cur")")
             return
         fi
         if [[ " $fileopts " =~ [[:space:]]${prev}[[:space:]] ]]; then
             compopt -o nospace
             compopt -o filenames 2>/dev/null
-            COMPREPLY=($(compgen -f -- "$cur"))
+            COMPREPLY=("$(compgen -f -- "$cur")")
             return
         fi
     fi
     case "$cur" in
     -*)
-        COMPREPLY=($(compgen -W "$opts" -- $cur))
+        COMPREPLY=("$(compgen -W "$opts" -- "$cur")")
         ;;
     *)
         compopt -o nospace
         compopt -o filenames 2>/dev/null
-        COMPREPLY=($(compgen -f -- "$cur"))
+        COMPREPLY=("$(compgen -f -- "$cur")")
         ;;
     esac
 }

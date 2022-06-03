@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
     cat <<EOF
@@ -13,20 +13,20 @@ EOF
 }
 
 declare -a args
-sig=""
+sig=()
 noyes=0
 while [ $# -gt 0 ]; do
     case "$1" in
     -n)
-        sig="-n $2"
+        sig=(-n "$2")
         shift 2
         ;;
     -s)
-        sig="-n $2"
+        sig=(-s "$2")
         shift 2
         ;;
     -[0-9]*)
-        sig=$1
+        sig=("$1")
         shift
         ;;
     -y)
@@ -87,13 +87,19 @@ if [ ${#args[@]} -eq 0 ]; then
     exit 1
 fi
 
-declare -a processes=("$(ps -ef | grep -E "${args[0]}" | grep -v "grep" | grep -v "${0##*/}")")
+command -v realpath >/dev/null 2>&1 || ps() {
+    find /proc/ -maxdepth 1 -type d -name '[0-9]*' -exec bash -c 'echo -n "${1##*/} "; cat "$1/cmdline"; echo' shell {} \;
+}
+
+# pgrep does not support
+# shellcheck disable=SC2009
+declare -a processes=("$(ps -o pid,command | grep -E "${args[0]}" | grep -v "grep" | grep -v "${0##*/}")")
 
 echo "${processes[@]}"
 
 if [ $noyes -eq 0 ]; then
     echo
-    echo "${processes[@]}" | awk '{print $2}' | xargs echo kill $sig
+    echo "${processes[@]}" | awk '{print $1}' | xargs echo kill "${sig[@]}"
     read -r -p "Kill all those process, OK[y/N]: " answer
     case "$answer" in
     y | yes | Y | Yes | YES) ;;
@@ -104,4 +110,4 @@ if [ $noyes -eq 0 ]; then
     esac
 fi
 
-echo "${processes[@]}" | awk '{print $2}' | xargs kill $sig
+echo "${processes[@]}" | awk '{print $2}' | xargs kill "${sig[@]}"

@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# ONLY BASH >= 4
-if [[ ${BASH_VERSION:0:1} -lt 4 ]]; then
-    echo "Bash version should >=4, current is $BASH_VERSION please upgrade your bash." >&2
-    return 1
-fi
 
 #--------------------------
 # STRING
@@ -39,6 +34,8 @@ str_endswith() {
 }
 
 str_index() {
+    # ignore string is unused.
+    # shellcheck disable=SC2034
     local string=$1
     local index=$2
     eval echo "\${string:$index:1}"
@@ -65,6 +62,8 @@ str_ltrim() {
     if (($# < 2)); then
         printf '%s\n' "${str#"${str%%[![:space:]]*}"}"
     else
+        # $2 must not quoted.
+        # shellcheck disable=SC2295
         printf '%s\n' "${str##$2}"
     fi
 }
@@ -74,6 +73,8 @@ str_rtrim() {
     if (($# < 2)); then
         printf '%s\n' "${str%"${str##*[![:space:]]}"}"
     else
+        # $2 must not quoted.
+        # shellcheck disable=SC2295
         printf '%s\n' "${str%%$2}"
     fi
 }
@@ -90,6 +91,8 @@ str_trim() {
 #--------------------------
 array_hasitem() {
     local array_name=$1
+    # ignore match is unused.
+    # shellcheck disable=SC2034
     local match="$2"
     local item1
 
@@ -112,6 +115,8 @@ array_intersection() {
     local array2_name=$2
 
     local item1
+    # ignore item2 is unused
+    # shellcheck disable=SC2034
     local item2
     eval "
   for item1 in \"\${${array1_name}[@]}\"; do
@@ -217,49 +222,6 @@ striking-print() {
     local s="$*"
     local n=$((${#s} + 6))
     printf '%*s' ${n} '' | tr ' ' '*' && printf '\n'
-    echo '* ' ${s} ' *'
+    echo '* ' "${s}" ' *'
     printf '%*s' ${n} '' | tr ' ' '*' && printf '\n'
-}
-
-#-----------------
-# DICT
-#-----------------
-# dict_new: declare -A variable=()
-dict_put() {
-    local dictname="$1"
-    local key="$2"
-    local value="$3"
-    eval "${dictname}['$key']=$value"
-}
-
-dict_get() {
-    local dictname="$1"
-    local key="$2"
-    eval "echo \"\${${dictname}['$key']}\""
-}
-
-dict_remove() {
-    local dictname="$1"
-    local key="$2"
-    unset "${dictname}['$key']"
-}
-
-dict_keys() {
-    local item
-    eval "for item in "\${!$1[@]}"; do echo "\$item"; done"
-}
-
-dict_values() {
-    local item
-    eval "for item in "\${!$1[@]}"; do echo "\${$1[\$item]}"; done"
-}
-
-dict_clear() {
-    local item
-    eval "for item in "\${!$1[@]}"; do unset "$1[\$item]"; done"
-}
-
-dict_echo() {
-    local item
-    eval "for item in "\${!$1[@]}"; do echo "\$item=\${$1[\$item]}"; done"
 }

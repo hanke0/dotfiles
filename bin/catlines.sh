@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 set -o pipefail
@@ -27,7 +27,7 @@ EOF
 declare -a args
 
 QUIET=""
-TERM_OPT=""
+TERM_OPT=()
 SIZE_OPT=-n
 QUIET_OPT=""
 
@@ -52,7 +52,7 @@ while [ $# -gt 0 ]; do
         shift
         ;;
     -z | --zero-terminated)
-        TERM_OPT="$TERM_OPT -z"
+        TERM_OPT+=(-z)
         shift
         ;;
     --)
@@ -107,7 +107,7 @@ _set_start_and_count() {
             START=.
             COUNT=0
         else
-            COUNT=$(($COUNT - $START + 1))
+            COUNT=$((COUNT - START + 1))
         fi
         return
     fi
@@ -127,18 +127,18 @@ if [ ${#args[@]} -eq 0 ]; then
     args=('-')
 fi
 
-if [ $START = . ] && [ $COUNT = . ]; then
+if [ "$START" = . ] && [ "$COUNT" = . ]; then
     cat -- "${args[@]}"
     exit 0
 fi
 
-if [ $START = . ]; then
-    head $SIZE_OPT "$COUNT" $TERM_OPT $QUIET_OPT -- "${args[@]}"
+if [ "$START" = . ]; then
+    head $SIZE_OPT "$COUNT" "${TERM_OPT[@]}" $QUIET_OPT -- "${args[@]}"
     exit 0
 fi
 
-if [ $COUNT = . ]; then
-    tail $SIZE_OPT "+$START" $TERM_OPT $QUIET_OPT -- "${args[@]}"
+if [ "$COUNT" = . ]; then
+    tail $SIZE_OPT "+$START" "${TERM_OPT[@]}" $QUIET_OPT -- "${args[@]}"
     exit 0
 fi
 
@@ -150,7 +150,7 @@ if [ "${#args[@]}" -eq 1 ]; then
             echo "==> ${args[0]} <=="
         fi
     fi
-    tail "$SIZE_OPT" "+$START" $TERM_OPT -q -- "${args[0]}" | head -q "$SIZE_OPT" "$COUNT" $TERM_OPT
+    tail "$SIZE_OPT" "+$START" "${TERM_OPT[@]}" -q -- "${args[0]}" | head -q "$SIZE_OPT" "$COUNT" "${TERM_OPT[@]}"
     exit 1
 fi
 
@@ -162,5 +162,5 @@ for file in "${args[@]}"; do
             echo "==> $file <=="
         fi
     fi
-    tail "$SIZE_OPT" "+$START" $TERM_OPT -q -- "$file" | head -q "$SIZE_OPT" "$COUNT" $TERM_OPT
+    tail "$SIZE_OPT" "+$START" "${TERM_OPT[@]}" -q -- "$file" | head -q "$SIZE_OPT" "$COUNT" "${TERM_OPT[@]}"
 done
