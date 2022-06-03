@@ -108,7 +108,7 @@ add_cronjob() {
     if [ -z "$3" ]; then
         remove_pattern="$2"
     fi
-    f="$(mktemp /tmp/handotfiles-cron.$ME.XXXX)"
+    f="$(mktemp "/tmp/handotfiles-cron.$ME.XXXX")"
     data="$(crontab -l 2>/dev/null || true)"
     echo "$data" >"$f"
     data="$(grep -v "$remove_pattern" "$f")"
