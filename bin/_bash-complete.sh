@@ -27,7 +27,7 @@ _common_option_pathopts() {
 _common_option_choiceopts() {
     local opts opt choices
     LC_ALL=C "$1" --help 2>&1 | while IFS=$'\n' read -r line; do
-        if _common_option_test_with_suffix "$line" "=\[([[:space:]|a-zA-Z0-9|]+)\]"; then
+        if _common_option_test_with_suffix "$line" "=\[([[:blank:]|a-zA-Z0-9|]+)\]"; then
             if [ -n "${BASH_REMATCH[1]}" ]; then # -s --long=[opt1|opt2]
                 opts="${BASH_REMATCH[1]%%=*}"
                 choices="${BASH_REMATCH[3]}"
@@ -73,7 +73,6 @@ _common_option_complete() {
         if [[ " $choiceopts " =~ [[:blank:]]${prev}=([a-zA-Z0-9|]+) ]]; then
             opts="$(echo "${BASH_REMATCH[1]}" | tr '|' ' ')"
             while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -W "$opts" -- "$cur")
-            COMPREPLY=("$(compgen -W "$opts" -- "$cur")")
             return
         fi
     fi
