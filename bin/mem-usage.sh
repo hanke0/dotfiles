@@ -16,7 +16,7 @@ Print memory usages of specific pid(s) from '/proc/*/smaps'.
 
 Options:
   -h --help                     print this help and exit
-  -t --type=[rss|pss|size|...]  memory type. see at /proc/self/smaps
+  -t --type=[rss|pss|size]      memory type. all types from /proc/self/smaps
 EOF
 }
 
