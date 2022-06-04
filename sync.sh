@@ -7,7 +7,7 @@ DRYRUN=
 
 print_help() {
     cat <<EOF
-Usage: $(basename "$ABS_PATH") [OPTION]...
+Usage: ${0##*/} [OPTION]...
 
 OPTION:
   -y --yes       Don't ask for confirmation of install options.

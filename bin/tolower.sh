@@ -2,7 +2,11 @@
 
 usage() {
     cat <<EOF
-Usage: ${0##*/} [-u|--upper] [FILE]
+Usage: ${0##*/} [OPTION]... [FILE]
+
+Option:
+  -u --upper           replace all lower character to upper
+  -h --help            print this help and exit
 EOF
 }
 

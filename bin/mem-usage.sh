@@ -15,8 +15,8 @@ Usage: ${0##*/} [OPTION]... [PID]...
 Print memory usages of specific pid(s) from '/proc/*/smaps'.
 
 Options:
-  -t --type     memory type. see at /proc/self/smaps
-  -h --help     print this help and exit
+  -h --help                     print this help and exit
+  -t --type=[rss|pss|size|...]  memory type. see at /proc/self/smaps
 EOF
 }
 
