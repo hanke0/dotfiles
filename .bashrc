@@ -186,7 +186,6 @@ else
     alias ls='ls --color=auto'
 fi
 alias ll='ls -Alhb'
-alias ll='ls -alF'
 alias la='ls -ACF'
 
 alias grep='grep --color=auto'
