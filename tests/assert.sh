@@ -30,9 +30,6 @@ assert_eq() {
     if [ "$expected" != "$actual" ]; then
         log_failure "'$expected' != '$actual' :: $msg"
         return 1
-    else
-        log_success ""
-        return 0
     fi
 }
 
@@ -42,19 +39,13 @@ assert_true() {
     if ! eval "$condition"; then
         log_failure "$condition return false :: $msg"
         return 1
-    else
-        log_success ""
-        return 0
     fi
 }
 
 assert_filepath_exist() {
     local file="$1"
     local msg="$2"
-    if [ -e "$file" ]; then
-        log_success ""
-        return 0
-    else
+    if [ ! -e "$file" ]; then
         log_failure "$file should exist :: $msg"
         return 1
     fi
@@ -66,21 +57,14 @@ assert_filepath_not_exist() {
     if [ -e "$file" ]; then
         log_failure "$file should not exist :: $msg"
         return 1
-
-    else
-        log_success ""
-        return 0
     fi
 }
 
 assert_file_exist() {
     local file="$1"
     local msg="$2"
-    if [ -f "$file" ]; then
-        log_success ""
-        return 0
-    else
-        log_failure "$file should exist :: $msg"
+    if [ ! -f "$file" ]; then
+        log_failure "$file should exist exist as a file :: $msg"
         return 1
     fi
 }
@@ -91,21 +75,14 @@ assert_file_not_exist() {
     if [ -f "$file" ]; then
         log_failure "$file should not exist :: $msg"
         return 1
-
-    else
-        log_success ""
-        return 0
     fi
 }
 
 assert_dir_exist() {
     local file="$1"
     local msg="$2"
-    if [ -d "$file" ]; then
-        log_success ""
-        return 0
-    else
-        log_failure "$file should exist :: $msg"
+    if [ ! -d "$file" ]; then
+        log_failure "$file should exist as a directory :: $msg"
         return 1
     fi
 }
@@ -116,11 +93,25 @@ assert_dir_not_exist() {
     if [ -d "$file" ]; then
         log_failure "$file should not exist :: $msg"
         return 1
-
-    else
-        log_success ""
-        return 0
     fi
+    return 0
+}
+
+assert_string_array_len() {
+    local s="$1"
+    local len="$2"
+    local msg="$3"
+    local i array line
+    i=0
+    # cannot use ${variable//search/replace} to replace sed.
+    # shellcheck disable=SC2001
+    array="$(sed "s/[[:blank:]][[:blank:]]*/\n/g" <<<"$s")"
+    while read -r line; do [ -n "$line" ] && ((i++)); done <<<"$array"
+    if [ "$i" -ne "$len" ]; then
+        log_failure "string array len $i != $len :: $msg"
+        return 1
+    fi
+    return 0
 }
 
 runtest() {
@@ -132,8 +123,11 @@ runtest() {
             continue
         fi
         printf "[TEST %s]:: " "$var"
-        eval "$var"
-        exit_code=$?
+        if ! eval "$var"; then
+            exit_code=1
+        else
+            log_success ""
+        fi
     done
     [[ "$exit_code" -eq 0 ]] && return 0 || return 1
 }

@@ -7,27 +7,27 @@ _common_option_test_with_suffix() {
 _common_option_opts_suffix() {
     LC_ALL=C "$1" --help 2>&1 | while IFS=$'\n' read -r line; do
         if _common_option_test_with_suffix "$line" "$2"; then
-            printf '%s ' "${BASH_REMATCH[0]%%=*}" | tr ',' ' '
+            printf '%s ' "${BASH_REMATCH[0]%%=*}" | tr ',[]' '   '
         fi
     done
 }
 
 _common_option_opts() {
-    _common_option_opts_suffix "$1" "(=.+)?"
+    _common_option_opts_suffix "$1" "(\[?=.+\]?)?"
 }
 
-_common_option_fileopts() {
-    _common_option_opts_suffix "$1" "=FILE"
+_common_option_file_opts() {
+    _common_option_opts_suffix "$1" "\[?=FILE\]?"
 }
 
-_common_option_pathopts() {
-    _common_option_opts_suffix "$1" "=PATH"
+_common_option_dir_opts() {
+    _common_option_opts_suffix "$1" "\[?=DIR(ECTORY)?\]?"
 }
 
-_common_option_choiceopts() {
+_common_option_choice_opts() {
     local opts opt choices
     LC_ALL=C "$1" --help 2>&1 | while IFS=$'\n' read -r line; do
-        if _common_option_test_with_suffix "$line" "=\[([[:blank:]|a-zA-Z0-9|]+)\]"; then
+        if _common_option_test_with_suffix "$line" "\[?=\[([a-zA-Z0-9[:blank:]|]+)\]\]?"; then
             if [ -n "${BASH_REMATCH[1]}" ]; then # -s --long=[opt1|opt2]
                 opts="${BASH_REMATCH[1]%%=*}"
                 choices="${BASH_REMATCH[3]}"
@@ -36,7 +36,7 @@ _common_option_choiceopts() {
                 opts="${BASH_REMATCH[4]%%=*}"
                 choices="${BASH_REMATCH[5]}"
             fi
-            opts="$(echo "$opts" | tr ',' ' ')"
+            opts="$(echo "$opts" | tr ',[]' '   ')"
             for opt in $opts; do
                 printf '%s ' "$opt=$choices"
             done
@@ -55,21 +55,21 @@ _common_option_complete() {
 
     COMPREPLY=()
     if [[ "$prev" == -* ]]; then
-        pathopts="$(_common_option_pathopts "$cmd")"
+        pathopts="$(_common_option_dir_opts "$cmd")"
         if [[ " $pathopts " =~ [[:blank:]]${prev}[[:blank:]] ]]; then
             compopt -o nospace 2>/dev/null
             compopt -o filenames 2>/dev/null
             while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -d -- "$cur")
             return
         fi
-        fileopts="$(_common_option_fileopts "$cmd")"
+        fileopts="$(_common_option_file_opts "$cmd")"
         if [[ " $fileopts " =~ [[:blank:]]${prev}[[:blank:]] ]]; then
             compopt -o nospace 2>/dev/null
             compopt -o filenames 2>/dev/null
             while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -f -- "$cur")
             return
         fi
-        choiceopts="$(_common_option_choiceopts "$cmd")"
+        choiceopts="$(_common_option_choice_opts "$cmd")"
         if [[ " $choiceopts " =~ [[:blank:]]${prev}=([a-zA-Z0-9|]+) ]]; then
             opts="$(echo "${BASH_REMATCH[1]}" | tr '|' ' ')"
             while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -W "$opts" -- "$cur")
