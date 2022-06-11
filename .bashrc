@@ -179,6 +179,17 @@ is_macOS() {
     [ "$(uname)" = "Darwin" ]
 }
 
+if is_macOS; then
+    _active_brew_bash_completion() {
+        local file
+        for file in /opt/homebrew/etc/bash_completion.d/*; do
+            . "$file" >/dev/null 2>&1
+        done
+    }
+    _active_brew_bash_completion
+    unset _active_brew_bash_completion
+fi
+
 # -- Alias --------------------------------------------------------------------
 if is_macOS; then
     alias ls='ls -G'
