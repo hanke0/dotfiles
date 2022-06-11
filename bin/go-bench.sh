@@ -12,12 +12,7 @@ vexec() {
     "$@"
 }
 
-f="$(mktemp)"
-
 vexec go clean -testcache
 vexec go test -gcflags=all=-l --bench=".*" --run=^$ \
     -benchmem \
     "${args[@]}"
-
-cat "$f"
-rm "$f"
