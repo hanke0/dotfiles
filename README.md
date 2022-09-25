@@ -1,6 +1,6 @@
 # How to Start
 ```bash
-git clone --progress  https://github.com/ko-han/dotfiles.git ~/.dotfiles \
+git clone --progress  https://github.com/hanke0/dotfiles.git ~/.dotfiles \
     && cd ~/.dotfiles \
     && ./sync.sh
 ```
