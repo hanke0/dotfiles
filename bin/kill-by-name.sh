@@ -53,35 +53,6 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-# to lower first ${str,}
-# to lower all ${str,,}
-# to upper first ${str^}
-# to upper all ${str^^}
-
-toPascal() {
-    IFS="$(echo -ne '\t-_ ')" read -ra str <<<"$1"
-    printf '%s' "${str[@]^}"
-    echo
-}
-
-toCamel() {
-    out="$(toPascal "$1")"
-    printf "%s" "${out,}"
-    echo
-}
-
-toSnake() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1_\L\2/g' -e 'y/- /__/' | tr '[:upper:]' '[:lower:]'
-}
-
-toSpinal() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1-\L\2/g' -e 'y/_ /--/' | tr '[:upper:]' '[:lower:]'
-}
-
-toSpace() {
-    echo "$1" | sed -r -e 's/([a-z0-9])([A-Z])/\1 \L\2/g' -e 'y/-_/  /' | tr '[:upper:]' '[:lower:]'
-}
-
 if [ ${#args[@]} -eq 0 ]; then
     usage
     exit 1
