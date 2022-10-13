@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 path_append() {
     case ":${PATH}:" in
     *:"$1":*) ;;
@@ -24,8 +22,11 @@ command -v realpath >/dev/null 2>&1 || realpath() {
 ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
 
-# compitable with nginx proxy for github
+# compatible with nginx proxy for github
 export GIT_SSL_NO_VERIFY=1
-cd "$ROOT_DIR"
+cd "$ROOT_DIR" || exit 1
 
 /usr/bin/git pull -q origin master
+
+# ignore annoying cron error mail.
+exit 0
