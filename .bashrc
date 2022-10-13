@@ -1,16 +1,11 @@
 #!/bin/bash
 
-ME="${BASH_SOURCE[0]}"
-[ -z "$ME" ] && exit 0
+# are we an interactive shell?
+[ -z "$PS1" ] && return
 
 command -v realpath >/dev/null 2>&1 || realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
-
-ABS_PATH="$(realpath "$ME")"
-if [ -n "$ABS_PATH" ]; then
-    ROOT_DIR="$(dirname "$ABS_PATH")"
-fi
 
 path_append() {
     case ":${PATH}:" in
@@ -30,13 +25,12 @@ path_push() {
     esac
 }
 
-if [ -n "$ROOT_DIR" ]; then
-    if [ -d "$ROOT_DIR/bin" ]; then
-        path_append "$ROOT_DIR/bin"
-        # relative path is not realy a problem here.
-        # shellcheck disable=SC1091
-        [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
-    fi
+ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+if [ -n "$ROOT_DIR" ] && [ -d "$ROOT_DIR/bin" ]; then
+    path_append "$ROOT_DIR/bin"
+    # relative path is not really a problem here.
+    # shellcheck disable=SC1091
+    [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
 fi
 
 # history about
@@ -196,6 +190,9 @@ fi
 # -- Alias --------------------------------------------------------------------
 if is_macOS; then
     alias ls='ls -G'
+    if command -v gsed >/dev/null 2>&1; then
+        alias sed="gsed"
+    fi
 else
     alias ls='ls --color=auto'
 fi
