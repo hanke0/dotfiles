@@ -39,4 +39,4 @@ if command -v "gsed"; then
     sed="gsed"
 fi
 
-"${sed}" "${sedopts[@]}" -E 's/([^\\])\$([a-zA-Z_0-9]+)/\1${\2}/g' "$@"
+"${sed}" "${sedopts[@]}" -E 's/([^\\\$])?\$([a-zA-Z_0-9]+)/\1${\2}/g' "$@"
