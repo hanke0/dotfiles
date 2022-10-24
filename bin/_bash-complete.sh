@@ -94,3 +94,4 @@ complete -F _common_option_complete kill-by-name.sh
 complete -F _common_option_complete sort-large-file.sh
 complete -F _common_option_complete catlines.sh
 complete -F _common_option_complete mem-usage.sh
+complete -F _common_option_complete cronlog.sh
