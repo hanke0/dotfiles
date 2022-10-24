@@ -4,7 +4,7 @@ args=()
 if [[ $# -gt 0 ]]; then
     args=("$@")
 else
-    args=(-coverpkg=./... ./...)
+    args=("-coverpkg=./..." "./...")
 fi
 
 vexec() {
