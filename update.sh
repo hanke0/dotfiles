@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set +e
+
 path_append() {
     case ":${PATH}:" in
     *:"$1":*) ;;
