@@ -64,7 +64,7 @@ __git_branch() {
 }
 
 __ps1_proxy() {
-    if [ -n "$http_proxy" ] || [ -n "${https_proxy}"]; then
+    if [ -n "$http_proxy" ] || [ -n "${https_proxy}" ]; then
         printf " ✈"
     fi
 }
