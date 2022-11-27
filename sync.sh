@@ -143,14 +143,6 @@ append_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
 # input config
 append_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
 
-if read_yes "Add cronjob for updating: [Y/n]: "; then
-    # cronjob auto update
-    CRON_JOB="/bin/bash $ROOT_DIR/update.sh"
-    if type crontab >/dev/null 2>&1; then
-        add_cronjob "* * * * *" "$CRON_JOB" "$ROOT_DIR"
-    fi
-fi
-
 link_yes() {
     if [ ! -f "$2" ]; then
         $DRYRUN ln -s "$1" "$2"
