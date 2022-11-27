@@ -143,6 +143,28 @@ condaon() {
     conda deactivate && conda activate "$@" && type python && pip -V
 }
 
+use_proxy() {
+    local proxy no_proxy
+    proxy="$1"
+    if [ -z "$1" ]; then
+        echo >&2 "proxy not provided"
+        return 1
+    fi
+    no_proxy="127.0.0.1,localhost,.local,local,192.168.0.0/16"
+    # https://about.gitlab.com/blog/2021/01/27/we-need-to-talk-no-proxy/
+    export HTTP_PROXY="$proxy" \
+        HTTPS_PROXY="$proxy" \
+        http_proxy="$proxy" \
+        https_proxy="$proxy" \
+        HTTP_PROXY="$proxy" \
+        NO_PROXY="$no_proxy" \
+        no_proxy="$no_proxy"
+}
+
+unuse_proxy() {
+    unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
+}
+
 update_z() {
     rm -f ~/.z.sh/z.sh
     mkdir -p ~/.z.sh
