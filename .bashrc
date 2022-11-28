@@ -156,7 +156,6 @@ use_proxy() {
         HTTPS_PROXY="$proxy" \
         http_proxy="$proxy" \
         https_proxy="$proxy" \
-        HTTP_PROXY="$proxy" \
         NO_PROXY="$no_proxy" \
         no_proxy="$no_proxy"
 }
