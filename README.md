@@ -2,7 +2,7 @@
 ```bash
 git clone --progress  https://github.com/hanke0/dotfiles.git ~/.dotfiles \
     && cd ~/.dotfiles \
-    && ./sync.sh
+    && ./install.sh
 ```
 
 # Some useful command tools
