@@ -34,7 +34,7 @@ fi
 export HISTIGNORE="?"
 export HISTSIZE=32768
 export HISTFILESIZE=32768
-export HISTCONTROL=ignoreboth
+export HISTCONTROL=ignoreboth:erasedups
 export PROMPT_COMMAND='history -a'
 if [ -n "${BASH_VERSION-}" ]; then
     shopt -s histappend
