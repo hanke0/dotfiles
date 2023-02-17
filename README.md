@@ -1,8 +1,7 @@
 # How to Start
 ```bash
 git clone --progress  https://github.com/hanke0/dotfiles.git ~/.dotfiles \
-    && cd ~/.dotfiles \
-    && ./install.sh
+    && ~/.dotfiles/install.sh
 ```
 
 # Some useful command tools
