@@ -68,7 +68,7 @@ all_port() {
 }
 
 main() {
-    local grepfunc arg result
+    local arg result
     if [ "${#args}" -eq 0 ]; then
         result="$(all_port)"
     else
