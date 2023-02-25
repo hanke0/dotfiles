@@ -49,18 +49,20 @@ done
 grep_by_port() {
     local port
     port="$1"
-    netstat -tulpn 2>/dev/null | awk -v pattern=":$port" '(NR > 2 && $4 ~ pattern){printf "%-8s %-30s %-30s\n", $1, $4, $7}'
+    netstat -tlpn 2>/dev/null | awk -v pattern=":$port" '(NR > 2 && $4 ~ pattern){printf "%-8s %-30s %-30s\n", $1, $4, $7}'
 }
 
 grep_by_pid() {
     local pid
     pid="$1"
-    netstat -tulpn 2>/dev/null | awk -v pattern="^$pid" '(NR > 2 && $7 ~ pattern){printf "%-8s %-30s %-30s\n", $1, $4, $7}'
+    netstat -tulpn 2>/dev/null | awk -v pattern="^$pid" \
+        '(NR > 2 && $7 ~ pattern){printf "%-8s %-30s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-30s %-30s\n",$1,$4,$6}'
 }
 
 grep_by_name() {
     local name="$1"
-    netstat -tulpn 2>/dev/null | awk -v pattern="/$name" '(NR > 2 && $7 ~ pattern){printf "%-8s %-30s %-30s\n", $1, $4, $7}'
+    netstat -tulpn 2>/dev/null | awk -v pattern="/$name" \
+        '(NR > 2 && $7 ~ pattern){printf "%-8s %-30s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-30s %-30s\n",$1,$4,$6}'
 }
 
 all_port() {
