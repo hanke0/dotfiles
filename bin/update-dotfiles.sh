@@ -24,5 +24,5 @@ command -v realpath >/dev/null 2>&1 || realpath() {
 ABS_PATH="$(realpath "$0")"
 ROOT_DIR="$(dirname "$(dirname "$ABS_PATH")")"
 
-cd "$ROOT_DIR" || exit 1
-/usr/bin/git pull -q origin master || true
+cd "$ROOT_DIR"
+/usr/bin/git pull -q origin master
