@@ -35,6 +35,7 @@ while [ $# -gt 0 ]; do
         ;;
     -n | --netstat)
         NETSTATE=true
+        shift
         ;;
     --)
         shift 1
@@ -57,7 +58,7 @@ if ! command -v lsof >/dev/null 2>&1; then
 fi
 
 grep_by_port() {
-    local portn
+    local port
     port="$1"
     if [ "$NETSTATE" = true ]; then
         netstat -tlpn 2>/dev/null | awk -v pattern=":$port" '(NR > 2 && $4 ~ pattern){printf "%-8s %-20s %-30s\n", $1, $4, $7}'
