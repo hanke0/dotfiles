@@ -73,7 +73,7 @@ grep_by_pid() {
     pid="$1"
     if [ "$NETSTATE" = true ]; then
         netstat -tulpn 2>/dev/null | awk -v pattern="^$pid" \
-            '(NR > 2 && $7 ~ pattern){printf "%-8s %-30s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-30s %-30s\n",$1,$4,$6}'
+            '(NR > 2 && $7 ~ pattern){printf "%-8s %-20s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-20s %-30s\n",$1,$4,$6}'
     else
         lsof -nP -a -p "${pid}" -iTCP -sTCP:LISTEN | awk '(NR>1){printf "%-5s %-5s %-10s %-20s\n",$5,$8,$2,$9}' || true
         lsof -nP -a -p "${pid}" -iUDP | grep -v -- "->" | awk '(NR>1){printf "%-5s %-5s %-10s %-20s\n",$5,$8,$2,$9}' || true
@@ -84,7 +84,7 @@ grep_by_name() {
     local name="$1"
     if [ "$NETSTATE" = true ]; then
         netstat -tulpn 2>/dev/null | awk -v pattern="/$name" \
-            '(NR > 2 && $7 ~ pattern){printf "%-8s %-30s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-30s %-30s\n",$1,$4,$6}'
+            '(NR > 2 && $7 ~ pattern){printf "%-8s %-20s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-20s %-30s\n",$1,$4,$6}'
     else
         processes="$(ps axo pid=,command=)"
         pids="$(echo "$processes" | grep "${name}" | awk '{print $1}' | xargs printf '%s,')"
