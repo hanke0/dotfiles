@@ -49,20 +49,42 @@ while [ $# -gt 0 ]; do
 done
 
 addcomment() {
-    # add comment for export method.
-    sed -i -E 's#^func \(([a-zA-Z0-9_]+ )?\*?[A-Z][a-zA-Z0-9_]*\) ([A-Z][a-zA-Z0-9_]+)\(#\/\/ \2 ...\n&#' "$@"
-
+    # add comment for export method and functions.
+    gawk -i inplace -v pattern='^func (\\(([a-zA-Z0-9_]+ )?\\*?[A-Z][a-zA-Z0-9_]*\\) )?([A-Z][a-zA-Z0-9_]+)\\(' \
+        -v commentre='^//' \
+        '{
+            if (match($0, pattern, ary) && precomment!=NR-1) {
+                print "//", ary[3], "...";
+            }
+            if ($0 ~ commentre) {
+                precomment=NR;
+            }
+            print $0;
+        }' "$@"
     # add comment for export type, one line const and var global.
-    sed -i -E 's#^(type|const|var) ([A-Z][a-zA-Z0-9_]*) #\/\/ \2 ...\n&#' "$@"
-
-    # add comment for export function.
-    sed -i -E 's#^func ([A-Z][a-zA-Z0-9_]*)\(#\/\/ \1 ...\n&#' "$@"
-
+    gawk -i inplace -v pattern='^(type|const|var) ([A-Z][a-zA-Z0-9_]*) ' \
+        -v commentre='^//' \
+        '{
+            if (match($0, pattern, ary) && precomment!=NR-1) {
+                print "//", ary[2], "...";
+            }
+            if ($0 ~ commentre) {
+                precomment=NR;
+            }
+            print $0;
+        }' "$@"
     # add comment for const group. (not handle if exported)
-    sed -i -E 's#const \(#\/\/ ...\n&#' "$@"
-
-    # remove duplicated comment.
-    sed -i -E '/^\/\//{n;/^\/\/ ([A-Za-z0-9_]+ )?.../d}' "$@"
+    gawk -i inplace -v pattern='^const \\(' \
+        -v commentre='^//' \
+        '{
+            if (match($0, pattern, ary) && precomment!=NR-1) {
+                print "//", "...";
+            }
+            if ($0 ~ commentre) {
+                precomment=NR;
+            }
+            print $0;
+        }' "$@"
 }
 
 if [ "$UNSAFE" != true ]; then
