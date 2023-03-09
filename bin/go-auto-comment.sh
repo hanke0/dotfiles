@@ -53,7 +53,7 @@ addcomment() {
     sed -i -E 's#^func \(([a-zA-Z0-9_]+ )?\*?[A-Z][a-zA-Z0-9_]*\) ([A-Z][a-zA-Z0-9_]+)\(#\/\/ \2 ...\n&#' "$@"
 
     # add comment for export type, one line const and var global.
-    sed -i -E 's#^(type|const|var) ([A-Z][a-zA-Z0-9_]*) #\/\/ \1 ...\n&#' "$@"
+    sed -i -E 's#^(type|const|var) ([A-Z][a-zA-Z0-9_]*) #\/\/ \2 ...\n&#' "$@"
 
     # add comment for export function.
     sed -i -E 's#^func ([A-Z][a-zA-Z0-9_]*)\(#\/\/ \1 ...\n&#' "$@"
