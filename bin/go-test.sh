@@ -80,7 +80,7 @@ if [ "${#args[@]}" -eq 0 ]; then
     args=(".")
 fi
 
-for path in "${args}[@]"; do
+for path in "${args[@]}"; do
     if [ "$RECURSIVE" = true ]; then
         find "$here" -print0 -name 'go.mod' -type f -exec dirname {} \; | while read -d '' -r folder; do
             doone "$folder"
