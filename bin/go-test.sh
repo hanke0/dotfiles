@@ -12,18 +12,17 @@ Options:
     -h, --help              print this text and exit.
     -c, --coverage          write coverage profile to cover.out and cover.html.
     -b, --benchmark         run test with benchmark.
-    -r, --recursive         test directory and thire content contains a go.mod recursive.
     -t, --timeout=Duration  if a test runs longer than this duration, panic.(default to 10 minutes).
         --cpuprofile        write a CPU profile to cpu.out
         --memprofile        wirte a alloctaion profile to mem.out.
+    -v, --verbose           verbose output.
 EOF
 }
 
 declare -a args
 
 COVERAGE=false
-RECURSIVE=false
-EXTRA=()
+EXTRA=(-failfast)
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -40,10 +39,6 @@ while [ $# -gt 0 ]; do
         shift
         EXTRA+=('-run=^$' '-bench=.')
         ;;
-    -r | --recursive)
-        shift
-        RECURSIVE=true
-        ;;
     -t | --timeout)
         EXTRA+=(-timeout "$2")
         shift
@@ -56,14 +51,18 @@ while [ $# -gt 0 ]; do
         EXTRA+=("-memprofile=mem.out")
         shift
         ;;
-    -*)
-        echo >&2 "unknown option: $1"
-        exit 1
+    -v | --verbose)
+        EXTRA+=(-v)
+        shift
         ;;
     --)
         shift 1
         args+=("$@")
         break
+        ;;
+    -*)
+        echo >&2 "unknown option: $1"
+        exit 1
         ;;
     *)
         args+=("$1")
@@ -73,24 +72,22 @@ while [ $# -gt 0 ]; do
 done
 
 doone() {
-    go test -failfast "${EXTRA[@]}" "$path"/...
+    echo "GO TEST: $1"
+    if [ -d "$1" ]; then
+        go test "${EXTRA[@]}" "${1}/..."
+        return
+    fi
+    go test "${EXTRA[@]}" "$1"
 }
 
 if [ "${#args[@]}" -eq 0 ]; then
     args=(".")
 fi
 
-for path in "${args[@]}"; do
-    if [ "$RECURSIVE" = true ]; then
-        find "$here" -print0 -name 'go.mod' -type f -exec dirname {} \; | while read -d '' -r folder; do
-            doone "$folder"
-        done
-        elseclear
-        git s
-        git s
+echo "GO TEST OPTIONS:" "${EXTRA[@]}"
 
-        doone "$path"
-    fi
+for path in "${args[@]}"; do
+    doone "$path"
 done
 
 if [ "$COVERAGE" = true ]; then
