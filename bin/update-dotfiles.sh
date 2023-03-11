@@ -21,8 +21,14 @@ command -v realpath >/dev/null 2>&1 || realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 
-ABS_PATH="$(realpath "$0")"
-ROOT_DIR="$(dirname "$(dirname "$ABS_PATH")")"
+x() {
+    if ! "$@"; then
+        exit 1
+    fi
+}
+
+ABS_PATH="$(x realpath "$0")"
+ROOT_DIR="$(x dirname "$(x dirname "$ABS_PATH")")"
 
 cd "$ROOT_DIR"
 /usr/bin/git pull -q origin master
