@@ -32,6 +32,10 @@ while [ $# -gt 0 ]; do
         SIGNAL="$2"
         shift 2
         ;;
+    -s=* | --signal=*)
+        SIGNAL="${1#*=}"
+        shift
+        ;;
     --)
         shift 1
         args+=("$@")
@@ -67,8 +71,7 @@ echo "$finds"
 read -r -p "! Kill all those process with signal $SIGNAL [Y/n]:" answer
 
 case "$answer" in
-""|Y|y|yes)
-    ;;
+"" | Y | y | yes) ;;
 *)
     exit 0
     ;;

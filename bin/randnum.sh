@@ -39,9 +39,17 @@ while [ $# -gt 0 ]; do
         SIZE="$2"
         shift 2
         ;;
+    -s=* | --size=*)
+        SIZE="${1#*=}"
+        shift
+        ;;
     -t | --type)
         TYPE="$2"
         shift 2
+        ;;
+    -t=* | --type=*)
+        TYPE="${1#*=}"
+        shift
         ;;
     --no-linebreak)
         END=''
@@ -83,10 +91,10 @@ case "${SIZE}" in
     ;;
 esac
 
-g="$(od -v -An -N ${SIZE} -t ${TYPE}${SIZE} <"$RAND_SOURCE" | tr -dc '0-9-')"
+g="$(od -v -An -N "${SIZE}" -t "${TYPE}${SIZE}" <"$RAND_SOURCE" | tr -dc '0-9-')"
 
 if [ -z "$g" ]; then
     exit 1
 fi
 
-printf -- "${g}${END}"
+printf '%s' -- "${g}${END}"

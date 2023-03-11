@@ -57,5 +57,6 @@ if [ ! -d "${folder}" ] || [ -z "${folder}" ]; then
 fi
 
 empty="$(mktemp -d)"
+# shellcheck disable=SC2064
 trap "rmdir ${empty}" EXIT
 rsync -a --delete "${MESSAGE_LEVEL}" "${empty}/" "${folder}/"

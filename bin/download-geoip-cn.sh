@@ -38,6 +38,10 @@ while [ $# -gt 0 ]; do
         HTTP_URL="$2"
         shift 2
         ;;
+    --url=*)
+        HTTP_URL="${1#*=}"
+        shift
+        ;;
     --)
         shift 1
         args+=("$@")

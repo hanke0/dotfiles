@@ -33,6 +33,10 @@ while [ $# -gt 0 ]; do
         TYPE="$2"
         shift 2
         ;;
+    -t=* | --type=*)
+        TYPE="${1#*=}"
+        shift
+        ;;
     --)
         args+=("$@")
         break

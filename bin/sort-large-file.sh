@@ -70,13 +70,25 @@ while [ "$#" -gt 0 ]; do
         PARALLEL="$(checked_argument "$1" "$2")"
         shift 2
         ;;
+    -p=* | --parallel=*)
+        PARALLEL="$(chcked_argument "${1%=*}" "${1#*=}")"
+        shift
+        ;;
     -l | --lines)
         TMP_LINES="$(checked_argument "$1" "$2")"
         shift 2
         ;;
+    -l=* | --lines=*)
+        TMP_LINES="$(chcked_argument "${1%=*}" "${1#*=}")"
+        shift
+        ;;
     --prefix)
         SORT_TMP_PREFIX="$(checked_argument "$1" "$2")"
         shift 2
+        ;;
+    --prefix=*)
+        SORT_TMP_PREFIX="$(chcked_argument "${1%=*}" "${1#*=}")"
+        shift
         ;;
     -h | --help)
         usage
@@ -86,11 +98,21 @@ while [ "$#" -gt 0 ]; do
         OUTPUT="$(checked_argument "$1" "$2")"
         shift 2
         ;;
+    -o=* | --output=*)
+        OUTPUT="$(chcked_argument "${1%=*}" "${1#*=}")"
+        shift
+        ;;
     --extra-sort-option)
         # want split words here.
         # shellcheck disable=SC2207
         SORT_ARGUMENT+=($(checked_argument "$1" "$2"))
         shift 2
+        ;;
+    --extra-sort-option=*)
+        # want split words here.
+        # shellcheck disable=SC2207
+        SORT_ARGUMENT+=($(chcked_argument "${1%=*}" "${1#*=}"))
+        shift
         ;;
     --test)
         TEST=1

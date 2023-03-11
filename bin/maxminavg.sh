@@ -22,6 +22,14 @@ OPTS=()
 SKIP_FIRST_LINE=-1
 declare -a args
 
+setcolumn() {
+    if [[ ! "$1" =~ [0-9]|[1-9][0-9]* ]]; then
+        echo >&2 "bad column value"
+        exit 1
+    fi
+    COLUMN="\$$1"
+}
+
 while [ $# -gt 0 ]; do
     case "$1" in
     -h | --help)
@@ -29,16 +37,20 @@ while [ $# -gt 0 ]; do
         exit 0
         ;;
     -c | --column)
-        if [[ ! $2 =~ [0-9]|[1-9][0-9]* ]]; then
-            echo >&2 "bad column value"
-            exit 1
-        fi
-        COLUMN="\$$2"
+        setcolumn "$2"
         shift 2
+        ;;
+    -c=* | --column=*)
+        setcolumn "${1#*=}"
+        shift
         ;;
     -F)
         OPTS+=(-F "$2")
         shift 2
+        ;;
+    -F=*)
+        OPTS+=(-F "${1#*=}")
+        shift
         ;;
     -s | --skip-first-line)
         SKIP_FIRST_LINE=1

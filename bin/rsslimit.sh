@@ -37,6 +37,10 @@ while [ $# -gt 0 ]; do
         interval="$2"
         shift 2
         ;;
+    -s=*)
+        interval="${1#*=}"
+        shift
+        ;;
     -q)
         quiet=1
         shift

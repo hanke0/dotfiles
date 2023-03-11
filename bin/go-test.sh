@@ -41,6 +41,10 @@ while [ $# -gt 0 ]; do
         ;;
     -t | --timeout)
         EXTRA+=(-timeout "$2")
+        shift 2
+        ;;
+    -t=* | --timeout=*)
+        EXTRA+=(-timeout "${1#*=}")
         shift
         ;;
     --cpuprofile)

@@ -25,6 +25,11 @@ while [ $# -gt 0 ]; do
         ;;
     -f | --file)
         SYSLOG="${2}"
+        shift 2
+        ;;
+    -f=* | --file=*)
+        SYSLOG="${1#*=}"
+        shift
         ;;
     --)
         shift 1
