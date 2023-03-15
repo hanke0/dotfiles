@@ -15,6 +15,7 @@ Options:
     -t, --timeout=Duration  if a test runs longer than this duration, panic.(default to 10 minutes).
         --cpuprofile        write a CPU profile to cpu.out
         --memprofile        wirte a alloctaion profile to mem.out.
+        --noinline          disable inline, it useful when some test uses gomonkey :(.
     -v, --verbose           verbose output.
 EOF
 }
@@ -53,6 +54,10 @@ while [ $# -gt 0 ]; do
         ;;
     --memprofile)
         EXTRA+=("-memprofile=mem.out")
+        shift
+        ;;
+    --noinline)
+        EXTRA+=("-gcflags=all=-l")
         shift
         ;;
     -v | --verbose)
