@@ -16,11 +16,11 @@ tcp      0.0.0.0:443      1234/nginx
 Options:
   -h --help               print this help and exit.
   -p --port               treat arguments as port and show all process that listen to port.
-  -n --netstate           using netstat instead of lsof. (only true if lsof is not install or set this value.)
+  -n --netstat            using netstat instead of lsof. (only true if lsof is not install or set this value.)
 EOF
 }
 
-NETSTATE=false
+NETSTAT=false
 
 declare -a args
 while [ $# -gt 0 ]; do
@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
         shift
         ;;
     -n | --netstat)
-        NETSTATE=true
+        NETSTAT=true
         shift
         ;;
     --)
@@ -54,14 +54,35 @@ while [ $# -gt 0 ]; do
 done
 
 if ! command -v lsof >/dev/null 2>&1; then
-    NETSTATE=true
+    NETSTAT=true
+fi
+
+std_lsof() {
+    [ $(lsof -nP -iTCP -sTCP:LISTEN 2>&1 | head -1 | awk '(NF==9&&$1=="COMMAND"){print "true"}') = true ]
+}
+
+std_netstat() {
+    [ $(netstat -tnlp | head -2 | awk '(NR==2&&NF==10&&$1=="Proto"){print "true"}') = true ]
+}
+
+if [ "${NETSTAT}" != true ]; then
+    if ! std_lsof; then
+        NETSTAT=true
+    fi
+fi
+
+if [ "${NETSTAT}" == true ]; then
+    if ! std_netstat; then
+        echo >&2 "netstat nor lsof output is a standard"
+        exit 1
+    fi
 fi
 
 grep_by_port() {
     local port
     port="$1"
-    if [ "$NETSTATE" = true ]; then
-        netstat -tlpn 2>/dev/null | awk -v pattern=":$port" '(NR > 2 && $4 ~ pattern){printf "%-8s %-20s %-30s\n", $1, $4, $7}'
+    if [ "$NETSTAT" = true ]; then
+        netstat -tlpn 2>/dev/null | awk -v pattern=":$port\$" '(NR > 2 && $4 ~ pattern){printf "%-8s %-20s %-30s\n", $1, $4, $7}'
     else
         lsof -nP "-iTCP:${port}" -sTCP:LISTEN | awk '(NR>1){printf "%-5s %-5s %-10s %-20s\n",$5,$8,$2,$9}' || true
         lsof -nP "-iUDP:${port}" | grep -v -- "->" | awk '(NR>1){printf "%-5s %-5s %-10s %-20s\n",$5,$8,$2,$9}' || true
@@ -71,8 +92,8 @@ grep_by_port() {
 grep_by_pid() {
     local pid
     pid="$1"
-    if [ "$NETSTATE" = true ]; then
-        netstat -tulpn 2>/dev/null | awk -v pattern="^$pid" \
+    if [ "$NETSTAT" = true ]; then
+        netstat -tulpn 2>/dev/null | awk -v pattern="^$pid/" \
             '(NR > 2 && $7 ~ pattern){printf "%-8s %-20s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-20s %-30s\n",$1,$4,$6}'
     else
         lsof -nP -a -p "${pid}" -iTCP -sTCP:LISTEN | awk '(NR>1){printf "%-5s %-5s %-10s %-20s\n",$5,$8,$2,$9}' || true
@@ -82,7 +103,7 @@ grep_by_pid() {
 
 grep_by_name() {
     local name="$1"
-    if [ "$NETSTATE" = true ]; then
+    if [ "$NETSTAT" = true ]; then
         netstat -tulpn 2>/dev/null | awk -v pattern="/$name" \
             '(NR > 2 && $7 ~ pattern){printf "%-8s %-20s %-30s\n", $1,$4,$7} (NR > 2 && $6 ~ pattern){ printf "%-8s %-20s %-30s\n",$1,$4,$6}'
     else
@@ -94,7 +115,7 @@ grep_by_name() {
 }
 
 all_port() {
-    if [ "$NETSTATE" = true ]; then
+    if [ "$NETSTAT" = true ]; then
         netstat -tulpn 2>/dev/null | awk 'NR>2 {printf "%-8s %-20s %-30s\n", $1, $4, $7}'
     else
         lsof -nP -iTCP -sTCP:LISTEN | awk '(NR>1){printf "%-5s %-5s %-10s %-20s\n",$5,$8,$2,$9}' || true
@@ -121,7 +142,7 @@ main() {
     fi
     result="$(echo "$result" | grep -v '^$')"
     if [ -n "$result" ]; then
-        if [ "$NETSTATE" = true ]; then
+        if [ "$NETSTAT" = true ]; then
             printf "%-8s %-20s %-30s\n" "Proto" "ListenAddress" "PID/ProcessName"
         else
             printf "%-5s %-5s %-10s %-20s\n" "Type" "Proto" "PID" "Address"
