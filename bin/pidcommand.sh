@@ -2,17 +2,14 @@
 
 usage() {
     cat <<EOF
-Usage: ${0##*/} [-i] [-h] [input files]...
-Replace all scripts use \$var to \${var}
+Usage: ${0##*/} [OPTION] [pid]...
+Print process name of pid.
 
 OPTION:
-    -y                no ask.
     -h --help         print this help and exit.
-    -i --in-place     edit files in place
 EOF
 }
 
-sedopts=()
 declare -a args
 
 while [ $# -gt 0 ]; do
@@ -20,10 +17,6 @@ while [ $# -gt 0 ]; do
     -h | --help)
         usage
         exit 0
-        ;;
-    -i | --in-place)
-        sedopts+=("${1}")
-        shift
         ;;
     --)
         shift 1
@@ -41,10 +34,13 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-sed="sed"
-if command -v "gsed"; then
-    sed="gsed"
+if command -v ps 2>&1 >/dev/null; then
+    for pid in "${args[@]}"; do
+        printf '%s %s\n' "$pid" "$(ps -o command=, -p "${pid}")"
+    done
+    exit 0
 fi
 
-# shellcheck disable=SC2016
-"${sed}" "${sedopts[@]}" -E 's/([^\\\$])?\$([a-zA-Z_0-9]+)/\1${\2}/g' "${args[@]}"
+for pid in "${args[@]}"; do
+    printf '%s %s\n' "$pid" "$(tr -d '\0' <"/proc/${pid}/cmdline")"
+done
