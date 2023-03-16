@@ -34,8 +34,13 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+if command -v ps 2>&1 >/dev/null; then
+    ps -axo pid=,command=,
+    exit 0
+fi
+
 for pid in /proc/*; do
     if [ -r "$pid/cmdline" ]; then
-        printf '%-12s %s\n' "${pid##*/}" "$(tr -d '\0' <"${pid}/cmdline")"
+        printf '%12s %s\n' "${pid##*/}" "$(tr -d '\0' <"${pid}/cmdline")"
     fi
 done
