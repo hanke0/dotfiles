@@ -81,10 +81,10 @@ setusage() {
         exit 1
     fi
     if [ "${NETSTAT}" = false ]; then
-        if good_netstat; then
+        if good_lsof; then
             return
         fi
-        echo >&2 "netstat output is a standard"
+        echo >&2 "lsof output is a standard"
         exit 1
     fi
 
