@@ -102,9 +102,11 @@ complete -F _common_option_complete hibrace.sh
 complete -F _common_option_complete killcommand.sh
 complete -F _common_option_complete maxminavg.sh
 complete -F _common_option_complete mem-usage.sh
+complete -F _common_option_complete pidcommand.sh
 complete -F _common_option_complete process-port.sh
 complete -F _common_option_complete randnum.sh
 complete -F _common_option_complete replace-none-printable.sh
 complete -F _common_option_complete rsslimit.sh
+complete -F _common_option_complete simple-ps.sh
 complete -F _common_option_complete sort-large-file.sh
 complete -F _common_option_complete tolower.sh
