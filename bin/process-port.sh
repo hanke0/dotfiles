@@ -64,12 +64,12 @@ done
 
 good_lsof() {
     command -v lsof >/dev/null 2>&1 &&
-        [ $(lsof -nP -iTCP -sTCP:LISTEN 2>&1 | head -1 | awk '(NF==9&&$1=="COMMAND"){print "true"}') = true ]
+        [ "$(lsof -nP -iTCP -sTCP:LISTEN 2>&1 | head -1 | awk '(NF==9&&$1=="COMMAND"){print "true"}')" = true ]
 }
 
 good_netstat() {
     command -v lsof >/dev/null 2>&1 &&
-        [ $(netstat -tnlp | head -2 | awk '(NR==2&&NF==10&&$1=="Proto"){print "true"}') = true ]
+        [ "$(netstat -tnlp | head -2 | awk '(NR==2&&NF==10&&$1=="Proto"){print "true"}')" = true ]
 }
 
 setusage() {
