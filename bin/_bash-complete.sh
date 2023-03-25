@@ -95,9 +95,11 @@ complete -F _common_option_complete cronlog.sh
 complete -F _common_option_complete dedup.sh
 complete -F _common_option_complete download-geoip-cn.sh
 complete -F _common_option_complete fast-rm-folder.sh
-complete -F _common_option_complete go-auth-comment.sh
+complete -F _common_option_complete gitsemver.sh
+complete -F _common_option_complete go-auto-comment.sh
 complete -F _common_option_complete go-cyclo.sh
 complete -F _common_option_complete go-test.sh
+complete -F _common_option_complete go-update.sh
 complete -F _common_option_complete hibrace.sh
 complete -F _common_option_complete killcommand.sh
 complete -F _common_option_complete maxminavg.sh
