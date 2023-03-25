@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-if command -v ps 2>&1 >/dev/null; then
+if command -v ps >/dev/null 2>&1; then
     ps -axo pid=,command=,
     exit 0
 fi

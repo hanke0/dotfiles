@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-if command -v ps 2>&1 >/dev/null; then
+if command -v ps >/dev/null 2>&1; then
     for pid in "${args[@]}"; do
         printf '%s %s\n' "$pid" "$(ps -o command=, -p "${pid}")"
     done

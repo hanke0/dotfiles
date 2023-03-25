@@ -105,9 +105,13 @@ pidname() {
     ps -o comm=, -p "$1"
 }
 
+# shellcheck disable=SC2016
 tcpawknetstat='{out = $7; for (i = 8; i <= NF; i++) {out = out " " $i};pid=substr(out,0,index(out,"/")-1);comm=substr(out,index(out,"/")+1);printf "%-8s %-20s %-12s %-30s\n",$1,$4,pid,comm}'
+# shellcheck disable=SC2016
 udpawknetstat='{out = $6; for (i = 7; i <= NF; i++) {out = out " " $i};pid=substr(out,0,index(out,"/")-1);comm=substr(out,index(out,"/")+1);printf "%-8s %-20s %-12s %-30s\n",$1,$4,pid,comm}'
+# shellcheck disable=SC2016
 tcpawklsof='{printf "%-8s %-20s %-12s\n",$8,$9,$2}'
+# shellcheck disable=SC2016
 udpawklsof='{printf "%-8s %-20s %-12s\n",$8,$9,$2}'
 
 grep_by_port() {
