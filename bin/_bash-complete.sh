@@ -16,17 +16,21 @@ _common_option_opts() {
     _common_option_opts_suffix "$1" "(\[?=.+\]?)?"
 }
 
+# =FILE
 _common_option_file_opts() {
     _common_option_opts_suffix "$1" "\[?=FILE\]?"
 }
 
+# =DIR
 _common_option_dir_opts() {
     _common_option_opts_suffix "$1" "\[?=DIR(ECTORY)?\]?"
 }
 
+# =[A|B]
 _common_option_choice_opts() {
     local opts opt choices
-    LC_ALL=C "$1" --help 2>&1 | while IFS=$'\n' read -r line; do
+    LC_ALL=C "$1" --help 2>&1 | while IFS='
+' read -r line; do
         if _common_option_test_with_suffix "$line" "\[?=\[([a-zA-Z0-9[:blank:]|]+)\]\]?"; then
             if [ -n "${BASH_REMATCH[1]}" ]; then # -s --long=[opt1|opt2]
                 opts="${BASH_REMATCH[1]%%=*}"
@@ -59,32 +63,37 @@ _common_option_complete() {
         if [[ " $pathopts " =~ [[:blank:]]${prev}[[:blank:]] ]]; then
             compopt -o nospace 2>/dev/null
             compopt -o filenames 2>/dev/null
-            while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -d -- "$cur")
+            # shellcheck disable=SC2207
+            COMPREPLY+=($(compgen -d -- "$cur"))
             return
         fi
         fileopts="$(_common_option_file_opts "$cmd")"
         if [[ " $fileopts " =~ [[:blank:]]${prev}[[:blank:]] ]]; then
             compopt -o nospace 2>/dev/null
             compopt -o filenames 2>/dev/null
-            while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -f -- "$cur")
+            # shellcheck disable=SC2207
+            COMPREPLY+=($(compgen -f -- "$cur"))
             return
         fi
         choiceopts="$(_common_option_choice_opts "$cmd")"
         if [[ " $choiceopts " =~ [[:blank:]]${prev}=([a-zA-Z0-9|]+) ]]; then
             opts="$(echo "${BASH_REMATCH[1]}" | tr '|' ' ')"
-            while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -W "$opts" -- "$cur")
+            # shellcheck disable=SC2207
+            COMPREPLY+=($(compgen -W "$opts" -- "$cur"))
             return
         fi
     fi
     case "$cur" in
     -*)
         opts="$(_common_option_opts "$cmd")"
-        while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -W "$opts" -- "$cur")
+        # shellcheck disable=SC2207
+        COMPREPLY+=($(compgen -W "$opts" -- "$cur"))
         ;;
     *)
         compopt -o nospace 2>/dev/null
         compopt -o filenames 2>/dev/null
-        while IFS='' read -r line; do COMPREPLY+=("$line"); done < <(compgen -f -- "$cur")
+        # shellcheck disable=SC2207
+        COMPREPLY+=($(compgen -f -- "$cur"))
         ;;
     esac
 }
