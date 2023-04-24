@@ -18,6 +18,7 @@ Options:
         --noinline          disable inline, it useful when some test uses gomonkey :(.
         --race              unable data race detector.
     -v, --verbose           verbose output.
+        --nocache           disable test cache.
 EOF
 }
 
@@ -34,7 +35,7 @@ while [ $# -gt 0 ]; do
         ;;
     -c | --coverage)
         shift
-        EXTRA+=(-covermode=atomic -race -coverprofile=cover.out)
+        EXTRA+=(-covermode=atomic -coverprofile=cover.out)
         COVERAGE=true
         ;;
     -b | --benchmark)
@@ -63,6 +64,10 @@ while [ $# -gt 0 ]; do
         ;;
     --race)
         EXTRA+=("-race")
+        shift
+        ;;
+    --nocache)
+        EXTRA+=("-count=1")
         shift
         ;;
     -v | --verbose)
