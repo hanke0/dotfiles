@@ -144,7 +144,7 @@ condaon() {
 }
 
 areyouok() {
-    echo "The previous command exit with code $?."
+    echo "The previous command exit with code $?"
 }
 
 enable_proxy() {
