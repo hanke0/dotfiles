@@ -143,6 +143,10 @@ condaon() {
     conda deactivate && conda activate "$@" && type python && pip -V
 }
 
+areyouok() {
+    echo "The previous command exit with code $?."
+}
+
 enable_proxy() {
     local proxy
     proxy="$1"
