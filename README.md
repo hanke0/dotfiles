@@ -24,5 +24,5 @@ ProxyCommand socat - PROXY:127.0.0.1:%h:%p,proxyport=1080
 
 2. Connect with ssh through socks5 proxy using nc
 ```
-nc -v -x 192.168.3.99:1081 %h %p
+nc -v -x 127.0.0.1:1080 %h %p
 ```
