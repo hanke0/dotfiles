@@ -140,7 +140,13 @@ fi
 # small enough for one screen.
 # Orginal written by mathiasbynens in project dotfiles(https://github.com/mathiasbynens/dotfiles).
 treeview() {
-	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
+    tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX
+}
+
+# Run `dig` and display the most useful info
+# Orginal written by mathiasbynens in project dotfiles(https://github.com/mathiasbynens/dotfiles).
+function digsimple() {
+    dig +nocmd "$1" any +multiline +noall +answer
 }
 
 set_shortcuts() {
