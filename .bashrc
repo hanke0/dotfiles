@@ -83,7 +83,7 @@ else
     __ps1_user="\[${COLOR_GREEN}\]\u\[${COLOR_RESET}\]"
 fi
 if [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ]; then
-    __ps1_host="\[${COLOR_CYAN_BOLD}\]\h*\[${COLOR_RESET}\]"
+    __ps1_host="\[${COLOR_CYAN_BOLD}\]\h\[${COLOR_RESET}\]*"
 else
     __ps1_host="\[${COLOR_CYAN}\]\h\[${COLOR_RESET}\]"
 fi
