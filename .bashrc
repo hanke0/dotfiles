@@ -55,7 +55,7 @@ export COLOR_YELLOW="\e[0;33m"
 export COLOR_BLUE="\e[0;34m"
 export COLOR_MAGENTA="\e[0;35m"
 export COLOR_CYAN="\e[0;36m"
-export COLOR_LIGHTGRAY="\e[0;37m"
+export COLOR_GRAY="\e[0;37m"
 
 export COLOR_BLACK_BOLD="\e[1;30m"
 export COLOR_RED_BOLD="\e[1;31m"
@@ -64,7 +64,7 @@ export COLOR_YELLOW_BOLD="\e[1;33m"
 export COLOR_BLUE_BOLD="\e[1;34m"
 export COLOR_MAGENTA_BOLD="\e[1;35m"
 export COLOR_CYAN_BOLD="\e[1;36m"
-export COLOR_LIGHTGRAY_BOLD="\e[1;37m"
+export COLOR_GRAY_BOLD="\e[1;37m"
 
 # -- Prompt -------------------------------------------------------------------
 if ! commanv -v "__git_ps1" >/dev/null 2>&1; then
