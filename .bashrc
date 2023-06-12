@@ -46,23 +46,23 @@ fi
 
 export EDITOR='vim'
 
-export COLOR_RESET='\033[0m'
-export COLOR_BLACK='\033[0;30m'
-export COLOR_RED='\033[0;31m'
-export COLOR_GREEN='\033[0;32m'
-export COLOR_YELLOW='\033[0;33m'
-export COLOR_BLUE='\033[0;34m'
-export COLOR_PURPLE='\033[0;35m'
-export COLOR_CYAN='\033[0;36m'
-export COLOR_LIGHTGRAY='\033[0;37m'
-export COLOR_BLACK_BOLD='\033[1;30m'
-export COLOR_RED_BOLD='\033[1;31m'
-export COLOR_GREEN_BOLD='\033[1;32m'
-export COLOR_YELLOW_BOLD='\033[1;33m'
-export COLOR_BLUE_BOLD='\033[1;34m'
-export COLOR_PURPLE_BOLD='\033[1;35m'
-export COLOR_CYAN_BOLD='\033[1;36m'
-export COLOR_LIGHTGRAY_BOLD='\033[1;37m'
+export COLOR_RESET='\e[0m'
+export COLOR_BLACK='\e[0;30m'
+export COLOR_RED='\e[0;31m'
+export COLOR_GREEN='\e[0;32m'
+export COLOR_YELLOW='\e[0;33m'
+export COLOR_BLUE='\e[0;34m'
+export COLOR_MAGENTA='\e[0;35m'
+export COLOR_CYAN='\e[0;36m'
+export COLOR_LIGHTGRAY='\e[0;37m'
+export COLOR_BLACK_BOLD='\e[1;30m'
+export COLOR_RED_BOLD='\e[1;31m'
+export COLOR_GREEN_BOLD='\e[1;32m'
+export COLOR_YELLOW_BOLD='\e[1;33m'
+export COLOR_BLUE_BOLD='\e[1;34m'
+export COLOR_MAGENTA_BOLD='\e[1;35m'
+export COLOR_CYAN_BOLD='\e[1;36m'
+export COLOR_LIGHTGRAY_BOLD='\e[1;37m'
 
 # -- Prompt -------------------------------------------------------------------
 __get_ps1_git_branch() {
@@ -85,7 +85,7 @@ fi
 __ps1_dir="\[${COLOR_YELLOW}\]\w\[${COLOR_RESET}\]"
 __ps1_git="\[${COLOR_BLUE}\]\$(command -v __get_ps1_git_branch 2>&1 >/dev/null && __get_ps1_git_branch)\[${COLOR_RESET}\]"
 __ps1_proxy="\$(if [ -n \"$http_proxy\" ] || [ -n \"${https_proxy}\" ]; then printf \" ✈\"; fi;)"
-__ps1_suffix="\n\[${COLOR_PURPLE_BOLD}\]» \[${COLOR_RESET}\]"
+__ps1_suffix="\n\[${COLOR_MAGENTA_BOLD}\]» \[${COLOR_RESET}\]"
 export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}${__ps1_suffix}"
 
 # -- Functions --------------------------------------------------------------
