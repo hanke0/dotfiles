@@ -46,31 +46,32 @@ fi
 
 export EDITOR='vim'
 
-export COLOR_RESET='\e[0m'
-export COLOR_BLACK='\e[0;30m'
-export COLOR_RED='\e[0;31m'
-export COLOR_GREEN='\e[0;32m'
-export COLOR_YELLOW='\e[0;33m'
-export COLOR_BLUE='\e[0;34m'
-export COLOR_MAGENTA='\e[0;35m'
-export COLOR_CYAN='\e[0;36m'
-export COLOR_LIGHTGRAY='\e[0;37m'
-export COLOR_BLACK_BOLD='\e[1;30m'
-export COLOR_RED_BOLD='\e[1;31m'
-export COLOR_GREEN_BOLD='\e[1;32m'
-export COLOR_YELLOW_BOLD='\e[1;33m'
-export COLOR_BLUE_BOLD='\e[1;34m'
-export COLOR_MAGENTA_BOLD='\e[1;35m'
-export COLOR_CYAN_BOLD='\e[1;36m'
-export COLOR_LIGHTGRAY_BOLD='\e[1;37m'
+export COLOR_RESET="\e[0m"
+
+export COLOR_BLACK="\e[0;30m"
+export COLOR_RED="\e[0;31m"
+export COLOR_GREEN="\e[0;32m"
+export COLOR_YELLOW="\e[0;33m"
+export COLOR_BLUE="\e[0;34m"
+export COLOR_MAGENTA="\e[0;35m"
+export COLOR_CYAN="\e[0;36m"
+export COLOR_LIGHTGRAY="\e[0;37m"
+
+export COLOR_BLACK_BOLD="\e[1;30m"
+export COLOR_RED_BOLD="\e[1;31m"
+export COLOR_GREEN_BOLD="\e[1;32m"
+export COLOR_YELLOW_BOLD="\e[1;33m"
+export COLOR_BLUE_BOLD="\e[1;34m"
+export COLOR_MAGENTA_BOLD="\e[1;35m"
+export COLOR_CYAN_BOLD="\e[1;36m"
+export COLOR_LIGHTGRAY_BOLD="\e[1;37m"
 
 # -- Prompt -------------------------------------------------------------------
-__get_ps1_git_branch() {
-    __cur_git_branch_name="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
-    if [ -n "$__cur_git_branch_name" ]; then
-        printf "(%s)" "$__cur_git_branch_name"
-    fi
-}
+if ! commanv -v "__git_ps1" >/dev/null 2>&1; then
+    __git_ps1() {
+        printf "$1" "$(git symbolic-ref --short HEAD 2>/dev/null || true)"
+    }
+fi
 
 if [ "$(id -u)" = "0" ]; then
     __ps1_user="\[${COLOR_RED_BOLD}\]\u\]${COLOR_RESET}\]"
@@ -83,7 +84,7 @@ else
     __ps1_host="\[${COLOR_CYAN}\]\h\[${COLOR_RESET}\]"
 fi
 __ps1_dir="\[${COLOR_YELLOW}\]\w\[${COLOR_RESET}\]"
-__ps1_git="\[${COLOR_BLUE}\]\$(command -v __get_ps1_git_branch 2>&1 >/dev/null && __get_ps1_git_branch)\[${COLOR_RESET}\]"
+__ps1_git="\[${COLOR_BLUE}\]\$(command -v __git_ps1 2>&1 >/dev/null && __git_ps1 '(%s)')\[${COLOR_RESET}\]"
 __ps1_proxy="\$(if [ -n \"$http_proxy\" ] || [ -n \"${https_proxy}\" ]; then printf \" ✈\"; fi;)"
 __ps1_suffix="\n\[${COLOR_MAGENTA_BOLD}\]» \[${COLOR_RESET}\]"
 export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}${__ps1_suffix}"
