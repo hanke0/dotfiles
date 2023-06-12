@@ -91,10 +91,10 @@ export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}
 # -- Functions --------------------------------------------------------------
 
 tmux_open() {
-    if tmux 'ls' 2>/dev/null | grep han; then
-        tmux attach-session -t han
+    if tmux 'ls' 2>/dev/null | grep -- "$(whoami)"; then
+        tmux attach-session -t "$(whoami)"
     else
-        tmux -2 -u new-session -s han
+        tmux -2 -u new-session -s "$(whoami)"
     fi
 }
 
