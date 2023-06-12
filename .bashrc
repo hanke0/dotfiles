@@ -69,7 +69,11 @@ export COLOR_LIGHTGRAY_BOLD="\e[1;37m"
 # -- Prompt -------------------------------------------------------------------
 if ! commanv -v "__git_ps1" >/dev/null 2>&1; then
     __git_ps1() {
-        printf "$1" "$(git symbolic-ref --short HEAD 2>/dev/null || true)"
+        local branchname
+        branchname="$(git symbolic-ref --short HEAD 2>/dev/null || true)"\]
+        if [ -n "$branchname" ]; then
+            printf "$1" "$branchname"
+        fi
     }
 fi
 
