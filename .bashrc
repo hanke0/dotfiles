@@ -46,41 +46,47 @@ fi
 
 export EDITOR='vim'
 
-export COLOR_RESET='\e[0m'
-export COLOR_RED='\e[31m'
-export COLOR_GREEN='\e[32m'
-export COLOR_YELLOW='\e[33m'
-export COLOR_BLUE='\e[34m'
-export COLOR_PURPLE='\e[35m'
-export COLOR_CYAN='\e[36m'
-export COLOR_LIGHTGRAY='\e[37m'
+export COLOR_RESET='\033[0m'
+export COLOR_BLACK='\033[0;30m'
+export COLOR_RED='\033[0;31m'
+export COLOR_GREEN='\033[0;32m'
+export COLOR_YELLOW='\033[0;33m'
+export COLOR_BLUE='\033[0;34m'
+export COLOR_PURPLE='\033[0;35m'
+export COLOR_CYAN='\033[0;36m'
+export COLOR_LIGHTGRAY='\033[0;37m'
+export COLOR_BLACK_BOLD='\033[1;30m'
+export COLOR_RED_BOLD='\033[1;31m'
+export COLOR_GREEN_BOLD='\033[1;32m'
+export COLOR_YELLOW_BOLD='\033[1;33m'
+export COLOR_BLUE_BOLD='\033[1;34m'
+export COLOR_PURPLE_BOLD='\033[1;35m'
+export COLOR_CYAN_BOLD='\033[1;36m'
+export COLOR_LIGHTGRAY_BOLD='\033[1;37m'
 
 # -- Prompt -------------------------------------------------------------------
-__git_branch() {
-    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
-
-__ps1_proxy() {
-    if [ -n "$http_proxy" ] || [ -n "${https_proxy}" ]; then
-        printf " ✈"
+__get_ps1_git_branch() {
+    __cur_git_branch_name="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
+    if [ -n "$__cur_git_branch_name" ]; then
+        printf "(%s)" "$__cur_git_branch_name"
     fi
 }
 
-PS1='['
 if [ "$(id -u)" = "0" ]; then
-    PS1+='\[\e[31m\]\u\[\e[m\]'
+    __ps1_user="\[${COLOR_RED_BOLD}\]\u\]${COLOR_RESET}\]"
 else
-    PS1+='\[\e[32m\]\u\[\e[m\]'
+    __ps1_user="\[${COLOR_GREEN}\]\u\[${COLOR_RESET}\]"
 fi
-PS1+='@'
-PS1+='\[\e[36m\]\h\[\e[m\]:'
-PS1+='\[\e[33m\]\w\[\e[m\]'
-PS1+=']'
-PS1+='\[\e[34m\]$(command -v __git_branch 2>&1 >/dev/null && __git_branch)\[\e[m\]'
-PS1+='$(command -v __ps1_proxy 2>&1 >/dev/null && __ps1_proxy)'
-PS1+='\n'
-PS1+='\[\e[35m\]» \[\e[m\]'
-export PS1
+if [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ]; then
+    __ps1_host="\[${COLOR_RED_BOLD}\]\h\[${COLOR_RESET}\]"
+else
+    __ps1_host="\[${COLOR_CYAN}\]\h\[${COLOR_RESET}\]"
+fi
+__ps1_dir="\[${COLOR_YELLOW}\]\w\[${COLOR_RESET}\]"
+__ps1_git="\[${COLOR_BLUE}\]\$(command -v __get_ps1_git_branch 2>&1 >/dev/null && __get_ps1_git_branch)\[${COLOR_RESET}\]"
+__ps1_proxy="\$(if [ -n \"$http_proxy\" ] || [ -n \"${https_proxy}\" ]; then printf \" ✈\"; fi;)"
+__ps1_suffix="\n\[${COLOR_PURPLE_BOLD}\]» \[${COLOR_RESET}\]"
+export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}${__ps1_suffix}"
 
 # -- Functions --------------------------------------------------------------
 
