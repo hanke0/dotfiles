@@ -78,7 +78,7 @@ if ! commanv -v "__git_ps1" >/dev/null 2>&1; then
 fi
 
 if [ "$(id -u)" = "0" ]; then
-    __ps1_user="\[${COLOR_RED_BOLD}\]\u\]${COLOR_RESET}\]"
+    __ps1_user="\[${COLOR_RED_BOLD}\]\u\[${COLOR_RESET}\]"
 else
     __ps1_user="\[${COLOR_GREEN}\]\u\[${COLOR_RESET}\]"
 fi
