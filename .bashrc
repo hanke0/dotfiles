@@ -89,7 +89,7 @@ else
 fi
 __ps1_dir="\[${COLOR_YELLOW}\]\w\[${COLOR_RESET}\]"
 __ps1_git="\[${COLOR_BLUE}\]\$(command -v __git_ps1 2>&1 >/dev/null && __git_ps1 '(%s)')\[${COLOR_RESET}\]"
-__ps1_proxy="\$(if [ -n \"$http_proxy\" ] || [ -n \"${https_proxy}\" ]; then printf \" ✈\"; fi;)"
+__ps1_proxy="\$(if [ -n \"\$http_proxy\" ] || [ -n \"\$https_proxy\" ]; then printf \" ✈\"; fi;)"
 __ps1_suffix="\n\[${COLOR_MAGENTA_BOLD}\]» \[${COLOR_RESET}\]"
 export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}${__ps1_suffix}"
 
