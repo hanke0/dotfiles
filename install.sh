@@ -42,11 +42,20 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-command -v realpath >/dev/null 2>&1 || realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
-}
+getrealpath() (
+    file=
+    path=$1
+    [ -d "$path" ] || {
+        file=/$(basename -- "$path")
+        path=$(dirname -- "$path")
+    }
+    {
+        path=$(cd -- "$path" && pwd)$file
+    } || exit $?
+    printf %s\\n "/${path#"${path%%[!/]*}"}"
+)
 
-ABS_PATH="$(realpath "$0")"
+ABS_PATH="$(getrealpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
 ME="$(whoami)"
 
