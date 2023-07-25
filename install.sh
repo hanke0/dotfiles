@@ -155,7 +155,11 @@ $commentsign $FINISH_SIGN
 EOF
     )"
     echo ">>>>>> change $file with following content(diff output)"
-    diff <(cat <<<"$text") "$file" || true
+    if ! [ -e "$file" ]; then
+        diff <(cat <<<"$text") <(cat <<<"") || true
+    else
+        diff <(cat <<<"$text") "$file" || true
+    fi
     if in_dryrun; then
         return 0
     fi
