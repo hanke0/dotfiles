@@ -163,8 +163,9 @@ EOF
     if in_dryrun; then
         return 0
     fi
-    read_yes "apply above change?[Y/n]"
-    cat >"$file" <<<"$text"
+    if read_yes "apply above change?[Y/n]"; then
+        cat >"$file" <<<"$text"
+    fi
 }
 
 # bashrc config
