@@ -149,8 +149,9 @@ append_content() {
     awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
 (\$0 == \"$commentsign $FINISH_SIGN\") { end=1 }
 (!start && !end){print}
-(start && end) { while ((getline<\"$contentfile\") > 0) {print} }
+(start && end) { added=1; while ((getline<\"$contentfile\") > 0) {print} }
 (end){ start=0;end=0 }
+END { if (!added) { while ((getline<\"$contentfile\") > 0) {print} } }
 " "$file"
 }
 
