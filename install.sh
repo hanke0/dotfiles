@@ -108,6 +108,9 @@ check_content() {
     local commentsign file
     commentsign="$(awk_comment "$1")"
     file="$2"
+    if ! [ -e "$file" ]; then
+        return 0
+    fi
 
     awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
 (\$0 == \"$commentsign $FINISH_SIGN\") { if (start) start=0; else print \"RAW FINISH\"; }
@@ -119,6 +122,9 @@ remove_pre_added_parts() {
     local commentsign file
     commentsign="$(awk_comment "$1")"
     file="$2"
+    if ! [ -e "$file" ]; then
+        return 0
+    fi
 
     awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
 (\$0 == \"$commentsign $FINISH_SIGN\") { end=1 }
