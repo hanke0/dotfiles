@@ -11,14 +11,25 @@ print_help() {
 Usage: ${0##*/} [OPTION]...
 
 OPTION:
-  -y --yes       Don't ask for confirmation of install options.
-  -n --dry-run   Show what this script would do
-  -v --verbose   Verbose output command
+  -y --yes            Don't ask for confirmation of install options.
+  -n --dry-run        Show what this script would do
+  -v --verbose        Verbose output command
+  -b --backup=SUFFIX  Make backup when given suffix (default to $SUFFIX).
+                      Do not backup when suffix is empty.
 EOF
 }
 
+SUFFIX=.hanke0.dotfiles.bak
 while [ $# -gt 0 ]; do
     case "$1" in
+    -b | --backup)
+        SUFFIX="$2"
+        shift 2
+        ;;
+    -b=* | --backup=*)
+        SUFFIX="${1#*=}"
+        shift
+        ;;
     -y | --yes)
         ALWAYS_YES=true
         shift
@@ -87,6 +98,13 @@ read_yes() {
 
 in_dryrun() {
     test -n "$DRYRUN"
+}
+
+backup() {
+    if [ -z "$SUFFIX" ]; then
+        return 0
+    fi
+    cp -f "$1" "$1$SUFFIX"
 }
 
 awk_comment() {
@@ -164,6 +182,7 @@ EOF
         return 0
     fi
     if read_yes "apply above change?[Y/n]"; then
+        backup "$file"
         cat >"$file" <<<"$text"
     fi
 }
