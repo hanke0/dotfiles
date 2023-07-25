@@ -109,6 +109,7 @@ check_content() {
     commentsign="$(awk_comment "$1")"
     file="$2"
     if ! [ -e "$file" ]; then
+        printf "OK"
         return 0
     fi
 
