@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+set -o pipefail
 
 ALWAYS_YES=false
 DRYRUN=
@@ -57,10 +58,14 @@ getrealpath() (
 
 ABS_PATH="$(getrealpath "$0")"
 ROOT_DIR="$(dirname "$ABS_PATH")"
-ME="$(whoami)"
 
 if [ -z "$ROOT_DIR" ]; then
-    echo >&2 "cannot get folder"
+    echo >&2 "cannot get root folder"
+    exit 1
+fi
+
+if ! [ -f "$ROOT_DIR/install.sh" ]; then
+    echo >&2 "cannot get root foler"
     exit 1
 fi
 
@@ -84,91 +89,91 @@ in_dryrun() {
     test -n "$DRYRUN"
 }
 
-has_content() {
-    if [ ! -f "$2" ]; then
-        return 1
-    fi
-    grep -qF "$1" "$2"
+awk_comment() {
+    case "$1" in
+    '"')
+        echo '\"'
+        ;;
+    *)
+        echo "$1"
+        ;;
+    esac
 }
 
-append_content() {
+START_SIGN=">>> hanke0/dotfiles >>>"
+COMMENTLINE="!! Contents within this block are managed by https://github.com/hanke0/dotfiles !!"
+FINISH_SIGN="<<< hanke0/dotfiles <<<"
+
+check_content() {
+    local commentsign file
+    commentsign="$(awk_comment "$1")"
     file="$2"
-    content="$1"
-    patten="$3"
-    if [ -z "$patten" ]; then
-        patten="$content"
-    fi
-    if ! has_content "$patten" "$file"; then
-        if in_dryrun; then
-            $DRYRUN "echo \"$content\" >>\"$file\""
-        else
-            echo "$content" >>"$file"
-        fi
-    fi
+
+    awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
+(\$0 == \"$commentsign $FINISH_SIGN\") { if (start) start=0; else print \"RAW FINISH\"; }
+END { if (!start) { print \"OK\" } }
+" "$file"
 }
 
-add_cronjob() {
-    local schedule="$1"
-    local commander="$2"
-    local remove_pattern="$3"
-    local f=
-    local data=
+remove_pre_added_parts() {
+    local commentsign file
+    commentsign="$(awk_comment "$1")"
+    file="$2"
 
-    if [ -z "$3" ]; then
-        remove_pattern="$2"
+    awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
+(\$0 == \"$commentsign $FINISH_SIGN\") { end=1 }
+(!start && !end){print}
+(end){ start=0;end=0 }
+" "$file"
+}
+
+add_parts() {
+    local text commentsign file content
+    content="$1"
+    commentsign="$2"
+    file="$3"
+    if [ "$(check_content "$commentsign" "$file")" != "OK" ]; then
+        echo >&2 "file has a bad block of contents, please check it: $file"
+        exit 1
     fi
-    f="$(mktemp "/tmp/handotfiles-cron.$ME.XXXX")"
-    data="$(crontab -l 2>/dev/null || true)"
-    echo "$data" >"$f"
-    data="$(grep -v "$remove_pattern" "$f")"
-    printf "%s" "$data" >"$f"
-    printf "\n%s %s" "$schedule" "$commander" >>"$f"
-    data="$(cat "$f")"
-    # remove leading whitespace characters
-    data="${data#"${data%%[![:space:]]*}"}"
-    if ! in_dryrun; then
-        echo "$data" | crontab -
-    else
-        $DRYRUN "echo $data | contab -"
+
+    text="$(remove_pre_added_parts "$commentsign" "$file")"
+    text="$(
+        cat <<EOF
+$text
+$commentsign $START_SIGN
+$commentsign $COMMENTLINE
+$content
+$commentsign $FINISH_SIGN
+EOF
+    )"
+    echo ">>>>>> change $file with following content(diff output)"
+    diff <(cat <<<"$text") "$file"
+    if in_dryrun; then
+        return 0
     fi
-    rm "$f"
+    read_yes "apply above change?[Y/n]"
+    cat >"$file" <<<"$text"
 }
 
 # bashrc config
-append_content "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" ~/.bashrc
+add_parts "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" "#" ~/.bashrc
 
 # git config
 $DRYRUN git config --global include.path "$ROOT_DIR/.gitconfig"
 
 # tmux config
-append_content "source-file $ROOT_DIR/.tmux.conf" ~/.tmux.conf
+add_parts "source-file $ROOT_DIR/.tmux.conf" "#" ~/.tmux.conf
 
 # vim config
-append_content "source $ROOT_DIR/.vimrc" ~/.vimrc
+add_parts "source $ROOT_DIR/.vimrc" '"' ~/.vimrc
 
 # zsh config
-append_content "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" ~/.zshrc
+add_parts "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" "#" ~/.zshrc
 
 # input config
-append_content "\$include $ROOT_DIR/.inputrc" ~/.inputrc
+add_parts "\$include $ROOT_DIR/.inputrc" "#" ~/.inputrc
 
-link_yes() {
-    if [ ! -f "$2" ]; then
-        $DRYRUN ln -s "$1" "$2"
-    else
-        if read_yes "$2 Exists, do you want delete it? [Y/n]: "; then
-            $DRYRUN rm "$2"
-            $DRYRUN ln -s "$1" "$2"
-        fi
-    fi
-}
-
-if read_yes "Link ~/.gitignore? [Y/n]: "; then
-    link_yes "$ROOT_DIR/.gitignore" ~/.gitignore
-fi
-
-if read_yes "Link ~/.condarc [Y/n]: "; then
-    link_yes "$ROOT_DIR/.condarc" ~/.condarc
-fi
+add_parts "$(cat "$ROOT_DIR/.gitignore")" "#" ~/.gitignore
 
 echo "Success setup! All confguration will active in next login."

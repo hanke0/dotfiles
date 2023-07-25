@@ -32,3 +32,4 @@ ROOT_DIR="$(x dirname "$(x dirname "$ABS_PATH")")"
 
 cd "$ROOT_DIR"
 /usr/bin/git pull -q origin master
+./install.sh "$@"
