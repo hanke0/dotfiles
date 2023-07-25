@@ -137,10 +137,11 @@ END { if (!start) { print \"OK\" } }
 " "$file"
 }
 
-remove_pre_added_parts() {
-    local commentsign file
+append_content() {
+    local commentsign file contentfile
     commentsign="$(awk_comment "$1")"
     file="$2"
+    contentfile="$3"
     if ! [ -e "$file" ]; then
         return 0
     fi
@@ -148,12 +149,13 @@ remove_pre_added_parts() {
     awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
 (\$0 == \"$commentsign $FINISH_SIGN\") { end=1 }
 (!start && !end){print}
+(start && end) { while ((getline<\"$contentfile\") > 0) {print} }
 (end){ start=0;end=0 }
 " "$file"
 }
 
 add_parts() {
-    local text commentsign file content
+    local text commentsign file content textfile
     content="$1"
     commentsign="$2"
     file="$3"
@@ -161,17 +163,14 @@ add_parts() {
         echo >&2 "file has a bad block of contents, please check it: $file"
         exit 1
     fi
-
-    text="$(remove_pre_added_parts "$commentsign" "$file")"
-    text="$(
-        cat <<EOF
-$text
+    textfile=/tmp/hanke0-dotfiles.tmp
+    cat >"$textfile" <<EOF
 $commentsign $START_SIGN
 $commentsign $COMMENTLINE
 $content
 $commentsign $FINISH_SIGN
 EOF
-    )"
+    text="$(append_content "$commentsign" "$file" "$textfile")"
     echo ">>>>>> change $file with following content(diff output)"
     if ! [ -e "$file" ]; then
         diff <(cat <<<"$text") <(cat <<<"") || true
