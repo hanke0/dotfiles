@@ -16,7 +16,7 @@ Options:
         --cpuprofile        write a CPU profile to cpu.out
         --memprofile        wirte a alloctaion profile to mem.out.
         --noinline          disable inline, it useful when some test uses gomonkey :(.
-        --race              unable data race detector.
+        --race              enable data race detector.
     -v, --verbose           verbose output.
         --nocache           disable test cache.
 EOF

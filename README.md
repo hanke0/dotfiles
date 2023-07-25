@@ -19,6 +19,11 @@ This repository contains a collection of useful configuration files that enhance
 
 These added contents are customized to improve your productivity and provide a better development environment.
 
+# Useful scripts
+There are a collection of useful bash script in the `bin` folder.
+Those scripts are registered into `PATH` after installation.
+You can get a script's help from `--help` option.
+
 # Useful Cheatsheets
 
 1. Connect with SSH through an HTTP proxy using socat:
