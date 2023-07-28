@@ -8,7 +8,7 @@ define void divmod(a, b) {
 }
 
 define mod(a, b) {
-    auto sc, r;
+    auto sc,r;
     sc=scale;
     scale=0;
     r=a%b;
@@ -17,7 +17,7 @@ define mod(a, b) {
 }
 
 define void convert(a, ib, ob) {
-    auto o i;
+    auto o,i;
     i=ibase;
     ibase=ib;
     o=obase;
