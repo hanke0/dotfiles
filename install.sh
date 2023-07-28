@@ -104,7 +104,9 @@ backup() {
     if [ -z "$SUFFIX" ]; then
         return 0
     fi
-    cp -f "$1" "$1$SUFFIX"
+    if [ -f "$1" ]; then
+        cp -f "$1" "$1$SUFFIX"
+    fi
 }
 
 awk_comment() {
@@ -143,6 +145,7 @@ append_content() {
     file="$2"
     contentfile="$3"
     if ! [ -e "$file" ]; then
+        cat "$contentfile"
         return 0
     fi
 
@@ -156,7 +159,7 @@ END { if (!added) { while ((getline<\"$contentfile\") > 0) {print} } }
 }
 
 add_parts() {
-    local text commentsign file content textfile
+    local text commentsign file content textfile note
     content="$1"
     commentsign="$2"
     file="$3"
@@ -172,16 +175,23 @@ $content
 $commentsign $FINISH_SIGN
 EOF
     text="$(append_content "$commentsign" "$file" "$textfile")"
-    echo ">>>>>> change $file with following content(diff output)"
+    note=""
     if ! [ -e "$file" ]; then
+        note="create file $file"
+        echo "!!! $note with following content(diff output)"
         diff <(cat <<<"$text") <(cat <<<"") || true
     else
+        if diff <(cat <<<"$text") "$file" >/dev/null 2>&1; then
+            return 0
+        fi
+        note="change file $file"
+        echo "!!! $note with following content(diff output)"
         diff <(cat <<<"$text") "$file" || true
     fi
     if in_dryrun; then
         return 0
     fi
-    if read_yes "apply above change?[Y/n]"; then
+    if read_yes "!!! $note [Y/n]?"; then
         backup "$file"
         cat >"$file" <<<"$text"
     fi
@@ -206,5 +216,7 @@ add_parts "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" "#" ~/.zshrc
 add_parts "\$include $ROOT_DIR/.inputrc" "#" ~/.inputrc
 
 add_parts "$(cat "$ROOT_DIR/.gitignore")" "#" ~/.gitignore
+
+add_parts "$(cat "$ROOT_DIR/.bcrc")" "#" ~/.bcrc
 
 echo "Success setup! All confguration will active in next login."

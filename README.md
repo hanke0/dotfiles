@@ -16,6 +16,7 @@ This repository contains a collection of useful configuration files that enhance
 - `~/.zshrc`
 - `~/.inputrc`
 - `~/.gitignore`
+- `~/.bcrc`
 
 These added contents are customized to improve your productivity and provide a better development environment.
 

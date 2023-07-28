@@ -250,3 +250,4 @@ alias egrep='egrep --color=auto'
 
 alias cls='clear'
 alias tt='tmux_open'
+alias xbc="bc ~/.bcrc -l"

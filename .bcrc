@@ -1,0 +1,76 @@
+define void divmod(a, b) {
+    auto sc;
+    sc=scale;
+    scale=0;
+    a/b;
+    a%b;
+    scale=sc;
+}
+
+define mod(a, b) {
+    auto sc, r;
+    sc=scale;
+    scale=0;
+    r=a%b;
+    scale=sc;
+    return(r);
+}
+
+define void convert(a, ib, ob) {
+    auto o i;
+    i=ibase;
+    ibase=ib;
+    o=obase;
+    obase=ob;
+    a;
+    obase=o;
+    ibase=i;
+}
+
+define void b2o(a) {
+    convert(a, 2, 8);
+}
+
+define void b2i(a) {
+    convert(a, 2, 10);
+}
+
+define void b2h(a) {
+    convert(a, 2, 16);
+}
+
+define void o2b(a) {
+    convert(a, 8, 2);
+}
+
+define void o2i(a) {
+    convert(a, 8, 10);
+}
+
+define void o2h(a) {
+    convert(a, 8, 16);
+}
+
+define void i2b(a) {
+    convert(a, 10, 2);
+}
+
+define void i2o(a) {
+    convert(a, 10, 8);
+}
+
+define void i2h(a) {
+    convert(a, 10, 16);
+}
+
+define void h2b(a) {
+    convert(a, 16, 2);
+}
+
+define void h2o(a) {
+    convert(a, 16, 8);
+}
+
+define void h2i(a) {
+    convert(a, 16, 10);
+}
