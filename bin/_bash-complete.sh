@@ -115,6 +115,7 @@ complete -F _common_option_complete hibrace.sh
 complete -F _common_option_complete killcommand.sh
 complete -F _common_option_complete maxminavg.sh
 complete -F _common_option_complete mem-usage.sh
+complete -F _common_option_complete pacproxy-set.sh
 complete -F _common_option_complete pidcommand.sh
 complete -F _common_option_complete process-port.sh
 complete -F _common_option_complete randnum.sh
