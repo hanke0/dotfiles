@@ -25,7 +25,7 @@ EOF
 RAND_SOURCE="/dev/urandom"
 SIZE=4
 TYPE=u
-END='\n'
+formating='%s\n'
 
 declare -a args
 
@@ -52,7 +52,7 @@ while [ $# -gt 0 ]; do
         shift
         ;;
     --no-linebreak)
-        END=''
+        formating='%s'
         shift
         ;;
     --)
@@ -97,4 +97,4 @@ if [ -z "$g" ]; then
     exit 1
 fi
 
-printf '%s' -- "${g}${END}"
+printf "$formating" "${g}"
