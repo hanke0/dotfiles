@@ -97,4 +97,5 @@ if [ -z "$g" ]; then
     exit 1
 fi
 
+# shellcheck disable=SC2059
 printf "$formating" "${g}"

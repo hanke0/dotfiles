@@ -72,6 +72,7 @@ if ! commanv -v "__git_ps1" >/dev/null 2>&1; then
         local branchname
         branchname="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
         if [ -n "$branchname" ]; then
+            # shellcheck disable=SC2059
             printf "$1" "$branchname"
         fi
     }
