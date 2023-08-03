@@ -22,14 +22,6 @@ path_push() {
     esac
 }
 
-ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
-if [ -n "$ROOT_DIR" ] && [ -d "$ROOT_DIR/bin" ]; then
-    path_append "$ROOT_DIR/bin"
-    # relative path is not really a problem here.
-    # shellcheck disable=SC1091
-    [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
-fi
-
 # history about
 export HISTIGNORE="?"
 export HISTSIZE=32768
@@ -233,10 +225,6 @@ if is_macOS; then
     [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 fi
 
-if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
-    [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
-fi
-
 # -- Alias --------------------------------------------------------------------
 if is_macOS; then
     alias ls='ls -G'
@@ -256,3 +244,18 @@ alias egrep='egrep --color=auto'
 alias cls='clear'
 alias tt='tmux_open'
 alias xbc="bc -l ~/.bcrc"
+
+# -- relay on root folder -----------------------------------------------------
+
+ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
+    [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
+fi
+
+if [ -n "$ROOT_DIR" ] && [ -d "$ROOT_DIR/bin" ]; then
+    path_append "$ROOT_DIR/bin"
+    # relative path is not really a problem here.
+    # shellcheck disable=SC1091
+    [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
+fi
