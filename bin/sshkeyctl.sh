@@ -225,7 +225,7 @@ EOF
         ssh-copy-id -i "$sshkey" "${OPTARGS[@]}"
     else
         sshkey=$(get_local_sshkey)
-        if [ -z "$key" ]; then
+        if [ -z "$sshkey" ]; then
             echo >&2 "cannot find sshkey"
             return 1
         fi
