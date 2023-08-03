@@ -195,16 +195,8 @@ EOF
             OPTARGS=("$key")
         fi
     fi
-    if [ "${SSH_AGENT_PID:-0}" -ne 0 ]; then
-        ssh-add "${OPTARGS[@]}"
-    else
-        ssh-agent bash --init-file <(
-            cat <<EOF
-. ~/.bashrc
-ssh-add ${OPTARGS[@]}
-EOF
-        )
-    fi
+    uagent
+    ssh-add "${OPTARGS[@]}"
 }
 
 command_copyid() {
