@@ -251,6 +251,8 @@ ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
     [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
+    # shellcheck disable=SC1090
+    [ -f ~/.ssh/agent.env ] && . ~/.ssh/agent.env >/dev/null
 fi
 
 if [ -n "$ROOT_DIR" ] && [ -d "$ROOT_DIR/bin" ]; then
