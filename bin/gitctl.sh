@@ -247,6 +247,29 @@ EOF
     git push origin "$bname:$bname"
 }
 
+command_cl() {
+    OPTDEF=()
+    parseoption "$(
+        cat <<EOF
+Usage: $0 cl [repo]
+Clone a repository into current sub directory as it directory.
+EOF
+    )" "$@" || exit 1
+
+    if [ ${#OPTARGS[@]} -eq 0 ]; then
+        echo >&2 "no commit messages"
+        return 1
+    fi
+    local path repo
+    repo="${OPTARGS[0]}"
+    if [ -z "$repo" ] || [ ${#OPTARGS[@]} -ne 1 ]; then
+        echo >&2 "must provides only one repo path"
+        return 1
+    fi
+    path=$(sed -E 's/(.+):([^.]+)(\..+)?/\2/g' <<<"$repo")
+    git clone "$repo" "$path"
+}
+
 command="$1"
 shift
 case "$command" in
