@@ -270,8 +270,9 @@ EOF
 command_new() {
     OPTDEF=(
         -C "" comment comment "set ssh key comment"
+        -t "" type keytype "spect the type of key to create. The possiblae values are \"ed25519\"(default) or \"rsa\""
     )
-    local comment
+    local comment keytype
     local sshopts=()
     parseoption "$(
         cat <<EOF
@@ -281,9 +282,23 @@ Test connection through SSH.
 EOF
     )" "$@" || exit 1
 
-    local destination
+    local destination defdest
+    case "$keytype" in
+    ed25519 | "")
+        keytype=ed25519
+        defdest=~/.ssh/id_ed25519
+        ;;
+    rsa)
+        keytype="rsa-sha2-512"
+        defdest=~/.ssh/id_rsa
+        ;;
+    *)
+        echo >&2 "unknown key type"
+        return 1
+        ;;
+    esac
     if [ -z "${OPTARGS[0]}" ]; then
-        destination=~/.ssh/id_ed25519
+        destination="$defdest"
     else
         destination="${OPTARGS[0]}"
     fi
@@ -294,7 +309,7 @@ EOF
     if [ -z "$comment" ]; then
         comment="$(whoami)@$(uname -n)-$(date -I)"
     fi
-    ssh-keygen -t ed25519 -C "$comment" -f "${destination}"
+    ssh-keygen -t "$keytype" -C "$comment" -f "${destination}"
 }
 
 usage() {
