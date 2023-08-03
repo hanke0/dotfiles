@@ -253,6 +253,36 @@ EOF
     return $exitcode
 }
 
+command_new() {
+    OPTDEF=(
+        -C "" comment comment "set ssh key comment"
+    )
+    local comment
+    local sshopts=()
+    parseoption "$(
+        cat <<EOF
+Usage: $0 new [-C comment] [filename]
+Test connection through SSH.
+
+EOF
+    )" "$@" || exit 1
+
+    local destination
+    if [ -z "${OPTARGS[0]}" ]; then
+        destination=~/.ssh/id_ed25519
+    else
+        destination="${OPTARGS[0]}"
+    fi
+    if [ -e "$destination" ]; then
+        echo >&2 "$destination exits"
+        return 1
+    fi
+    if [ -z "$comment" ]; then
+        comment="$(whoami)@$(uname -n)-$(date -I)"
+    fi
+    ssh-keygen -t ed25519 -C "$comment" -f "${destination}"
+}
+
 usage() {
     cat <<EOF
 Usage: ${0##*/} command [command options]...
@@ -274,14 +304,8 @@ case "$command" in
     usage
     exit 1
     ;;
-add)
-    command_add "$@"
-    ;;
-copyid)
-    command_copyid "$@"
-    ;;
-test)
-    command_test "$@"
+add | copyid | test | new)
+    "command_$command" "$@"
     ;;
 *)
     echo >&2 "unknow command: $command"
