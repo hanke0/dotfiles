@@ -277,7 +277,7 @@ case "$command" in
     usage
     exit 1
     ;;
-showdelete | deepdelete | cm | push)
+showdelete | deepdelete | cm | push | cl)
     "command_$command" "$@"
     ;;
 *)
