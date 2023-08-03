@@ -277,7 +277,7 @@ command_new() {
     parseoption "$(
         cat <<EOF
 Usage: $0 new [-C comment] [filename]
-Test connection through SSH.
+Create new sshkey.
 
 EOF
     )" "$@" || exit 1
@@ -312,6 +312,22 @@ EOF
     ssh-keygen -t "$keytype" -C "$comment" -f "${destination}"
 }
 
+command_password() {
+    OPTDEF=()
+    local sshopts=()
+    parseoption "$(
+        cat <<EOF
+Usage: $0 password filename
+Changing the private key's passphrase without changing the key
+
+EOF
+    )" "$@" || exit 1
+    local file
+    for file in "${OPTARGS[@]}"; do
+        ssh-keygen -f "file" -p
+    done
+}
+
 usage() {
     cat <<EOF
 Usage: ${0##*/} command [command options]...
@@ -321,6 +337,8 @@ Commands:
     add       addd sshkey into ssh-agent
     copyid    push sshkey on remote machine for connections remote without password
     test      test connection through ssh
+    new       create new sshkey
+    password  change the private key's passphrase without changing the key
 
 Use "$0 <command> --help" for more information about a given command.
 EOF
@@ -333,7 +351,7 @@ case "$command" in
     usage
     exit 1
     ;;
-add | copyid | test | new)
+add | copyid | test | new | password)
     "command_$command" "$@"
     ;;
 *)
