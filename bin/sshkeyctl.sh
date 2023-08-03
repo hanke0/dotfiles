@@ -229,7 +229,7 @@ EOF
             echo >&2 "cannot find sshkey"
             return 1
         fi
-        ssh-copy-id "$sshkey" "${OPTARGS[@]}"
+        ssh-copy-id -i "$sshkey" "${OPTARGS[@]}"
     fi
 }
 
