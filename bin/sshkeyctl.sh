@@ -214,23 +214,26 @@ command_copyid() {
     local sshkey
     parseoption "$(
         cat <<EOF
-Usage: $0 copyid [-i sshkey] [user@]host
+Usage: $0 copyid [-i sshkey] [user@]host...
 copy sshkey(identity_file) from local to remote for login
 authtication without password.
 
 EOF
     )" "$@" || exit 1
-
-    if [ -n "$sshkey" ]; then
-        ssh-copy-id -i "$sshkey" "${OPTARGS[@]}"
-    else
+    local host
+    if [ -z "$sshkey" ]; then
         sshkey=$(get_local_sshkey)
         if [ -z "$sshkey" ]; then
             echo >&2 "cannot find sshkey"
             return 1
         fi
-        ssh-copy-id -i "$sshkey" "${OPTARGS[@]}"
     fi
+    for host in "${OPTARGS[@]}"; do
+        if ! ssh-copy-id -i "$sshkey" "$host"; then
+            echo >&2 "fail to push $host"
+            return 1
+        fi
+    done
 }
 
 command_test() {
