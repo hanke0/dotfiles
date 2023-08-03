@@ -233,6 +233,10 @@ if is_macOS; then
     [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 fi
 
+if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
+    [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
+fi
+
 # -- Alias --------------------------------------------------------------------
 if is_macOS; then
     alias ls='ls -G'

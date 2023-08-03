@@ -270,6 +270,36 @@ EOF
     return $exitcode
 }
 
+command_uagent() {
+    OPTDEF=()
+    parseoption "$(
+        cat <<EOF
+Usage: $0 useragent
+Start a user agent. set environment into ~/.ssh/agent.env.
+
+EOF
+    )" "$@" || exit 1
+    local env agent_run_state
+    env=~/.ssh/agent.env
+    # shellcheck disable=SC1090
+    test -f "$env" && . "$env" >/dev/null
+
+    # agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
+    agent_run_state=$(
+        ssh-add -l >/dev/null 2>&1
+        echo $?
+    )
+
+    if [ ! "$SSH_AUTH_SOCK" ] || [ "$agent_run_state" = 2 ]; then
+        (
+            umask 077
+            ssh-agent -s >"$env"
+        )
+        # shellcheck disable=SC1090
+        . "$env" >/dev/null
+    fi
+}
+
 command_new() {
     OPTDEF=(
         -C "" comment comment "set ssh key comment"
@@ -342,6 +372,7 @@ Commands:
     test      test connection through ssh
     new       create new sshkey
     password  change the private key's passphrase without changing the key
+    uagent    start a user agent if no ssh-agent has been started
 
 Use "$0 <command> --help" for more information about a given command.
 EOF
@@ -354,7 +385,7 @@ case "$command" in
     usage
     exit 1
     ;;
-add | copyid | test | new | password)
+add | copyid | test | new | password | uagent)
     "command_$command" "$@"
     ;;
 *)
