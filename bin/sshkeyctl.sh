@@ -169,6 +169,16 @@ parseoption() {
     done
 }
 
+get_local_sshkey() {
+    local file
+    for file in ~/.ssh/id_ed25519 ~/.ssh/id_rsa; do
+        if [ -f "$file" ]; then
+            echo "$file"
+            return
+        fi
+    done
+}
+
 command_add() {
     OPTDEF=()
     parseoption "$(
@@ -178,13 +188,11 @@ Add ssh key file into ssh-agent. Starts a new ssh-agent if
 there are no agents has been started.
 EOF
     )" "$@" || exit 1
+    local key
     if [ ${#OPTARGS[@]} -eq 0 ]; then
-        if [ -f ~/.ssh/id_ed25519 ]; then
-            OPTARGS=(~/.ssh/id_ed25519)
-        else
-            if [ -f ~/.ssh/id_rsa ]; then
-                OPTARGS=(~/.ssh/id_rsa)
-            fi
+        key=$(get_local_sshkey)
+        if [ -n "$key" ]; then
+            OPTARGS=("$key")
         fi
     fi
     if [ "${SSH_AGENT_PID:-0}" -ne 0 ]; then
@@ -212,10 +220,16 @@ authtication without password.
 
 EOF
     )" "$@" || exit 1
+
     if [ -n "$sshkey" ]; then
         ssh-copy-id -i "$sshkey" "${OPTARGS[@]}"
     else
-        ssh-copy-id "${OPTARGS[@]}"
+        sshkey=$(get_local_sshkey)
+        if [ -z "$key" ]; then
+            echo >&2 "cannot find sshkey"
+            return 1
+        fi
+        ssh-copy-id "$sshkey" "${OPTARGS[@]}"
     fi
 }
 
