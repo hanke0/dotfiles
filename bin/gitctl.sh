@@ -238,13 +238,9 @@ Push current branch to remote same branch.
 EOF
     )" "$@" || exit 1
 
-    if [ ${#OPTARGS[@]} -eq 0 ]; then
-        echo >&2 "no commit messages"
-        return 1
-    fi
-    local bname
-    bname=$(git rev-parse --abbrev-ref HEAD)
-    git push origin "$bname:$bname"
+    local branch
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    git push origin "$branch:$branch"
 }
 
 command_cl() {
