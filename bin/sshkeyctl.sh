@@ -195,7 +195,7 @@ EOF
             OPTARGS=("$key")
         fi
     fi
-    uagent
+    command_uagent
     ssh-add "${OPTARGS[@]}"
 }
 
