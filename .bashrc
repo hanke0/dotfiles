@@ -196,7 +196,7 @@ proxyoff() {
 alias disable_proxy=proxyoff
 
 update_dotfiles() {
-    update_dotfiles.sh
+    update-dotfiles.sh
     . ~/.bashrc
 }
 
