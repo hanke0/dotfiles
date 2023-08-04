@@ -195,6 +195,11 @@ proxyoff() {
 }
 alias disable_proxy=proxyoff
 
+update_dotfiles() {
+    update_dotfiles.sh
+    . ~/.bashrc
+}
+
 update_z() {
     rm -f ~/.z.sh/z.sh
     mkdir -p ~/.z.sh
