@@ -166,23 +166,34 @@ areyouok() {
     echo "The previous command exit with code $?"
 }
 
-enable_proxy() {
+proxyon() {
     local proxy
     proxy="$1"
     if [ -z "$1" ]; then
-        echo >&2 "proxy not provided"
-        return 1
+        proxy="$DEFAULT_HTTP_PROXY"
     fi
+    case "$proxy" in
+    "")
+        echo >&2 "proxy is not set"
+        return 1
+        ;;
+    http://*) ;;
+    *)
+        proxy="http://$proxy"
+        ;;
+    esac
     # https://about.gitlab.com/blog/2021/01/27/we-need-to-talk-no-proxy/
     no_proxy="localhost,127.0.0.1,::1"
     http_proxy="$proxy"
     https_proxy="$proxy"
     export http_proxy https_proxy no_proxy
 }
+alias enable_proxy=proxyon
 
-disable_proxy() {
+proxyoff() {
     unset http_proxy https_proxy no_proxy
 }
+alias disable_proxy=proxyoff
 
 update_z() {
     rm -f ~/.z.sh/z.sh
