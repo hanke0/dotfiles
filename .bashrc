@@ -91,7 +91,7 @@ __ps1_suffix="\n\[${COLOR_MAGENTA_BOLD}\]» \[${COLOR_RESET}\]"
 export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}${__ps1_suffix}"
 
 # -- Alias --------------------------------------------------------------------
-if is_macOS; then
+if is_MacOS; then
     alias ls='ls -G'
     if command -v gsed >/dev/null 2>&1; then
         alias sed="gsed"
@@ -182,7 +182,7 @@ o() {
 }
 # Normalize `open` across Linux, macOS, and Windows.
 # This is needed to make the `o` function (see below) cross-platform.
-if [ ! "$(uname -s)" = 'Darwin' ]; then
+if ! is_MacOS; then
     if grep --quiet --ignore-case microsoft /proc/version; then
         # Ubuntu on Windows using the Linux subsystem
         alias open='explorer.exe'
