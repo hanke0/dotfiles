@@ -22,6 +22,10 @@ path_push() {
     esac
 }
 
+is_MacOS() {
+    [ "$(uname)" = "Darwin" ]
+}
+
 # history about
 export HISTIGNORE="?"
 export HISTSIZE=32768
@@ -86,9 +90,46 @@ __ps1_proxy="\$(if [ -n \"\$http_proxy\" ] || [ -n \"\$https_proxy\" ]; then pri
 __ps1_suffix="\n\[${COLOR_MAGENTA_BOLD}\]» \[${COLOR_RESET}\]"
 export PS1="[${__ps1_user}@${__ps1_host}:${__ps1_dir}]${__ps1_git}${__ps1_proxy}${__ps1_suffix}"
 
+# -- Alias --------------------------------------------------------------------
+if is_macOS; then
+    alias ls='ls -G'
+    if command -v gsed >/dev/null 2>&1; then
+        alias sed="gsed"
+    fi
+else
+    alias ls='ls --color=auto'
+fi
+alias ll='ls -Alhb'
+alias la='ls -ACF'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+alias cls='clear'
+alias tt='tmux_open'
+alias xbc="bc -l ~/.bcrc"
+
+# -- relay on root folder -----------------------------------------------------
+
+ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
+    [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
+    # shellcheck disable=SC1090
+    [ -f ~/.ssh/agent.env ] && . ~/.ssh/agent.env >/dev/null
+fi
+
+if [ -n "$ROOT_DIR" ] && [ -d "$ROOT_DIR/bin" ]; then
+    path_append "$ROOT_DIR/bin"
+    # relative path is not really a problem here.
+    # shellcheck disable=SC1091
+    [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
+fi
+
 # -- Functions --------------------------------------------------------------
 
-tmux_open() {
+tmuxopen() {
     if tmux 'ls' 2>/dev/null | grep -- "$(whoami)"; then
         tmux attach-session -t "$(whoami)"
     else
@@ -96,7 +137,7 @@ tmux_open() {
     fi
 }
 
-tmux_clean() {
+tmuxkill() {
     if tmux 'ls' 1>/dev/null 2>&1; then
         tmux 'ls' 2>/dev/null | grep : | cut -d: -f1 | xargs tmux kill-session -t
     fi
@@ -114,8 +155,20 @@ hex2int() {
     printf "%d\n" 0x"$1"
 }
 
-char2hex() {
-    printf "%s" "$1" | od -t x1
+int2bin() {
+    echo "scale=0;ibase=10;obase=2;$1" | bc
+}
+
+bin2int() {
+    echo "scale=0;obase=10;ibase=2;$1" | bc
+}
+
+char2int() {
+    printf '%d\n' "'$1"
+}
+
+int2char() {
+    printf "\x$(printf %x $1)\n"
 }
 
 # `o` with no arguments opens the current directory, otherwise opens the given
@@ -149,7 +202,7 @@ treeview() {
 
 # Run `dig` and display the most useful info
 # Orginal written by mathiasbynens in project dotfiles(https://github.com/mathiasbynens/dotfiles).
-function digsimple() {
+digsimple() {
     dig +nocmd "$1" any +multiline +noall +answer
 }
 
@@ -203,8 +256,8 @@ update_dotfiles() {
 update_z() {
     rm -f ~/.z.sh/z.sh
     mkdir -p ~/.z.sh
-    curl -sSL -o ~/.z.sh/z.sh https://raw.githubusercontent.com/rupa/z/master/z.sh
-    curl -sSL -o /usr/local/share/man/man1/z.1 https://raw.githubusercontent.com/rupa/z/master/z.1
+    wget -O ~/.z.sh/z.sh https://raw.githubusercontent.com/rupa/z/master/z.sh
+    wget -O /usr/local/share/man/man1/z.1 https://raw.githubusercontent.com/rupa/z/master/z.1
 }
 
 # ~ is allowed here.
@@ -223,11 +276,7 @@ if ! command -v 'z' >/dev/null 2>&1; then
     alias z='_download_z'
 fi
 
-is_macOS() {
-    [ "$(uname)" = "Darwin" ]
-}
-
-if is_macOS; then
+if is_MacOS; then
     _active_brew_bash_completion() {
         local file
         for file in /opt/homebrew/etc/bash_completion.d/*; do
@@ -239,41 +288,4 @@ if is_macOS; then
     unset _active_brew_bash_completion
     # shellcheck source=/dev/null
     [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-fi
-
-# -- Alias --------------------------------------------------------------------
-if is_macOS; then
-    alias ls='ls -G'
-    if command -v gsed >/dev/null 2>&1; then
-        alias sed="gsed"
-    fi
-else
-    alias ls='ls --color=auto'
-fi
-alias ll='ls -Alhb'
-alias la='ls -ACF'
-
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
-alias cls='clear'
-alias tt='tmux_open'
-alias xbc="bc -l ~/.bcrc"
-
-# -- relay on root folder -----------------------------------------------------
-
-ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
-
-if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
-    [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
-    # shellcheck disable=SC1090
-    [ -f ~/.ssh/agent.env ] && . ~/.ssh/agent.env >/dev/null
-fi
-
-if [ -n "$ROOT_DIR" ] && [ -d "$ROOT_DIR/bin" ]; then
-    path_append "$ROOT_DIR/bin"
-    # relative path is not really a problem here.
-    # shellcheck disable=SC1091
-    [ -f "$ROOT_DIR/bin/_bash-complete.sh" ] && . "$ROOT_DIR/bin/_bash-complete.sh"
 fi
