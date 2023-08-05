@@ -165,3 +165,7 @@ parseoption() {
         esac
     done
 }
+
+flagisset() {
+    [ "$1" = 1 ]
+}
