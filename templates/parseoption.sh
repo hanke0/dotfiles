@@ -1,9 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-set -e
-set -o pipefail
-
-commandusage() {
+parseoption_usage() {
     local usage optshort optlong valtype varname help
     echo "$1"
     shift
@@ -148,7 +145,7 @@ parseoption() {
     while [ $# -ne 0 ]; do
         case "$1" in
         --help | --help=*)
-            commandusage "$usage" "${OPTDEF[@]}"
+            parseoption_usage "$usage" "${OPTDEF[@]}"
             return 1
             ;;
         -*)
@@ -168,40 +165,3 @@ parseoption() {
         esac
     done
 }
-
-# <<<<< template finish
-
-usage() {
-    cat <<EOF
-Usage: $0 TODO
-EOF
-}
-
-command_example() {
-    OPTDEF=(
-        -v "" flag verbose "set verbose mode"
-    )
-    local verbose
-    parseoption "$(
-        cat <<EOF
-Usage: $0 example [options]
-EOF
-    )" "$@" || exit 1
-    echo "$verbose"
-}
-
-command="$1"
-shift
-case "$command" in
--h | --help)
-    usage
-    exit 1
-    ;;
-example)
-    command_example "$@"
-    ;;
-*)
-    echo >&2 "unknow command: $command"
-    exit 1
-    ;;
-esac

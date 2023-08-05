@@ -105,6 +105,7 @@ complete -F _common_option_complete dedup.sh
 complete -F _common_option_complete download-geoip-cn.sh
 complete -F _common_option_complete fast-rm-folder.sh
 complete -F _common_option_complete find-dup-files.sh
+complete -F _common_option_complete gctl.sh
 complete -F _common_option_complete gitsemver.sh
 complete -F _common_option_complete go-auto-comment.sh
 complete -F _common_option_complete go-auth-comment.sh
@@ -123,4 +124,5 @@ complete -F _common_option_complete replace-none-printable.sh
 complete -F _common_option_complete rsslimit.sh
 complete -F _common_option_complete simple-ps.sh
 complete -F _common_option_complete sort-large-file.sh
+complete -F _common_option_complete sshkeyctl.sh
 complete -F _common_option_complete tolower.sh

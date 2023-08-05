@@ -68,3 +68,4 @@ tags
 .idea/
 tmp/
 !go.mod
+*.bak

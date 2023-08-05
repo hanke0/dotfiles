@@ -3,57 +3,6 @@
 set -e
 set -o pipefail
 
-ALWAYS_YES=false
-DRYRUN=
-
-print_help() {
-    cat <<EOF
-Usage: ${0##*/} [OPTION]...
-
-OPTION:
-  -y --yes            Don't ask for confirmation of install options.
-  -n --dry-run        Show what this script would do
-  -v --verbose        Verbose output command
-  -b --backup=SUFFIX  Make backup when given suffix (default to $SUFFIX).
-                      Do not backup when suffix is empty.
-EOF
-}
-
-SUFFIX=.hanke0.dotfiles.bak
-while [ $# -gt 0 ]; do
-    case "$1" in
-    -b | --backup)
-        SUFFIX="$2"
-        shift 2
-        ;;
-    -b=* | --backup=*)
-        SUFFIX="${1#*=}"
-        shift
-        ;;
-    -y | --yes)
-        ALWAYS_YES=true
-        shift
-        ;;
-    -n | --dry-run)
-        DRYRUN='echo +'
-        shift
-        ;;
-    -h | --help)
-        print_help
-        exit 1
-        ;;
-    -v | --verbose)
-        set -x
-        shift
-        ;;
-    *)
-        echo >&2 "Bad options: $1"
-        echo >&2 "Use -h or --help or more informations."
-        exit 1
-        ;;
-    esac
-done
-
 getrealpath() (
     file=
     path=$1
@@ -80,11 +29,189 @@ if ! [ -f "$ROOT_DIR/install.sh" ]; then
     exit 1
 fi
 
-read_yes() {
-    if [ "$ALWAYS_YES" = "true" ]; then
-        return 0
+# >>> hanke0/dotfiles >>>
+# !! Contents within this block are managed by https://github.com/hanke0/dotfiles !!
+
+parseoption_usage() {
+    local usage optshort optlong valtype varname help
+    echo "$1"
+    shift
+    echo -e "\nOptons:"
+    while [ $# -ne 0 ]; do
+        optshort="$1"
+        optlong="$2"
+        valtype="$3"
+        varname="$4"
+        help="$5"
+        shift 5
+        case "$valtype" in
+        flag)
+            echo "  $optshort $optlong	$help"
+            ;;
+        *)
+            if [ -n "$optlong" ]; then
+                echo "  $optshort $optlong=$valtype	$help"
+            else
+                echo "  $optshort=$valtype	$help"
+            fi
+            ;;
+        esac
+    done
+    echo "  --help        print this text and exit"
+}
+
+parseoption1_setvalue() {
+    if eval "declare -p $1 " 2>/dev/null | grep -q '^declare \-a' >/dev/null 2>&1; then
+        eval "$1+=('$2')"
+    else
+        eval "$1='$2'"
     fi
-    local answer=
+}
+
+# must set optname, optval and optlen
+# return set by shiftnum
+parseoption1() {
+    local relopt relval
+    local optshort optlong valtype varname help
+    relopt="${optname%%=*}"
+    relval="${optname#*=}"
+    shiftnum=0
+    while [ $# -ne 0 ]; do
+        optshort="$1"
+        optlong="$2"
+        valtype="$3"
+        varname="$4"
+        help="$5"
+        shift 5
+        if [ "$relopt" != "$optshort" ] && [ "$relopt" != "$optlong" ]; then
+            continue
+        fi
+        case "$valtype" in
+        flag)
+            if [ "$relopt" == "$optname" ]; then
+                parseoption1_setvalue "$varname" 1
+            else
+                case "$relval" in
+                -[0-9][0-9]* | [0-9][0-9]* | true)
+                    parseoption1_setvalue "$varname" 1
+                    ;;
+                0 | false)
+                    parseoption1_setvalue "$varname" 0
+                    ;;
+                *)
+                    echo >&2 "bad flag value must be true(1) or false(0)"
+                    return 1
+                    ;;
+                esac
+            fi
+            shiftnum=1
+            return 0
+            ;;
+        *)
+            if [ "$relopt" != "$optname" ]; then
+                parseoption1_setvalue "$varname" "$relval"
+                shiftnum=1
+                return 0
+            else
+                if [ "$optlen" -lt 2 ]; then
+                    echo >&2 "$relopt must provide a value"
+                    return 1
+                fi
+                parseoption1_setvalue "$varname" "$optval"
+                shiftnum=2
+                return 0
+            fi
+            ;;
+        esac
+    done
+    echo >&2 "unknown option: $relopt"
+    return 1
+}
+
+# parseoption parse options, flags and arguments from a list of parameters.
+# usage: parseoption helpstring [parameters]...
+#
+# Options are named key-value pairs. Keys start with one or two dashes (- or --),
+# and a user can separate the key and value with an equal sign (=) or a space.
+# This command is called with two options:
+#    % example --count=5 --index 2
+#
+# Flags are like options, but without a paired value.
+# Instead, their presence indicates a bool type value.
+# A no equal sign(=) contained flag indicates a true value.
+# A flag accepts an equal sign and a unsigned integer or true|false to
+# define it's value explicitly, but it cannot pass value by a space.
+# This command is called with three flags:
+#    % example --verbose --quiet=false --strip=true
+#
+# Arguments are values given by a user and are read in order from first to last
+# For example, this command is called with three file names as arguments:
+#    % example file1.txt file2.txt file3.txt
+#
+# The defination of options, flags are passed by global variable `OPTDEF`.
+# `OPTDEF` is a array of options defines, each options has 5 fields:
+#    optshort:   short name of option, ignore it if got empty string
+#    optlong:    long name of option, ignore it if got empty string
+#    valtype:    option value type, special value flag defines a flag.
+#    varname:    name of variable if option is set. flag value will be set 0 or 1
+#    help:       help string of this option.
+# This `OPTDEF` contains 1 option and 1 flag:
+#    OPTDEF=(
+#        ""      --count   NUM    varcount    "the number of run count"
+#        -v      --verbose flag   varverbose  "verbose mode"
+#    )
+#
+# Arguments are returned by global array variable `OPTARGS` as is
+# input order.
+#
+# --help flag is added by default. If the help flag is set,
+# following values are printed in order and exit:
+#     1. the input helpstring
+#     2. options and flags defined in OPTDEF
+parseoption() {
+    OPTARGS=()
+    local usage
+    usage="$1"
+    shift 1
+    local optname optval optlen shiftnum
+    while [ $# -ne 0 ]; do
+        case "$1" in
+        --help | --help=*)
+            parseoption_usage "$usage" "${OPTDEF[@]}"
+            return 1
+            ;;
+        -*)
+            optname="$1"
+            optval="$2"
+            optlen=$#
+            parseoption1 "${OPTDEF[@]}" || return 1
+            if [ "$shiftnum" -lt 1 ]; then
+                return 1
+            fi
+            shift "$shiftnum"
+            ;;
+        *)
+            OPTARGS+=("$1")
+            shift
+            ;;
+        esac
+    done
+}
+
+PARTS_COMMENT="!! Contents within this block are managed by https://github.com/hanke0/dotfiles !!"
+PARTS_ID=hanke0/dotfiles
+PARTS_SUFFIX=.bak
+PARTS_DRYRUN=
+PARTS_YES=
+
+adparts_read_yes() {
+    case "$PARTS_YES" in
+    1 | true)
+        return 0
+        ;;
+    esac
+    local answer
+    answer=
     read -r -p "$@" answer
     case "$answer" in
     y* | Y* | '')
@@ -96,20 +223,7 @@ read_yes() {
     esac
 }
 
-in_dryrun() {
-    test -n "$DRYRUN"
-}
-
-backup() {
-    if [ -z "$SUFFIX" ]; then
-        return 0
-    fi
-    if [ -f "$1" ]; then
-        cp -f "$1" "$1$SUFFIX"
-    fi
-}
-
-awk_comment() {
+addparts_awk_comment() {
     case "$1" in
     '"')
         echo '\"'
@@ -120,61 +234,81 @@ awk_comment() {
     esac
 }
 
-START_SIGN=">>> hanke0/dotfiles >>>"
-COMMENTLINE="!! Contents within this block are managed by https://github.com/hanke0/dotfiles !!"
-FINISH_SIGN="<<< hanke0/dotfiles <<<"
+addparts_backupfile() {
+    if [ -z "$PARTS_SUFFIX" ]; then
+        return 0
+    fi
+    if [ -f "$1" ]; then
+        cp -f "$1" "$1$PARTS_SUFFIX"
+    fi
+}
 
-check_content() {
-    local commentsign file
-    commentsign="$(awk_comment "$1")"
-    file="$2"
+addparts_check() {
+    local file awkleading awktrailing
+    file="$1"
+    awkleading="$2"
+    awktrailing="$3"
     if ! [ -e "$file" ]; then
         printf "OK"
         return 0
     fi
 
-    awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
-(\$0 == \"$commentsign $FINISH_SIGN\") { if (start) start=0; else print \"RAW FINISH\"; }
+    awk "(\$0 == \"$awkleading\"){ start=1 }
+(\$0 == \"$awktrailing\") { if (start) start=0; else print \"RAW FINISH\"; }
 END { if (!start) { print \"OK\" } }
 " "$file"
 }
 
-append_content() {
-    local commentsign file contentfile
-    commentsign="$(awk_comment "$1")"
-    file="$2"
-    contentfile="$3"
+addparts_append() {
+    local dest src awkleading awktrailing
+    dest="$1"
+    src="$2"
+    awkleading="$3"
+    awktrailing="$4"
     if ! [ -e "$file" ]; then
-        cat "$contentfile"
+        cat "$src"
         return 0
     fi
 
-    awk "(\$0 == \"$commentsign $START_SIGN\"){ start=1 }
-(\$0 == \"$commentsign $FINISH_SIGN\") { end=1 }
+    awk "(\$0 == \"$awkleading\"){ start=1 }
+(\$0 == \"$awktrailing\") { end=1 }
 (!start && !end){print}
-(start && end) { added=1; while ((getline<\"$contentfile\") > 0) {print} }
+(start && end) { added=1; while ((getline<\"$src\") > 0) {print} }
 (end){ start=0;end=0 }
-END { if (!added) { while ((getline<\"$contentfile\") > 0) {print} } }
-" "$file"
+END { if (!added) { while ((getline<\"$src\") > 0) {print} } }
+" "$dest"
 }
 
-add_parts() {
-    local text commentsign file content textfile note
-    content="$1"
+addparts() {
+    local file commentsign content
+    local textfile note leading trailing awkcommentsign awkleading awktrailing
+    file="$1"
     commentsign="$2"
-    file="$3"
-    if [ "$(check_content "$commentsign" "$file")" != "OK" ]; then
+    content="$3"
+
+    awkcommentsign=$(addparts_awk_comment "$commentsign")
+    leading=">>> $PARTS_ID >>>"
+    trailing="<<< $PARTS_ID <<<"
+    awkleading="$awkcommentsign $leading"
+    awktrailing="$awkcommentsign $trailing"
+
+    if [ "$(addparts_check "$file" "$awkleading" "$awktrailing")" != "OK" ]; then
         echo >&2 "file has a bad block of contents, please check it: $file"
-        exit 1
+        return 1
     fi
-    textfile=/tmp/hanke0-dotfiles.tmp
+    textfile=$(mktemp --tmpdir= hanke0.dotfiles.XXXXXXXX.tmp)
+    if [ -z "$textfile" ]; then
+        echo >&2 "cannot make temporery file"
+        return 1
+    fi
     cat >"$textfile" <<EOF
-$commentsign $START_SIGN
-$commentsign $COMMENTLINE
+$commentsign $leading
+$commentsign $PARTS_COMMENT
 $content
-$commentsign $FINISH_SIGN
+$commentsign $trailing
 EOF
-    text="$(append_content "$commentsign" "$file" "$textfile")"
+    text=$(addparts_append "$file" "$textfile" "$awkleading" "$awktrailing")
+    rm -f "$textfile"
     note=""
     if ! [ -e "$file" ]; then
         note="create file $file"
@@ -188,35 +322,64 @@ EOF
         echo "!!! $note with following content(diff output)"
         diff <(cat <<<"$text") "$file" || true
     fi
-    if in_dryrun; then
+    case "$PARTS_DRYRUN" in
+    1 | true)
         return 0
-    fi
-    if read_yes "!!! $note [Y/n]?"; then
-        backup "$file"
+        ;;
+    esac
+    if adparts_read_yes "!!! $note [Y/n]?"; then
+        addparts_backupfile "$file"
         cat >"$file" <<<"$text"
     fi
 }
+# <<< hanke0/dotfiles <<<
+
+usage=$(
+    cat <<EOF
+Usage: ${0##*/} [OPTION]...
+install hanke0/dotfiles for current login user.
+
+EOF
+)
+VERBOSE=
+DRYRUN=
+PARTS_YES=
+PARTS_SUFFIX=.bak
+OPTDEF=(
+    -y --yes flag PARTS_YES "don't ask for confirmation of install options."
+    -n --dry-run flag DRYRUN "show what this script would do"
+    -v --verbose flag VERBOSE "verbose output command"
+    -b --backup SUFFIX PARTS_SUFFIX "Make backup when given suffix (default to $SUFFIX). never backup when suffix is empty."
+)
+parseoption "$usage" "$@" || exit 1
+
+case "$VERBOSE" in
+1 | true)
+    set -x
+    ;;
+esac
+case "$DRYRUN" in
+1 | true)
+    PARTS_DRYRUN=1
+    DRYRUN="echo +"
+    ;;
+esac
 
 # bashrc config
-add_parts "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'" "#" ~/.bashrc
-
+addparts ~/.bashrc '#' "[[ -f '$ROOT_DIR/.bashrc' ]] && . '$ROOT_DIR/.bashrc'"
 # git config
 $DRYRUN git config --global include.path "$ROOT_DIR/.gitconfig"
-
 # tmux config
-add_parts "source-file $ROOT_DIR/.tmux.conf" "#" ~/.tmux.conf
-
+addparts ~/.tmux.conf '#' "source-file $ROOT_DIR/.tmux.conf"
 # vim config
-add_parts "source $ROOT_DIR/.vimrc" '"' ~/.vimrc
-
+addparts ~/.vimrc '"' "source $ROOT_DIR/.vimrc"
 # zsh config
-add_parts "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'" "#" ~/.zshrc
-
+addparts ~/.zshrc '#' "[[ -f '$ROOT_DIR/.zshrc' ]] && . '$ROOT_DIR/.zshrc'"
 # input config
-add_parts "\$include $ROOT_DIR/.inputrc" "#" ~/.inputrc
-
-add_parts "$(cat "$ROOT_DIR/.gitignore")" "#" ~/.gitignore
-
-add_parts "$(cat "$ROOT_DIR/.bcrc")" "#" ~/.bcrc
+addparts ~/.inputrc '#' "\$include $ROOT_DIR/.inputrc"
+# git ignore
+addparts ~/.gitignore '#' "$(cat "$ROOT_DIR/.gitignore")"
+# bc config
+addparts ~/.bcrc '#' "$(cat "$ROOT_DIR/.bcrc")"
 
 echo "Success setup! All confguration will active in next login."
