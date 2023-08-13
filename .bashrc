@@ -27,7 +27,7 @@ is_MacOS() {
 }
 
 # history about
-export HISTFILE=~/.bashrc_history
+export HISTFILE=~/.bash_history
 export HISTIGNORE="?"
 export HISTSIZE=32768
 export HISTFILESIZE=32768
