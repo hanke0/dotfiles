@@ -108,7 +108,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 alias cls='clear'
-alias tt='tmux_open'
+alias tt='tmuxopen'
 alias xbc="bc -l ~/.bcrc"
 
 # -- relay on root folder -----------------------------------------------------
