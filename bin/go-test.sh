@@ -35,7 +35,7 @@ while [ $# -gt 0 ]; do
         ;;
     -c | --coverage)
         shift
-        EXTRA+=(-covermode=atomic -coverprofile=cover.out)
+        EXTRA+=(-covermode=atomic -coverprofile=cover.out -coverpkg=./...)
         COVERAGE=true
         ;;
     -b | --benchmark)
