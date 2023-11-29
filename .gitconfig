@@ -25,6 +25,7 @@ la = !git config -l | grep alias | cut -c 7-
 u = !git push origin $(git rev-parse --abbrev-ref HEAD):$(git rev-parse --abbrev-ref HEAD)
 deepdelete = filter-repo --invert-paths
 showdelete = !git log --diff-filter=D --summary | awk '($1==\"delete\"){print $4}'
+track = !git branch --set-upstream-to=$(git rev-parse --abbrev-ref HEAD) $(git rev-parse --abbrev-ref HEAD)
 
 [merge]
 ff = true
