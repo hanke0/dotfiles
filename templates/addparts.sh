@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 PARTS_COMMENT="!! Contents within this block are managed by https://github.com/hanke0/dotfiles !!"
 PARTS_ID=hanke0/dotfiles
