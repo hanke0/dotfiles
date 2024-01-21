@@ -238,12 +238,15 @@ proxyon() {
     no_proxy="localhost,127.0.0.1,::1"
     http_proxy="$proxy"
     https_proxy="$proxy"
-    export http_proxy https_proxy no_proxy
+    HTTP_PROXY="$proxy"
+    HTTPS_PROXY="$proxy"
+    NO_PROXY="$no_proxy"
+    export http_proxy https_proxy no_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY
 }
 alias enable_proxy=proxyon
 
 proxyoff() {
-    unset http_proxy https_proxy no_proxy
+    unset http_proxy https_proxy no_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY
 }
 alias disable_proxy=proxyoff
 
