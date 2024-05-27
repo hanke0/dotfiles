@@ -1,4 +1,4 @@
-define void divmod(a, b) {
+define void divmod1(a, b) {
     auto sc;
     sc=scale;
     scale=0;
