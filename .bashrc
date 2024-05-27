@@ -1,3 +1,9 @@
+# Set this value to none-empty string for auto starting ssh-agent when login.
+ENABLE_AUTO_START_SSH_AGENT=${ENABLE_AUTO_START_SSH_AGENT:-}
+
+# Default http(s) proxy url when run 'proxyon' with no arguments.
+DEFAULT_HTTP_PROXY=${DEFAULT_HTTP_PROXY:-}
+
 command -v realpath >/dev/null 2>&1 || realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
@@ -113,7 +119,7 @@ alias xbc="bc -l ~/.bcrc"
 
 ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
-if [ -z "${DISABLE_AUTO_START_SSH_AGENT}" ]; then
+if [ -n "${ENABLE_AUTO_START_SSH_AGENT}" ]; then
     [ -x "$ROOT_DIR/bin/sshkeyctl.sh" ] && "$ROOT_DIR/bin/sshkeyctl.sh" uagent
     # shellcheck disable=SC1090
     [ -f ~/.ssh/agent.env ] && . ~/.ssh/agent.env >/dev/null

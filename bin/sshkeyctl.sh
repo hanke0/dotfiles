@@ -516,7 +516,11 @@ case "$command" in
     usage
     exit 1
     ;;
-add | copyid | test | new | password | uagent)
+uagent)
+    command_uagent "$@"
+    ;;
+add | copyid | test | new | password)
+    uagent
     "command_$command" "$@"
     ;;
 *)
