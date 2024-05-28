@@ -35,7 +35,7 @@ export HISTFILE=~/.bash_history
 export HISTIGNORE="?"
 export HISTSIZE=32768
 export HISTFILESIZE=32768
-export HISTCONTROL=ignoreboth:erasedups
+export HISTCONTROL=ignorespace:erasedups
 export PROMPT_COMMAND='history -a'
 if [ -n "${BASH_VERSION-}" ]; then
     shopt -s histappend
