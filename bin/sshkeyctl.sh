@@ -35,11 +35,28 @@ parseoption_usage() {
 }
 
 parseoption1_setvalue() {
+    local script
+
     if eval "declare -p $1 " 2>/dev/null | grep -q '^declare \-a' >/dev/null 2>&1; then
-        eval "$1+=('$2')"
+        script=$(
+            cat <<EOF
+$1+=("\$(cat <<'__EOF__'
+$2
+__EOF__
+)")
+EOF
+        )
     else
-        eval "$1='$2'"
+        script=$(
+            cat <<EOF
+$1=(cat <<'__EOF__'
+$2
+__EOF__
+)
+EOF
+        )
     fi
+    eval "$script"
 }
 
 # must set optname, optval and optlen
@@ -170,6 +187,10 @@ parseoption() {
             ;;
         esac
     done
+}
+
+flagisset() {
+    [ "$1" = 1 ]
 }
 
 PARTS_COMMENT="!! Contents within this block are managed by https://github.com/hanke0/dotfiles !!"

@@ -19,21 +19,38 @@ parseoption_usage() {
         *)
             if [ -n "$optlong" ]; then
                 echo "  $optshort $optlong=$valtype	$help"
-        else
+            else
                 echo "  $optshort=$valtype	$help"
-        fi
+            fi
             ;;
-    esac
-  done
+        esac
+    done
     echo "  --help        print this text and exit"
 }
 
 parseoption1_setvalue() {
+    local script
+
     if eval "declare -p $1 " 2>/dev/null | grep -q '^declare \-a' >/dev/null 2>&1; then
-        eval "$1+=('$2')"
-  else
-        eval "$1='$2'"
-  fi
+        script=$(
+            cat <<EOF
+$1+=("\$(cat <<'__EOF__'
+$2
+__EOF__
+)")
+EOF
+        )
+    else
+        script=$(
+            cat <<EOF
+$1=(cat <<'__EOF__'
+$2
+__EOF__
+)
+EOF
+        )
+    fi
+    eval "$script"
 }
 
 # must set optname, optval and optlen
@@ -53,12 +70,12 @@ parseoption1() {
         shift 5
         if [ "$relopt" != "$optshort" ] && [ "$relopt" != "$optlong" ]; then
             continue
-    fi
+        fi
         case "$valtype" in
         flag)
             if [ "$relopt" == "$optname" ]; then
                 parseoption1_setvalue "$varname" 1
-        else
+            else
                 case "$relval" in
                 -[0-9][0-9]* | [0-9][0-9]* | true)
                     parseoption1_setvalue "$varname" 1
@@ -70,8 +87,8 @@ parseoption1() {
                     echo >&2 "bad flag value must be true(1) or false(0)"
                     return 1
                     ;;
-          esac
-        fi
+                esac
+            fi
             shiftnum=1
             return 0
             ;;
@@ -80,18 +97,18 @@ parseoption1() {
                 parseoption1_setvalue "$varname" "$relval"
                 shiftnum=1
                 return 0
-        else
+            else
                 if [ "$optlen" -lt 2 ]; then
                     echo >&2 "$relopt must provide a value"
                     return 1
-          fi
+                fi
                 parseoption1_setvalue "$varname" "$optval"
                 shiftnum=2
                 return 0
-        fi
+            fi
             ;;
-    esac
-  done
+        esac
+    done
     echo >&2 "unknown option: $relopt"
     return 1
 }
@@ -155,15 +172,15 @@ parseoption() {
             parseoption1 "${OPTDEF[@]}" || return 1
             if [ "$shiftnum" -lt 1 ]; then
                 return 1
-        fi
+            fi
             shift "$shiftnum"
             ;;
         *)
             OPTARGS+=("$1")
             shift
             ;;
-    esac
-  done
+        esac
+    done
 }
 
 flagisset() {
