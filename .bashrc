@@ -297,3 +297,20 @@ if is_MacOS; then
     # shellcheck source=/dev/null
     [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 fi
+
+loadenvfile1() {
+    local line
+    while IFS= read -r line; do
+        if grep -q -E "(^\s*#)|(^\s*$)" <<<"$line"; then
+            continue
+        fi
+        export "${line?}"
+    done <"$1"
+}
+
+loadenvfile() {
+    local file
+    for file in "$@"; do
+        loadenvfile1 "$file"
+    done
+}
