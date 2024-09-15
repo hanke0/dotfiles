@@ -298,19 +298,20 @@ if is_MacOS; then
     [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 fi
 
-loadenvfile1() {
-    local line
-    while IFS= read -r line; do
-        if grep -q -E "(^\s*#)|(^\s*$)" <<<"$line"; then
-            continue
-        fi
-        export "${line?}"
-    done <"$1"
-}
+sourcedotenv() {
+    local file line files
+    files=("$@")
+    if [ "${files[#]}" = 0 ]; then
+        [ -r ".env" ] && files+=(".env")
+        [ -r ".env.local" ] && files+=(".env")
+    fi
 
-loadenvfile() {
-    local file
     for file in "$@"; do
-        loadenvfile1 "$file"
+        while IFS= read -r line; do
+            if grep -q -E "(^\s*#)|(^\s*$)" <<<"$line"; then
+                continue
+            fi
+            export "${line?}"
+        done <"$1"
     done
 }
