@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 # Set this value to none-empty string for auto starting ssh-agent when login.
 ENABLE_AUTO_START_SSH_AGENT=${ENABLE_AUTO_START_SSH_AGENT:-}
 
@@ -258,6 +259,7 @@ alias disable_proxy=proxyoff
 
 update_dotfiles() {
     update-dotfiles.sh
+    # shellcheck disable=SC1090
     . ~/.bashrc
 }
 
@@ -270,7 +272,7 @@ update_z() {
 
 # ~ is allowed here.
 # shellcheck disable=SC1090
-[ -f ~/.z.sh/z.sh ] && . ~/.z.sh/z.sh
+[ -r ~/.z.sh/z.sh ] && . ~/.z.sh/z.sh
 if ! command -v 'z' >/dev/null 2>&1; then
     # z not exists
     _download_z() {
@@ -295,17 +297,16 @@ if is_MacOS; then
     _active_brew_bash_completion
     unset _active_brew_bash_completion
     # shellcheck source=/dev/null
-    [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+    [ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 fi
 
 sourcedotenv() {
     local file line files
     files=("$@")
-    if [ "${files[#]}" = 0 ]; then
-        [ -r ".env" ] && files+=(".env")
-        [ -r ".env.local" ] && files+=(".env")
+    if [ "${#files[@]}" = "0" ]; then
+        [ -r .env ] && files+=(".env")
+        [ -r .env.local ] && files+=(".env.local")
     fi
-
     for file in "$@"; do
         while IFS= read -r line; do
             if grep -q -E "(^\s*#)|(^\s*$)" <<<"$line"; then
