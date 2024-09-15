@@ -307,12 +307,12 @@ sourcedotenv() {
         [ -r .env ] && files+=(".env")
         [ -r .env.local ] && files+=(".env.local")
     fi
-    for file in "$@"; do
+    for file in "${files[@]}"; do
         while IFS= read -r line; do
             if grep -q -E "(^\s*#)|(^\s*$)" <<<"$line"; then
                 continue
             fi
             export "${line?}"
-        done <"$1"
+        done <"$file"
     done
 }
