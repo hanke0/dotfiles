@@ -31,5 +31,5 @@ ABS_PATH="$(x realpath "$0")"
 ROOT_DIR="$(x dirname "$(x dirname "$ABS_PATH")")"
 
 cd "$ROOT_DIR"
-/usr/bin/git pull -q origin master
+git pull -q origin master
 ./install.sh "$@"
