@@ -197,32 +197,59 @@ flagisset() {
 # <<< hanke0/dotfiles <<<
 
 OPTDEF=(
-    -r --regexp PATTERN searchpattern "search cmd by regular expression."
-    -f --fixed-string PATTERN searchfixedstring "search cmd by fixed string."
-    -p --pid PID pidlist "select by process ids."
-    "" --ppid PPID ppidlist "select by parent process ids."
-    -g --group GROUP grouplist "select by real group ids."
-    -s --sid SID sidlist "select by session ids."
+    -r --regexp PATTERN searchpattern "search cmd by regular expression. mutual exclusion with -f option."
+    -f --fixed-string PATTERN searchfixedstring "search cmd by fixed string.  mutual exclusion with -r option."
+    -p --pid PIDs pidlist "select by process ids."
+    "" --ppid PPIDs ppidlist "select by parent process ids."
+    -g --group GROUPs grouplist "select by real group ids."
+    "" --sid SIDs sidlist "select by session ids."
+    -u --user USERs uidlist "select by user id or name."
+    -c --command CMDs cmdlist "select by command name."
+    -s --state STATE statecode "select by process state."
     -t --tree flag treeflag "acsii art process hierarchy."
+    -a --simple flag simplecmd "output only executeable name istead "
 )
 
 parseoption "$(
     cat <<EOF
 Usage: $0 [OPTIONS..]
 Search processes.
+
+PRPCESS STATE CODES
+    D    uninterruptible sleep (usually I/O)
+    I    idle kernel thread
+    R    running or runnable (on run queue)
+    S    interruptible sleep (waiting for an
+         event to complete)
+    T    stopped by job control signal
+    t    stopped by debugger during the tracing
+    W    paging (not valid since Linux 2.6)
+    X    dead (should never be seen)
+    Z    defunct ("zombie") process, terminated
+         but not reaped by its parent
 EOF
 )" "$@" || exit 1
 
+fields="user:12,pid,ppid,state,etime,start,times,rss:10"
+if flagisset "${simplecmd:-}"; then
+    fields="${fields},comm"
+else
+    fields="${fields},cmd"
+fi
+
 psoptions=(
-    -o "user,pid,ppid,s,etime,start,times,rss,cmd"
+    -o "${fields}" -ww
 )
 
+beforenum="${#psoptions[@]}"
 [ -n "$pidlist" ] && psoptions+=(-p "$pidlist")
 [ -n "$ppidlist" ] && psoptions+=(--ppid "$ppidlist")
 [ -n "$grouplist" ] && psoptions+=(-g "$grouplist")
 [ -n "$sidlist" ] && psoptions+=(-s "$sidlist")
+[ -n "$uidlist" ] && psoptions+=(-u "$uidlist")
+[ -n "${cmdlist}" ] && psoptions+=(-C "${cmdlist}")
 
-if [ "${#psoptions[@]}" -eq 2 ]; then
+if [ "${#psoptions[@]}" = "${beforenum}" ]; then
     psoptions+=(-e)
 else
     if [ -n "$searchpattern" ]; then
@@ -241,14 +268,23 @@ content=$(ps "${psoptions[@]}")
 header=$(head -n 1 <<<"$content")
 body=$(tail -n +2 <<<"$content")
 
-if [ -n "$searchpattern" ]; then
-    echo "${header}"
-    grep --color=auto -E "$searchpattern" <<<"$body"
-else
-    if [ -n "$searchfixedstring" ]; then
-        echo "${header}"
-        grep --color=auto -F "$searchfixedstring" <<<"$body"
-    else
-        echo "$content"
-    fi
+if [ -n "${statecode}" ]; then
+    statecode=$(tr '[:lower:]' '[:upper:]' <<<"$statecode")
+    body=$(awk "\$4==\"${statecode}\"" <<<"$body")
 fi
+
+awkbody() {
+    local awkscript
+    awkscript="{c=\"\"; for(i=10;i<=NF;i++) c=c SUBSEP \$i} c$1 {print \$0}"
+    body=$(awk "${awkscript}" <<<"$body")
+}
+
+if [ -n "$searchpattern" ]; then
+    awkbody "~/${searchpattern}/"
+fi
+if [ -n "$searchfixedstring" ]; then
+    awkbody "==\"${searchfixedstring}\""
+fi
+
+echo "$header"
+[ -n "$body" ] && echo "$body"
