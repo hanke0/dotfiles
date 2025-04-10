@@ -7,7 +7,6 @@ shift
 if [ $# -eq 0 ]; then
     tpls=(
         templates/parseoption.sh
-        templates/addparts.sh
     )
 else
     tpls=("$@")

@@ -43,7 +43,7 @@ EOF
     else
         script=$(
             cat <<EOF
-$1=(cat <<'__EOF__'
+$1=\$(cat <<'__EOF__'
 $2
 __EOF__
 )
@@ -164,6 +164,11 @@ parseoption() {
         --help | --help=*)
             parseoption_usage "$usage" "${OPTDEF[@]}"
             return 1
+            ;;
+        --)
+            shift 1
+            OPTARGS+=("$@")
+            break
             ;;
         -*)
             optname="$1"

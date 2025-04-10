@@ -1,7 +1,4 @@
-#!/usr/bin/env bash
-
-set -e
-set -o pipefail
+#!/bin/bash
 
 # >>> hanke0/dotfiles >>>
 # !! Contents within this block are managed by https://github.com/hanke0/dotfiles !!
@@ -199,223 +196,59 @@ flagisset() {
 }
 # <<< hanke0/dotfiles <<<
 
-get_local_sshkey() {
-    local file
-    for file in ~/.ssh/id_ed25519 ~/.ssh/id_rsa; do
-        if [ -f "$file" ]; then
-            echo "$file"
-            return
-        fi
-    done
-}
+OPTDEF=(
+    -r --regexp PATTERN searchpattern "search cmd by regular expression."
+    -f --fixed-string PATTERN searchfixedstring "search cmd by fixed string."
+    -p --pid PID pidlist "select by process ids."
+    "" --ppid PPID ppidlist "select by parent process ids."
+    -g --group GROUP grouplist "select by real group ids."
+    -s --sid SID sidlist "select by session ids."
+    -t --tree flag treeflag "acsii art process hierarchy."
+)
 
-command_add() {
-    OPTDEF=()
-    parseoption "$(
-        cat <<EOF
-Usage: $0 add [files]...
-Add ssh key file into ssh-agent. Starts a new ssh-agent if
-there are no agents has been started.
-EOF
-    )" "$@" || exit 1
-    local key
-    if [ ${#OPTARGS[@]} -eq 0 ]; then
-        key=$(get_local_sshkey)
-        if [ -n "$key" ]; then
-            OPTARGS=("$key")
-        fi
-    fi
-    command_uagent
-    ssh-add "${OPTARGS[@]}"
-}
-
-command_copyid() {
-    OPTDEF=(
-        -i "" FILE sshkey "sshkey(identity_file)"
-    )
-    local sshkey
-    parseoption "$(
-        cat <<EOF
-Usage: $0 copyid [-i sshkey] [user@]host...
-copy sshkey(identity_file) from local to remote for login
-authtication without password.
-
-EOF
-    )" "$@" || exit 1
-    local host
-    if [ -z "$sshkey" ]; then
-        sshkey=$(get_local_sshkey)
-        if [ -z "$sshkey" ]; then
-            echo >&2 "cannot find sshkey"
-            return 1
-        fi
-    fi
-    for host in "${OPTARGS[@]}"; do
-        if ! ssh-copy-id -i "$sshkey" "$host"; then
-            echo >&2 "fail to push $host"
-            return 1
-        fi
-    done
-}
-
-command_test() {
-    OPTDEF=(
-        -i "" FILE sshkey "sshkey(identity_file)"
-        -o "" OPT sshopts "ssh options, cound set many times"
-    )
-    local sshkey
-    local sshopts=()
-    parseoption "$(
-        cat <<EOF
-Usage: $0 test [-i sshkey] [user@]host
-Test connection through SSH.
-
-EOF
-    )" "$@" || exit 1
-    local tmp exitcode
-    local opts=()
-    exitcode=0
-    if [ -n "$sshkey" ]; then
-        opts+=(-i "$sshkey")
-    fi
-    for tmp in "${sshopts[@]}"; do
-        opts+=(-o "$tmp")
-    done
-    for tmp in "${OPTARGS[@]}"; do
-        if ! ssh -q "${opts[@]}" "$tmp" exit; then
-            echo >&2 "connection to $tmp fail"
-            exitcode=1
-        else
-            echo "connection to $tmp success"
-        fi
-    done
-    return $exitcode
-}
-
-command_uagent() {
-    OPTDEF=()
-    parseoption "$(
-        cat <<EOF
-Usage: $0 useragent
-Start a user agent. set environment into ~/.ssh/agent.env.
-
-EOF
-    )" || exit 1
-    local env agent_run_state
-    env=~/.ssh/agent.env
-    # shellcheck disable=SC1090
-    test -f "$env" && . "$env" >/dev/null
-
-    # agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
-    agent_run_state=$(
-        ssh-add -l >/dev/null 2>&1
-        echo $?
-    )
-
-    if [ ! "$SSH_AUTH_SOCK" ] || [ "$agent_run_state" = 2 ]; then
-        (
-            umask 077
-            ssh-agent -s >"$env"
-        )
-        # shellcheck disable=SC1090
-        . "$env" >/dev/null
-    fi
-}
-
-command_new() {
-    OPTDEF=(
-        -C "" comment comment "set ssh key comment"
-        -t "" type keytype "spect the type of key to create. The possiblae values are \"ed25519\"(default) or \"rsa\""
-    )
-    local comment keytype
-    local sshopts=()
-    parseoption "$(
-        cat <<EOF
-Usage: $0 new [-C comment] [filename]
-Create new sshkey.
-
-EOF
-    )" "$@" || exit 1
-
-    local destination defdest
-    case "$keytype" in
-    ed25519 | "")
-        keytype=ed25519
-        defdest=~/.ssh/id_ed25519
-        ;;
-    rsa)
-        keytype="rsa-sha2-512"
-        defdest=~/.ssh/id_rsa
-        ;;
-    *)
-        echo >&2 "unknown key type"
-        return 1
-        ;;
-    esac
-    if [ -z "${OPTARGS[0]}" ]; then
-        destination="$defdest"
-    else
-        destination="${OPTARGS[0]}"
-    fi
-    if [ -e "$destination" ]; then
-        echo >&2 "$destination exits"
-        return 1
-    fi
-    if [ -z "$comment" ]; then
-        comment="$(whoami)@$(uname -n)-$(date -I)"
-    fi
-    ssh-keygen -t "$keytype" -C "$comment" -f "${destination}"
-}
-
-command_password() {
-    OPTDEF=()
-    local sshopts=()
-    parseoption "$(
-        cat <<EOF
-Usage: $0 password filename
-Changing the private key's passphrase without changing the key
-
-EOF
-    )" "$@" || exit 1
-    local file
-    for file in "${OPTARGS[@]}"; do
-        ssh-keygen -f "file" -p
-    done
-}
-
-usage() {
+parseoption "$(
     cat <<EOF
-Usage: ${0##*/} command [command options]...
-A useful tools for SSH key control.
-
-Commands:
-    add       addd sshkey into ssh-agent
-    copyid    push sshkey on remote machine for connections remote without password
-    test      test connection through ssh
-    new       create new sshkey
-    password  change the private key's passphrase without changing the key
-    uagent    start a user agent if no ssh-agent has been started
-
-Use "$0 <command> --help" for more information about a given command.
+Usage: $0 [OPTIONS..]
+Search processes.
 EOF
-}
+)" "$@" || exit 1
 
-command="$1"
-shift
-case "$command" in
--h | --help)
-    usage
-    exit 1
-    ;;
-uagent)
-    command_uagent "$@"
-    ;;
-add | copyid | test | new | password)
-    uagent
-    "command_$command" "$@"
-    ;;
-*)
-    echo >&2 "unknow command: $command"
-    exit 1
-    ;;
-esac
+psoptions=(
+    -o "user,pid,ppid,s,etime,start,times,rss,cmd"
+)
+
+[ -n "$pidlist" ] && psoptions+=(-p "$pidlist")
+[ -n "$ppidlist" ] && psoptions+=(--ppid "$ppidlist")
+[ -n "$grouplist" ] && psoptions+=(-g "$grouplist")
+[ -n "$sidlist" ] && psoptions+=(-s "$sidlist")
+
+if [ "${#psoptions[@]}" -eq 2 ]; then
+    psoptions+=(-e)
+else
+    if [ -n "$searchpattern" ]; then
+        psoptions+=(-e)
+    else
+        [ -n "$searchfixedstring" ] && psoptions+=(-e)
+    fi
+fi
+
+if flagisset "${treeflag:-}"; then
+    psoptions+=(--forest)
+fi
+
+content=$(ps "${psoptions[@]}")
+[ -z "$content" ] && exit 0
+header=$(head -n 1 <<<"$content")
+body=$(tail -n +2 <<<"$content")
+
+if [ -n "$searchpattern" ]; then
+    echo "${header}"
+    grep --color=auto -E "$searchpattern" <<<"$body"
+else
+    if [ -n "$searchfixedstring" ]; then
+        echo "${header}"
+        grep --color=auto -F "$searchfixedstring" <<<"$body"
+    else
+        echo "$content"
+    fi
+fi
