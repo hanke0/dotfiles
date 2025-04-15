@@ -275,7 +275,7 @@ fi
 
 awkbody() {
     local awkscript
-    awkscript="{c=\"\"; for(i=10;i<=NF;i++) c=c SUBSEP \$i} c$1 {print \$0}"
+    awkscript="{c=\"\"; for(i=9;i<=NF;i++) c=c SUBSEP \$i} c$1 {print \$0}"
     body=$(awk "${awkscript}" <<<"$body")
 }
 
