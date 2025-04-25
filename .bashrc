@@ -316,3 +316,25 @@ sourcedotenv() {
         done <"$file"
     done
 }
+
+envsh() {
+    local envs
+    envs=()
+    while [ $# -gt 0 ]; do
+        case "$1" in
+        -h|--help)
+           echo "newshwithenv [-h | --help] [name=value]..."
+           return
+           ;;
+        ?*=*)
+          envs+=("$1")
+          shift
+          ;;
+        *)
+          echo >&2 "unknown options: $1"
+          return 1
+          ;;
+        esac
+    done
+    env -- "${envs[@]}" bash -i <<<"PS1=\"(fork)\$PS1\"; export PS1; exec </dev/tty;"
+}
