@@ -230,7 +230,7 @@ PRPCESS STATE CODES
 EOF
 )" "$@" || exit 1
 
-fields="user:12,pid,ppid,state,etime,start,times,rss:10"
+fields="user,pid,ppid,state,etime,start,times,rss"
 if flagisset "${simplecmd:-}"; then
     fields="${fields},comm"
 else
