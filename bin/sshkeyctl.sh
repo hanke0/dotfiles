@@ -411,7 +411,7 @@ uagent)
     command_uagent "$@"
     ;;
 add | copyid | test | new | password)
-    uagent
+    command_uagent
     "command_$command" "$@"
     ;;
 *)
