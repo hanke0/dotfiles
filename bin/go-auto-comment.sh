@@ -89,11 +89,11 @@ addcomment() {
 
 if [ "$UNSAFE" != true ]; then
     if ! git ls-files --error-unmatch "${args[@]}" >/dev/null; then
-        echo >&2 "* Has files not trcked by git"
+        echo >&2 "* Has files not tracked by git"
         exit 1
     fi
     if [ -n "$(git status --porcelain 2>&1)" ]; then
-        echo >&2 "* Has changes not commited"
+        echo >&2 "* Has changes not committed"
         exit 1
     fi
 fi
