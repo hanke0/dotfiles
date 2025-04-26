@@ -230,6 +230,12 @@ PRPCESS STATE CODES
 EOF
 )" "$@" || exit 1
 
+if [ "${#OPTARGS[@]}" -gt 0 ]; then
+    echo >&2 "Unknown arguments: ${OPTARGS[*]}"
+    echo >&2 "Try '$(basename "$0usago") --help' for more information."
+    exit 1
+fi
+
 fields="user,pid,ppid,state,etime,start,times,rss"
 if flagisset "${simplecmd:-}"; then
     fields="${fields},comm"
