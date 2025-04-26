@@ -10,6 +10,9 @@ command -v realpath >/dev/null 2>&1 || realpath() {
 }
 
 path_append() {
+    if [ "$2" = force ]; then
+        export PATH="$PATH:$1"
+    fi
     case ":${PATH}:" in
     *:"$1":*) ;;
     *)
@@ -19,6 +22,9 @@ path_append() {
 }
 
 path_push() {
+    if [ "$2" = force ]; then
+        export PATH="$1:$PATH"
+    fi
     case ":${PATH}:" in
     *:"$1":*) ;;
     *)
@@ -69,7 +75,7 @@ export COLOR_CYAN_BOLD="\e[1;36m"
 export COLOR_GRAY_BOLD="\e[1;37m"
 
 # -- Prompt -------------------------------------------------------------------
-if ! commanv -v "__git_ps1" >/dev/null 2>&1; then
+if ! command -v "__git_ps1" >/dev/null 2>&1; then
     __git_ps1() {
         local branchname
         branchname="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
@@ -322,19 +328,30 @@ envsh() {
     envs=()
     while [ $# -gt 0 ]; do
         case "$1" in
-        -h|--help)
-           echo "newshwithenv [-h | --help] [name=value]..."
-           return
-           ;;
+        -h | --help)
+            echo "Usage: envsh [-h | --help] [name=value]..."
+            echo "start a new bash shell with environment variables set and current tty."
+            return
+            ;;
         ?*=*)
-          envs+=("$1")
-          shift
-          ;;
+            envs+=("$1")
+            shift
+            ;;
         *)
-          echo >&2 "unknown options: $1"
-          return 1
-          ;;
+            echo >&2 "unknown options: $1"
+            return 1
+            ;;
         esac
     done
     env -- "${envs[@]}" bash -i <<<"PS1=\"(fork)\$PS1\"; export PS1; exec </dev/tty;"
+}
+
+# start shell with bitwarden ssh-agent
+bsh() {
+    local home sshsock
+    home=$(eval 'echo ~')
+    sshsock="$home/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
+    [ -e "$sshsock" ] || sshsock="$home/.bitwarden-ssh-agent.sock"
+
+    envsh "SSH_AUTH_SOCK=$sshsock"
 }
