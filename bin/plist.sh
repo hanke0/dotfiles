@@ -236,11 +236,11 @@ if [ "${#OPTARGS[@]}" -gt 0 ]; then
     exit 1
 fi
 
-fields="user,pid,ppid,state,etime,start,times,rss"
+fields="user,pid,ppid,state,etime,start,cputime,rss"
 if flagisset "${simplecmd:-}"; then
     fields="${fields},comm"
 else
-    fields="${fields},cmd"
+    fields="${fields},args"
 fi
 
 psoptions=(
