@@ -159,28 +159,52 @@ ts2date() {
     date -d @"$1" +%Y-%m-%dT%H:%M:%S%z 2>/dev/null || date -r "$1" +%Y-%m-%dT%H:%M:%S%z
 }
 
-int2hex() {
-    printf "%x\n" "$1"
-}
-
 hex2int() {
     printf "%d\n" 0x"$1"
 }
 
-int2bin() {
-    echo "scale=0;ibase=10;obase=2;$1" | bc
+hex2char() {
+    printf "\x$1"
 }
 
-bin2int() {
-    echo "scale=0;obase=10;ibase=2;$1" | bc
+hex2bin() {
+    bc <<<"scale=0;ibase=16;obase=2;$1"
+}
+
+int2hex() {
+    printf "%x\n" "$1"
+}
+
+int2char() {
+    printf "\x$(printf %x "$1")\n"
+}
+
+int2bin() {
+    bc <<<"scale=0;ibase=10;obase=2;$1"
+}
+
+char2hex() {
+    printf '%x' "'$1"
 }
 
 char2int() {
     printf '%d\n' "'$1"
 }
 
-int2char() {
-    printf "\x$(printf %x $1)\n"
+char2bin() {
+    int2bin "$(char2int "$1")"
+}
+
+bin2hex() {
+    bc <<<"scale=0;obase=16;ibase=2;$1"
+}
+
+bin2int() {
+    bc <<<"scale=0;obase=10;ibase=2;$1"
+}
+
+bin2char() {
+    int2char "$(bin2int "$1")"
 }
 
 # `o` with no arguments opens the current directory, otherwise opens the given

@@ -11,15 +11,15 @@ export COLOR_LIGHTGRAY='\e[37m'
 export COLOR_BOLD='\e[01m'
 
 log_header() {
-    printf "\n${COLOR_BOLD}${COLOR_CYAN}==========  %s  ==========${COLOR_RESET}\n" "$@" >&2
+    printf "\n${COLOR_BOLD}${COLOR_CYAN}==========  %s  ==========${COLOR_RESET}\n" "$@"
 }
 
 log_success() {
-    printf "${COLOR_GREEN}✔ %s${COLOR_RESET}\n" "$*" >&2
+    printf "${COLOR_GREEN}✔ %s${COLOR_RESET}\n" "$*"
 }
 
 log_failure() {
-    printf "${COLOR_RED}✖ %s${COLOR_RESET}\n" "$*" >&2
+    printf "${COLOR_RED}✖ %s${COLOR_RESET}\n" "$*"
 }
 
 assert_eq() {
@@ -114,20 +114,27 @@ assert_string_array_len() {
     return 0
 }
 
+testlog() {
+    echo >&2 "$@"
+}
+
 runtest() {
-    local exit_code=0
-    log_header "${BASH_SOURCE[0]}"
+    local logfile
+    log_header "${BASH_SOURCE[${#BASH_SOURCE[@]} - 1]}"
+    logfile=$(mktemp)
+    trap "rm -f \"$logfile\"" EXIT
     for var in $(declare -F); do
         var=$(echo "$var" | cut -d' ' -f3)
-        if [[ $var != test* ]]; then
+        if [[ $var != test_* ]]; then
             continue
         fi
         printf "[TEST %s]:: " "$var"
-        if ! eval "$var"; then
-            exit_code=1
+        if ! "${var}" 2>"${logfile}"; then
+            echo >&2 "Log:"
+            cat >&2 "${logfile}"
+            exit 1
         else
             log_success ""
         fi
     done
-    [[ "$exit_code" -eq 0 ]] && return 0 || return 1
 }
