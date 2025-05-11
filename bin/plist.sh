@@ -199,15 +199,19 @@ flagisset() {
 OPTDEF=(
     -r --regexp PATTERN searchpattern "search cmd by regular expression. mutual exclusion with -f option."
     -f --fixed-string PATTERN searchfixedstring "search cmd by fixed string.  mutual exclusion with -r option."
+    -e --exclude-regex PATTERN excludepattern "ignore cmd by regular expression."
+    -E --exclude-fixed-string PATTERN excludefixedstring "ignore cmd by fixed string."
     -p --pid PIDs pidlist "select by process ids."
     "" --ppid PPIDs ppidlist "select by parent process ids."
     -g --group GROUPs grouplist "select by real group ids."
     "" --sid SIDs sidlist "select by session ids."
     -u --user USERs uidlist "select by user id or name."
     -c --command CMDs cmdlist "select by command name."
-    -s --state STATE statecode "select by process state."
+    -S --state STATE statecode "select by process state."
+    -s --pidsid PID pidsid "select by pid's sid"
     -t --tree flag treeflag "acsii art process hierarchy."
     -a --simple flag simplecmd "output only executeable name istead "
+    "" --self flag selfflag "do not ignore plist it self."
 )
 
 parseoption "$(
@@ -236,24 +240,38 @@ if [ "${#OPTARGS[@]}" -gt 0 ]; then
     exit 1
 fi
 
-fields="user,pid,ppid,state,etime,start,cputime,rss"
+fields="user=USER,pid=PID,ppid=PPID,sess=SID,state=STATE,etime=ELAPSED,start=STARTED,cputime=TIME,rss=RSS"
 if flagisset "${simplecmd:-}"; then
-    fields="${fields},comm"
+    fields="${fields},comm=COMMAND"
 else
-    fields="${fields},args"
+    fields="${fields},args=COMMAND"
 fi
 
 psoptions=(
     -o "${fields}" -ww
 )
 
+_get_pid_sid() {
+    local c
+    c=$(ps -o sess= -p "$1" | sort -u | xargs printf '%s,')
+    printf "%s" "${c%,}"
+}
+
+_add_options_if_not_empty() {
+    local k v
+    k="$1"
+    v="$2"
+    [ -n "$v" ] && psoptions+=("$k" "$v")
+}
+
 beforenum="${#psoptions[@]}"
-[ -n "$pidlist" ] && psoptions+=(-p "$pidlist")
-[ -n "$ppidlist" ] && psoptions+=(--ppid "$ppidlist")
-[ -n "$grouplist" ] && psoptions+=(-g "$grouplist")
-[ -n "$sidlist" ] && psoptions+=(-s "$sidlist")
-[ -n "$uidlist" ] && psoptions+=(-u "$uidlist")
-[ -n "${cmdlist}" ] && psoptions+=(-C "${cmdlist}")
+_add_options_if_not_empty -p "${pidlist:-}"
+_add_options_if_not_empty -p "${ppidlist:-}"
+_add_options_if_not_empty -g "${grouplist:-}"
+_add_options_if_not_empty -s "${sidlist:-}"
+_add_options_if_not_empty -u "${uidlist:-}"
+_add_options_if_not_empty -C "${cmdlist:-}"
+[ -n "${pidsid:-}" ] && _add_options_if_not_empty -s "$(_get_pid_sid "$pidsid")"
 
 if [ "${#psoptions[@]}" = "${beforenum}" ]; then
     psoptions+=(-e)
@@ -270,7 +288,11 @@ if flagisset "${treeflag:-}"; then
 fi
 
 content=$(ps "${psoptions[@]}")
-[ -z "$content" ] && exit 0
+[ -z "$content" ] && {
+    echo >&2 "ps failed, args:"
+    printf '%q ' "${psoptions[@]}"
+    exit 1
+}
 header=$(head -n 1 <<<"$content")
 body=$(tail -n +2 <<<"$content")
 
@@ -281,16 +303,25 @@ fi
 
 awkbody() {
     local awkscript
-    awkscript="{c=\"\"; for(i=9;i<=NF;i++) c=c SUBSEP \$i} c$1 {print \$0}"
+    awkscript="{c=\"\"; for(i=10;i<=NF;i++) c=c SUBSEP \$i} c$1 {print \$0}"
     body=$(awk "${awkscript}" <<<"$body")
 }
 
 if [ -n "$searchpattern" ]; then
+    # shellcheck disable=SC2088
     awkbody "~/${searchpattern}/"
 fi
 if [ -n "$searchfixedstring" ]; then
     awkbody "==\"${searchfixedstring}\""
 fi
-
+if [ -n "$excludepattern" ]; then
+    awkbody "!~/${excludepattern}/"
+fi
+if [ -n "$excludefixedstring" ]; then
+    awkbody "!=${excludefixedstring}"
+fi
+if ! flagisset "${selfflag:-}"; then
+    body=$(awk "\$2 != $$ && \$3 != $$ {print}" <<<"$body")
+fi
 echo "$header"
 [ -n "$body" ] && echo "$body"

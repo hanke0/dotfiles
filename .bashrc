@@ -164,6 +164,7 @@ hex2int() {
 }
 
 hex2char() {
+    # shellcheck disable=SC2059
     printf "\x$1"
 }
 
@@ -176,6 +177,7 @@ int2hex() {
 }
 
 int2char() {
+    # shellcheck disable=SC2059
     printf "\x$(printf %x "$1")\n"
 }
 

@@ -29,7 +29,7 @@ test_hex() {
                 char2int int2hex hex2int int2char char2int int2bin bin2int int2char \
                 char2hex hex2char char2int int2char char2bin bin2char \
                 char2bin bin2hex hex2bin bin2int int2bin bin2char char2bin \
-                bin2char \
+                bin2char
         )"
 }
 

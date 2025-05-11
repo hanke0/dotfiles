@@ -122,6 +122,7 @@ runtest() {
     local logfile
     log_header "${BASH_SOURCE[${#BASH_SOURCE[@]} - 1]}"
     logfile=$(mktemp)
+    # shellcheck disable=SC2064
     trap "rm -f \"$logfile\"" EXIT
     for var in $(declare -F); do
         var=$(echo "$var" | cut -d' ' -f3)

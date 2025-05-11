@@ -126,3 +126,6 @@ complete -F _common_option_complete simple-ps.sh
 complete -F _common_option_complete sort-large-file.sh
 complete -F _common_option_complete sshkeyctl.sh
 complete -F _common_option_complete tolower.sh
+complete -F _common_option_complete plist.sh
+complete -F _common_option_complete listens.sh
+complete -F _common_option_complete regex-rename.sh
