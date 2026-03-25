@@ -332,19 +332,41 @@ if is_MacOS; then
     [ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 fi
 
+
 sourcedotenv() {
-    local file line files
+    local file files key value
     files=("$@")
-    if [ "${#files[@]}" = "0" ]; then
+
+    if [ "${#files[@]}" -eq 0 ]; then
         [ -r .env ] && files+=(".env")
         [ -r .env.local ] && files+=(".env.local")
     fi
+
     for file in "${files[@]}"; do
-        while IFS= read -r line; do
-            if grep -q -E "(^\s*#)|(^\s*$)" <<<"$line"; then
-                continue
+        if [ ! -f "$file" ]; then
+            echo "Warning: $file not found, skipping." >&2
+            continue
+        fi
+
+        while IFS='=' read -r key value || [ -n "$key" ]; do
+            # skip comments and empty lines
+            [[ "$key" =~ ^[[:space:]]*# ]] && continue
+            [[ -z "${key//[[:space:]]/}" ]] && continue
+
+            # drop leading and trailing spaces
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+
+            # remove leading and trailing single/double quotes
+            value="${value%\"}"
+            value="${value#\"}"
+            value="${value%\'}"
+            value="${value#\'}"
+
+            # export variable
+            if [ -n "$key" ]; then
+                export "$key"="$value"
             fi
-            export "${line?}"
         done <"$file"
     done
 }
