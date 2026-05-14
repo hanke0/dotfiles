@@ -366,7 +366,7 @@ sourcedotenv() {
             # export variable
             if [ -n "$key" ]; then
                 if [ "$DRYRUN" = 1 ] || [ "$DRYRUN" = true ]; then
-                    printf '%q\n' "$key=$value"
+                    printf 'export %q\n' "$key=$value"
                 else
                     export "$key"="$value"
                 fi
