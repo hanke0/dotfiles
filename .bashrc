@@ -365,7 +365,11 @@ sourcedotenv() {
 
             # export variable
             if [ -n "$key" ]; then
-                export "$key"="$value"
+                if [ "$DRYRUN" = 1 ] || [ "$DRYRUN" = true ]; then
+                    printf '%q\n' "$key=$value"
+                else
+                    export "$key"="$value"
+                fi
             fi
         done <"$file"
     done
@@ -400,6 +404,5 @@ bsh() {
     home=$(eval 'echo ~')
     sshsock="$home/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
     [ -e "$sshsock" ] || sshsock="$home/.bitwarden-ssh-agent.sock"
-
     envsh "SSH_AUTH_SOCK=$sshsock"
 }
